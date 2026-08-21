@@ -6,18 +6,46 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\TeacherController;
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PublicController;
 
 /*
-|--------------------------------------------------------------------------
-| Public Website
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/', function () {
     return view('frontend.home');
-})->name('home');
+})->name('home');*/
 
+// ==============================
+// WEBSITE PUBLIC
+// ==============================
 
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
+
+Route::get('/profil', [PublicController::class, 'profile'])
+    ->name('profile');
+
+Route::get('/program/{program:slug}', [PublicController::class, 'program'])
+    ->name('program.show');
+
+Route::get('/berita', [PublicController::class, 'news'])
+    ->name('news.index');
+
+Route::get('/berita/{news:slug}', [PublicController::class, 'newsShow'])
+    ->name('news.show');
+
+Route::get('/agenda', [PublicController::class, 'events'])
+    ->name('events.index');
+
+Route::get('/agenda/{event:slug}', [PublicController::class, 'eventShow'])
+    ->name('events.show');
+
+Route::get('/galeri', [PublicController::class, 'gallery'])
+    ->name('gallery.index');
+    
 /*
 |--------------------------------------------------------------------------
 | Authentication
@@ -71,7 +99,10 @@ Route::prefix('admin')
         Route::put('/settings', [SettingController::class, 'update'])
             ->name('settings.update');
 
-
+Route::resource('events', EventController::class)
+    ->except([
+        'show',
+    ]);
         /*
         |--------------------------------------------------------------------------
         | Programs
@@ -82,6 +113,33 @@ Route::prefix('admin')
             ->except(['show']);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Teachers
+        |--------------------------------------------------------------------------
+        */
+            Route::resource('teachers', TeacherController::class)
+    ->except([
+        'show',
+    ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Announcements
+        |--------------------------------------------------------------------------
+        */
+    Route::resource('announcements', AnnouncementController::class)
+    ->except([
+        'show',
+    ]);
+    /*
+        |--------------------------------------------------------------------------
+        | Galleries
+        |--------------------------------------------------------------------------
+        */
+    Route::resource('galleries', GalleryController::class)
+    ->except([
+        'show',
+    ]);
         /*
         |--------------------------------------------------------------------------
         | News

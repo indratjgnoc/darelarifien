@@ -178,65 +178,66 @@
 
     </a>
 
+<a
+    href="{{ route('admin.announcements.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.announcements.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
 
-                    <a
-                        href="#"
-                        class="mt-1 flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+    <i
+        data-lucide="megaphone"
+        class="h-5 w-5"
+    ></i>
 
-                        <i
-                            data-lucide="megaphone"
-                            class="h-5 w-5"
-                        ></i>
+    <span>Pengumuman</span>
 
-                        <span>Pengumuman</span>
-
-                    </a>
-
-
-                    <a
-                        href="#"
-                        class="mt-1 flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
-
-                        <i
-                            data-lucide="calendar-days"
-                            class="h-5 w-5"
-                        ></i>
-
-                        <span>Agenda</span>
-
-                    </a>
+</a>
 
 
-                    <a
-                        href="#"
-                        class="mt-1 flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+<a
+    href="{{ route('admin.events.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.events.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
 
-                        <i
-                            data-lucide="images"
-                            class="h-5 w-5"
-                        ></i>
+    <i
+        data-lucide="calendar-days"
+        class="h-5 w-5"
+    ></i>
 
-                        <span>Galeri</span>
+    <span>Agenda / Event</span>
 
-                    </a>
+</a>
+
+<a
+    href="{{ route('admin.galleries.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.galleries.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
+
+    <i
+        data-lucide="images"
+        class="h-5 w-5"
+    ></i>
+
+    <span>Galeri</span>
+
+</a>
 
                 </div>
 
@@ -274,24 +275,25 @@
 
 </a>
 
-                    <a
-                        href="#"
-                        class="mt-1 flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+                   <a
+    href="{{ route('admin.teachers.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.teachers.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
 
-                        <i
-                            data-lucide="users"
-                            class="h-5 w-5"
-                        ></i>
+    <i
+        data-lucide="users-round"
+        class="h-5 w-5"
+    ></i>
 
-                        <span>Ustadz & Ustadzah</span>
+    <span>Ustadz & Ustadzah</span>
 
-                    </a>
+</a>
 
                 </div>
 
