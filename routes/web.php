@@ -33,15 +33,6 @@ Route::get('/pendaftaran/sukses/{registrationNumber}',
     [PublicRegistrationController::class, 'success']
 )->name('registration.success');
 
-
-Route::get(
-    'registrations/{registration}/document',
-    [
-        \App\Http\Controllers\Admin\RegistrationController::class,
-        'document'
-    ]
-)->name('registrations.document');
-
 Route::resource(
         'registrations',
         \App\Http\Controllers\Admin\RegistrationController::class
@@ -194,12 +185,18 @@ Route::resource('events', EventController::class)
         'show',
     ]);
 
-    /*
-        |--------------------------------------------------------------------------
-        | Registrations
-        |--------------------------------------------------------------------------
-        */
-    Route::resource(
+   /*
+|--------------------------------------------------------------------------
+| Registrations
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/registrations/{registration}/document',
+    [\App\Http\Controllers\Admin\RegistrationController::class, 'document']
+)->name('registrations.document');
+
+Route::resource(
     'registrations',
     \App\Http\Controllers\Admin\RegistrationController::class
 )->only([
