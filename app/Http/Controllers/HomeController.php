@@ -44,6 +44,7 @@ class HomeController extends Controller
 
         return view('home', compact(
             'programs',
+            /*'teachers',*/
             'news',
             'announcements',
             'events',

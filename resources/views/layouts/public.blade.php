@@ -12,11 +12,11 @@
 
     <meta
         name="description"
-        content="Website resmi Pesantren Darel Arifien"
+        content="Website resmi Pesantren {{ $settings['school_name'] ?? '' }}"
     >
 
     <title>
-        @yield('title', 'Pesantren Darel Arifien')
+        @yield('title', 'Pesantren ' . ($settings['school_name'] ?? ''))
     </title>
 
     @vite([

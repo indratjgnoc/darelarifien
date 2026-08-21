@@ -15,7 +15,7 @@
     >
 
     <title>
-        @yield('title', 'Dashboard') - Darel Arifien
+        @yield('title', 'Dashboard') - {{ $settings['school_name'] ?? 'n' }}
     </title>
 
     @vite([
@@ -57,7 +57,7 @@
 
                 <div>
                     <h1 class="font-black tracking-wide">
-                        Darel Arifien
+                        {{ $settings['school_name'] ?? '' }}
                     </h1>
 
                     <p class="text-xs text-white/50">

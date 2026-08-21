@@ -55,21 +55,25 @@ class PublicController extends Controller
     */
 
     public function events(): View
-    {
-        $events = Event::where('is_published', true)
-            ->orderBy('start_at')
-            ->paginate(9);
+{
+    $events = Event::where('is_published', true)
+        ->where(function ($query) {
+            $query->whereNull('start_at')
+                ->orWhere('start_at', '>=', now());
+        })
+        ->orderBy('start_at')
+        ->paginate(9);
 
-        return view('public.events.index', compact('events'));
-    }
+    return view('public.events.index', compact('events'));
+}
 
 
-    public function eventShow(Event $event): View
-    {
-        abort_unless($event->is_published, 404);
+   public function eventShow(Event $event): View
+{
+    abort_unless($event->is_published, 404);
 
-        return view('public.events.show', compact('event'));
-    }
+    return view('public.events.show', compact('event'));
+}
 
 
     /*
@@ -82,6 +86,7 @@ class PublicController extends Controller
     {
         $galleries = Gallery::where('is_active', true)
             ->orderBy('sort_order')
+            ->orderByDesc('created_at')
             ->get();
 
         return view('public.gallery.index', compact('galleries'));

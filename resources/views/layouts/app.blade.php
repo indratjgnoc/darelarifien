@@ -10,16 +10,16 @@
 
     <meta
         name="description"
-        content="Website Resmi Pesantren Darel Arifien"
+        content="Website Resmi Pesantren {{ $settings['school_name'] ?? '' }}"
     >
 
     <meta
         name="author"
-        content="Pesantren Darel Arifien"
+        content="Pesantren {{ $settings['school_name'] ?? '' }}"
     >
 
     <title>
-        @yield('title', 'Pesantren Darel Arifien')
+        @yield('title', 'Pesantren ' . ($settings['school_name'] ?? ''))
     </title>
 
     @vite([

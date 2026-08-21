@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pesantren Darel Arifien | Membentuk Generasi Qurani')
+@section('title', 'Pesantren | Membentuk Generasi Qurani')
 
 @section('content')
 
@@ -59,7 +59,7 @@
                         class="text-sm font-semibold
                                tracking-wide text-white"
                     >
-                        PESANTREN DAREL ARIFIEN
+                        PESANTREN {{ $settings['school_name'] ?? '' }}
                     </span>
                 </div>
 
@@ -82,7 +82,7 @@
                            leading-8 text-white/80
                            sm:text-lg"
                 >
-                    Pesantren Darel Arifien hadir untuk
+                    Pesantren {{ $settings['school_name'] ?? '' }} hadir untuk
                     membentuk generasi yang kuat dalam ilmu,
                     kokoh dalam iman, mulia dalam akhlak,
                     serta siap memberikan manfaat bagi umat.
@@ -161,7 +161,7 @@
                     {{-- Ganti URL ini dengan foto pesantren --}}
                     <img
                         src="https://images.unsplash.com/photo-1564121211835-e88c852648ab?auto=format&fit=crop&w=1200&q=85"
-                        alt="Pesantren Darel Arifien"
+                        alt="Pesantren"
                         class="h-[520px] w-full
                                rounded-[1.5rem]
                                object-cover"
@@ -388,7 +388,7 @@
                 <p
                     class="mt-6 leading-8 text-gray-600"
                 >
-                    Pesantren Darel Arifien merupakan lembaga
+                    Pesantren {{ $settings['school_name'] ?? '' }} merupakan lembaga
                     pendidikan Islam yang berkomitmen dalam
                     membina generasi melalui pendidikan,
                     pembinaan karakter, penguatan ilmu agama,
@@ -1254,7 +1254,7 @@
         >
             Siap Menjadi Bagian dari
             <span class="text-[#F4C542]">
-                Darel Arifien?
+                {{ $settings['school_name'] ?? '' }} ?
             </span>
         </h2>
 
@@ -1263,7 +1263,7 @@
                    leading-8 text-white/75"
         >
             Bergabunglah bersama keluarga besar
-            Pesantren Darel Arifien dan tumbuh bersama
+            Pesantren {{ $settings['school_name'] ?? '' }} dan tumbuh bersama
             dalam lingkungan pendidikan yang Islami,
             berilmu dan berakhlak.
         </p>

@@ -10,14 +10,6 @@
 
     <div>
 
-        <p
-            class="text-sm font-semibold
-                   uppercase tracking-wider
-                   text-[#087443]"
-        >
-            Dashboard Overview
-        </p>
-
         <h1
             class="mt-1 text-3xl font-black
                    text-[#111111]"
@@ -236,11 +228,11 @@
     </div>
 
 
-    {{-- CHART + QUICK ACTION --}}
+    {{-- CHART --}}
 
     <div
         class="grid gap-6
-               lg:grid-cols-3"
+               lg:grid-cols-1"
     >
 
         {{-- Chart --}}
@@ -249,7 +241,6 @@
             class="rounded-2xl bg-white
                    p-6 shadow-sm
                    ring-1 ring-gray-100
-                   lg:col-span-2"
         >
 
             <div
@@ -281,121 +272,8 @@
 
                 <canvas id="registrationChart"></canvas>
 
-            </div>
-
+            </div>  
         </div>
-
-
-        {{-- Quick Action --}}
-
-        <div
-            class="rounded-2xl
-                   bg-[#062E1F]
-                   p-6 text-white
-                   shadow-sm"
-        >
-
-            <p
-                class="text-xs font-bold
-                       uppercase tracking-widest
-                       text-[#F4C542]"
-            >
-                Quick Action
-            </p>
-
-            <h2
-                class="mt-3 text-xl font-black"
-            >
-                Kelola Website
-            </h2>
-
-            <p
-                class="mt-2 text-sm
-                       leading-relaxed
-                       text-white/60"
-            >
-                Akses menu pengelolaan
-                website dengan cepat.
-            </p>
-
-
-            <div class="mt-6 space-y-3">
-
-                <a
-                    href="#"
-                    class="flex items-center
-                           justify-between
-                           rounded-xl
-                           bg-white/5
-                           px-4 py-3
-                           transition
-                           hover:bg-white/10"
-                >
-
-                    <span class="text-sm font-semibold">
-                        Tambah Berita
-                    </span>
-
-                    <i
-                        data-lucide="arrow-up-right"
-                        class="h-4 w-4
-                               text-[#F4C542]"
-                    ></i>
-
-                </a>
-
-
-                <a
-                    href="#"
-                    class="flex items-center
-                           justify-between
-                           rounded-xl
-                           bg-white/5
-                           px-4 py-3
-                           transition
-                           hover:bg-white/10"
-                >
-
-                    <span class="text-sm font-semibold">
-                        Tambah Program
-                    </span>
-
-                    <i
-                        data-lucide="arrow-up-right"
-                        class="h-4 w-4
-                               text-[#F4C542]"
-                    ></i>
-
-                </a>
-
-
-                <a
-                    href="#"
-                    class="flex items-center
-                           justify-between
-                           rounded-xl
-                           bg-white/5
-                           px-4 py-3
-                           transition
-                           hover:bg-white/10"
-                >
-
-                    <span class="text-sm font-semibold">
-                        Lihat Pendaftar
-                    </span>
-
-                    <i
-                        data-lucide="arrow-up-right"
-                        class="h-4 w-4
-                               text-[#F4C542]"
-                    ></i>
-
-                </a>
-
-            </div>
-
-        </div>
-
     </div>
 
 

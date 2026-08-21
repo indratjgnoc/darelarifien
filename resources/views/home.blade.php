@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Pesantren Darel Arifien')
+@section('title', 'Pesantren ')
 
 @section('content')
 
@@ -107,7 +107,7 @@
                            leading-8
                            text-white/60"
                 >
-                    Pesantren Darel Arifien hadir
+                    Pesantren {{ $settings['school_name'] ?? '' }} hadir
                     sebagai tempat menuntut ilmu,
                     membentuk karakter dan
                     mempersiapkan generasi Islam
@@ -295,7 +295,7 @@
                                        font-black
                                        text-white"
                             >
-                                Darel Arifien
+                                {{ $settings['school_name'] ?? '' }}
                             </p>
 
 
@@ -311,63 +311,10 @@
                     </div>
 
                 </div>
-
-
-                {{-- FLOATING CARD --}}
-
-                <div
-                    class="absolute
-                           -bottom-5
-                           -left-5
-                           rounded-2xl
-                           border
-                           border-white/10
-                           bg-[#0B3D2B]
-                           p-5
-                           shadow-2xl
-                           sm:-left-8"
-                >
-
-                    <div
-                        class="flex
-                               items-center gap-3"
-                    >
-
-                        <div
-                            class="flex h-11 w-11
-                                   items-center
-                                   justify-center
-                                   rounded-xl
-                                   bg-[#F4C542]"
-                        >
-
-                            <i
-                                data-lucide="graduation-cap"
-                                class="h-5 w-5
-                                       text-[#062E1F]"
-                            ></i>
+  
 
                         </div>
-
-
-                        <div>
-
-                            <p
-                                class="text-xs
-                                       text-white/40"
-                            >
-                                Fokus Utama
-                            </p>
-
-                            <p
-                                class="font-black
-                                       text-white"
-                            >
-                                Pendidikan Islam
-                            </p>
-
-                        </div>
-
+                        
                     </div>
 
                 </div>
@@ -426,7 +373,7 @@
                        leading-8
                        text-gray-500"
             >
-                Pesantren Darel Arifien berkomitmen
+                Pesantren {{ $settings['school_name'] ?? '' }} berkomitmen
                 memberikan pendidikan yang
                 mengintegrasikan ilmu agama,
                 ilmu pengetahuan dan pembentukan
@@ -868,6 +815,378 @@
 
 </section>
 
+{{-- ========================================= --}}
+{{-- AGENDA --}}
+{{-- ========================================= --}}
+
+<section
+    id="agenda"
+    class="bg-[#F5F7F6] py-24"
+>
+
+    <div
+        class="mx-auto max-w-7xl
+               px-5 lg:px-8"
+    >
+
+        <div
+            class="flex flex-col gap-5
+                   md:flex-row
+                   md:items-end
+                   md:justify-between"
+        >
+
+            <div>
+
+                <p
+                    class="text-sm font-black
+                           uppercase
+                           tracking-widest
+                           text-[#087443]"
+                >
+                    Kegiatan
+                </p>
+
+                <h2
+                    class="mt-3 text-3xl
+                           font-black
+                           sm:text-4xl"
+                >
+                    Agenda Pesantren
+                </h2>
+
+            </div>
+
+
+            <a
+                href="{{ route('events.index') }}"
+                class="inline-flex
+                       items-center gap-2
+                       text-sm font-black
+                       text-[#087443]"
+            >
+
+                Lihat Semua
+
+                <i
+                    data-lucide="arrow-right"
+                    class="h-4 w-4"
+                ></i>
+
+            </a>
+
+        </div>
+
+
+        <div
+            class="mt-12 grid gap-5
+                   md:grid-cols-2
+                   lg:grid-cols-4"
+        >
+
+            @forelse ($events as $event)
+
+                <a
+                    href="{{ route(
+                        'events.show',
+                        $event->slug
+                    ) }}"
+                    class="group rounded-2xl
+                           bg-white p-6
+                           shadow-sm
+                           ring-1 ring-gray-100
+                           transition
+                           hover:-translate-y-1
+                           hover:shadow-xl"
+                >
+
+                    @if ($event->start_at)
+
+                        <div
+                            class="flex h-14 w-14
+                                   flex-col
+                                   items-center
+                                   justify-center
+                                   rounded-xl
+                                   bg-[#087443]
+                                   text-white"
+                        >
+
+                            <span
+                                class="text-lg
+                                       font-black
+                                       leading-none"
+                            >
+                                {{ $event->start_at->format('d') }}
+                            </span>
+
+                            <span
+                                class="mt-1 text-[9px]
+                                       font-bold
+                                       uppercase"
+                            >
+                                {{ $event->start_at->format('M') }}
+                            </span>
+
+                        </div>
+
+                    @else
+
+                        <div
+                            class="flex h-14 w-14
+                                   items-center
+                                   justify-center
+                                   rounded-xl
+                                   bg-[#F4C542]
+                                   text-[#062E1F]"
+                        >
+
+                            <i
+                                data-lucide="calendar"
+                                class="h-6 w-6"
+                            ></i>
+
+                        </div>
+
+                    @endif
+
+
+                    <h3
+                        class="mt-6 text-lg
+                               font-black
+                               leading-7
+                               transition
+                               group-hover:text-[#087443]"
+                    >
+                        {{ $event->title }}
+                    </h3>
+
+
+                    @if ($event->location)
+
+                        <div
+                            class="mt-3 flex
+                                   items-center gap-2
+                                   text-xs
+                                   text-gray-400"
+                        >
+
+                            <i
+                                data-lucide="map-pin"
+                                class="h-4 w-4
+                                       text-[#087443]"
+                            ></i>
+
+                            {{ $event->location }}
+
+                        </div>
+
+                    @endif
+
+                </a>
+
+            @empty
+
+                <div
+                    class="md:col-span-2
+                           lg:col-span-4
+                           rounded-2xl
+                           bg-white
+                           p-10 text-center"
+                >
+
+                    <p
+                        class="text-gray-400"
+                    >
+                        Belum ada agenda.
+                    </p>
+
+                </div>
+
+            @endforelse
+
+        </div>
+
+    </div>
+
+</section>
+
+{{-- ========================================= --}}
+{{-- GALERI --}}
+{{-- ========================================= --}}
+
+<section
+    id="galeri"
+    class="bg-white py-24"
+>
+
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+        <div
+            class="flex flex-col gap-5
+                   md:flex-row
+                   md:items-end
+                   md:justify-between"
+        >
+
+            <div>
+
+                <p
+                    class="text-sm font-black
+                           uppercase
+                           tracking-widest
+                           text-[#087443]"
+                >
+                    Dokumentasi
+                </p>
+
+                <h2
+                    class="mt-3 text-3xl
+                           font-black
+                           sm:text-4xl"
+                >
+                    Galeri Pesantren
+                </h2>
+
+            </div>
+
+
+            <a
+                href="{{ route('gallery.index') }}"
+                class="inline-flex
+                       items-center gap-2
+                       text-sm font-black
+                       text-[#087443]"
+            >
+
+                Lihat Semua
+
+                <i
+                    data-lucide="arrow-right"
+                    class="h-4 w-4"
+                ></i>
+
+            </a>
+
+        </div>
+
+
+        @if ($galleries->count())
+
+            <div
+                class="mt-12 grid gap-5
+                       sm:grid-cols-2
+                       lg:grid-cols-3"
+            >
+
+                @foreach ($galleries as $gallery)
+
+                    <a
+                        href="{{ route('gallery.index') }}"
+                        class="group relative
+                               aspect-[4/3]
+                               overflow-hidden
+                               rounded-2xl
+                               bg-[#062E1F]"
+                    >
+
+                        @if ($gallery->image)
+
+                            <img
+                                src="{{ asset(
+                                    'storage/' .
+                                    $gallery->image
+                                ) }}"
+                                alt="{{ $gallery->title }}"
+                                class="h-full w-full
+                                       object-cover
+                                       transition
+                                       duration-700
+                                       group-hover:scale-110"
+                            >
+
+                        @else
+
+                            <div
+                                class="flex h-full
+                                       items-center
+                                       justify-center"
+                            >
+
+                                <i
+                                    data-lucide="image"
+                                    class="h-12 w-12
+                                           text-[#F4C542]"
+                                ></i>
+
+                            </div>
+
+                        @endif
+
+
+                        <div
+                            class="absolute inset-0
+                                   bg-gradient-to-t
+                                   from-black/80
+                                   via-transparent
+                                   to-transparent"
+                        ></div>
+
+
+                        <div
+                            class="absolute bottom-0
+                                   left-0 right-0
+                                   p-6"
+                        >
+
+                            @if ($gallery->category)
+
+                                <p
+                                    class="text-[10px]
+                                           font-black
+                                           uppercase
+                                           tracking-widest
+                                           text-[#F4C542]"
+                                >
+                                    {{ $gallery->category }}
+                                </p>
+
+                            @endif
+
+
+                            <h3
+                                class="mt-2 text-lg
+                                       font-black
+                                       text-white"
+                            >
+                                {{ $gallery->title }}
+                            </h3>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <div
+                class="mt-12 rounded-2xl
+                       bg-[#F5F7F6]
+                       p-10 text-center"
+            >
+                <p class="text-gray-400">
+                    Belum ada dokumentasi.
+                </p>
+            </div>
+
+        @endif
+
+    </div>
+
+</section>
 
 {{-- ========================================= --}}
 {{-- PENDAFTARAN --}}
@@ -903,7 +1222,7 @@
                    sm:text-4xl"
         >
             Siapkan Masa Depan
-            Bersama Darel Arifien
+            Bersama {{ $settings['school_name'] ?? '' }}
         </h2>
 
 

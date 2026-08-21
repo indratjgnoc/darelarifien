@@ -15,23 +15,23 @@ class SettingController extends Controller
         return view('admin.settings.index', compact('settings'));
     }
 
+
     public function update(Request $request)
     {
         $validated = $request->validate([
-
-            'site_name' => [
+            'school_name' => [
                 'required',
                 'string',
                 'max:255',
             ],
 
-            'site_short_name' => [
+            'school_short_name' => [
                 'nullable',
                 'string',
                 'max:100',
             ],
 
-            'site_description' => [
+            'school_description' => [
                 'nullable',
                 'string',
             ],
@@ -50,12 +50,6 @@ class SettingController extends Controller
             'email' => [
                 'nullable',
                 'email',
-                'max:255',
-            ],
-
-            'website' => [
-                'nullable',
-                'url',
                 'max:255',
             ],
 
@@ -83,29 +77,31 @@ class SettingController extends Controller
                 'max:255',
             ],
 
-            'founded_year' => [
+            'vision' => [
                 'nullable',
-                'integer',
-                'min:1900',
-                'max:' . date('Y'),
+                'string',
             ],
 
+            'mission' => [
+                'nullable',
+                'string',
+            ],
         ]);
+
 
         foreach ($validated as $key => $value) {
 
-            Setting::setValue(
-                $key,
-                $value
+            Setting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value ?? '']
             );
 
         }
 
-        return redirect()
-            ->route('admin.settings')
-            ->with(
-                'success',
-                'Pengaturan berhasil diperbarui.'
-            );
+
+        return back()->with(
+            'success',
+            'Pengaturan berhasil diperbarui.'
+        );
     }
 }

@@ -46,6 +46,16 @@ Route::get('/agenda/{event:slug}', [PublicController::class, 'eventShow'])
 Route::get('/galeri', [PublicController::class, 'gallery'])
     ->name('gallery.index');
     
+    Route::get(
+    '/admin/settings',
+    [SettingController::class, 'index']
+)->name('admin.settings.index');
+
+Route::put(
+    '/admin/settings',
+    [SettingController::class, 'update']
+)->name('admin.settings.update');
+    
 /*
 |--------------------------------------------------------------------------
 | Authentication

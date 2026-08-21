@@ -1,89 +1,102 @@
 @extends('layouts.admin')
 
-@section('title', 'Pengaturan Website')
+@section('title', 'Pengaturan')
 
 @section('content')
 
-<div class="mx-auto max-w-6xl space-y-8">
+<div class="max-w-5xl">
 
     {{-- HEADER --}}
 
-    <div>
+    <div class="mb-8">
 
-        <p
-            class="text-sm font-semibold
-                   uppercase tracking-wider
-                   text-[#087443]"
-        >
-            Website Configuration
-        </p>
+        <div class="flex items-center gap-3">
 
-        <h1
-            class="mt-1 text-3xl font-black
-                   text-[#111111]"
-        >
-            Pengaturan Website
-        </h1>
+            <div
+                class="flex h-12 w-12
+                       items-center justify-center
+                       rounded-2xl
+                       bg-[#087443]/10
+                       text-[#087443]"
+            >
 
-        <p class="mt-2 text-gray-500">
-            Kelola identitas dan informasi resmi
-            Pesantren Darel Arifien.
-        </p>
+                <i
+                    data-lucide="settings"
+                    class="h-6 w-6"
+                ></i>
+
+            </div>
+
+            <div>
+
+                <h1
+                    class="text-2xl font-black
+                           text-gray-900"
+                >
+                    Pengaturan Website
+                </h1>
+
+                <p
+                    class="mt-1 text-sm
+                           text-gray-500"
+                >
+                    Kelola informasi utama
+                    Pesantren Darel Arifien.
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 
 
-    {{-- SUCCESS MESSAGE --}}
+    {{-- SUCCESS --}}
 
     @if (session('success'))
 
         <div
-            class="flex items-center gap-3
-                   rounded-xl border
-                   border-green-200
-                   bg-green-50 px-5 py-4"
+            class="mb-6 flex items-center
+                   gap-3 rounded-2xl
+                   border border-green-200
+                   bg-green-50
+                   px-5 py-4
+                   text-sm font-semibold
+                   text-green-700"
         >
 
             <i
-                data-lucide="circle-check"
-                class="h-5 w-5 text-[#087443]"
+                data-lucide="check-circle"
+                class="h-5 w-5"
             ></i>
 
-            <p
-                class="text-sm font-semibold
-                       text-[#087443]"
-            >
-                {{ session('success') }}
-            </p>
+            {{ session('success') }}
 
         </div>
 
     @endif
 
 
-    {{-- VALIDATION ERROR --}}
+    {{-- ERROR --}}
 
     @if ($errors->any())
 
         <div
-            class="rounded-xl border
-                   border-red-200
-                   bg-red-50 px-5 py-4"
+            class="mb-6 rounded-2xl
+                   border border-red-200
+                   bg-red-50 p-5
+                   text-sm text-red-700"
         >
 
-            <p
-                class="mb-2 font-bold text-red-700"
-            >
+            <p class="font-bold">
                 Terdapat kesalahan:
             </p>
 
-            <ul class="list-disc pl-5 text-sm text-red-600">
+            <ul class="mt-2 list-disc pl-5">
 
                 @foreach ($errors->all() as $error)
 
-                    <li>
-                        {{ $error }}
-                    </li>
+                    <li>{{ $error }}</li>
 
                 @endforeach
 
@@ -101,236 +114,111 @@
     >
 
         @csrf
-
         @method('PUT')
 
 
+        {{-- ================================= --}}
         {{-- IDENTITAS --}}
+        {{-- ================================= --}}
 
         <div
-            class="overflow-hidden
-                   rounded-2xl bg-white
-                   shadow-sm ring-1
-                   ring-gray-100"
+            class="rounded-3xl bg-white
+                   p-6 shadow-sm
+                   ring-1 ring-gray-100"
         >
 
-            <div
-                class="border-b border-gray-100
-                       px-6 py-5"
-            >
+            <div class="mb-6">
 
-                <div class="flex items-center gap-3">
+                <h2
+                    class="text-lg font-black"
+                >
+                    Identitas Pesantren
+                </h2>
 
-                    <div
-                        class="flex h-10 w-10
-                               items-center justify-center
-                               rounded-xl
-                               bg-[#087443]/10
-                               text-[#087443]"
-                    >
-
-                        <i
-                            data-lucide="school"
-                            class="h-5 w-5"
-                        ></i>
-
-                    </div>
-
-                    <div>
-
-                        <h2 class="font-black">
-                            Identitas Pesantren
-                        </h2>
-
-                        <p
-                            class="mt-1 text-xs
-                                   text-gray-400"
-                        >
-                            Informasi utama website
-                        </p>
-
-                    </div>
-
-                </div>
+                <p
+                    class="mt-1 text-sm
+                           text-gray-400"
+                >
+                    Informasi dasar yang ditampilkan
+                    di website.
+                </p>
 
             </div>
 
 
-            <div
-                class="grid gap-6 p-6
-                       md:grid-cols-2"
-            >
+            <div class="grid gap-6 md:grid-cols-2">
 
-                {{-- Nama --}}
+                {{-- NAME --}}
 
                 <div class="md:col-span-2">
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
                         Nama Pesantren
                     </label>
 
                     <input
                         type="text"
-                        name="site_name"
-                        value="{{ $settings['site_name'] ?? '' }}"
-                        placeholder="Pesantren Darel Arifien"
+                        name="school_name"
+                        value="{{ old(
+                            'school_name',
+                            $settings['school_name'] ?? 'Pesantren Darel Arifien'
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
+                               text-sm outline-none
+                               transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
+                        placeholder="Pesantren Darel Arifien"
                     >
 
                 </div>
 
 
-                {{-- Nama Singkat --}}
+                {{-- SHORT NAME --}}
 
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
                         Nama Singkat
                     </label>
 
                     <input
                         type="text"
-                        name="site_short_name"
-                        value="{{ $settings['site_short_name'] ?? '' }}"
+                        name="school_short_name"
+                        value="{{ old(
+                            'school_short_name',
+                            $settings['school_short_name'] ?? 'Darel Arifien'
+                        ) }}"
+                        class="w-full rounded-xl
+                               border border-gray-200
+                               bg-gray-50 px-4 py-3
+                               text-sm outline-none
+                               transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
                         placeholder="Darel Arifien"
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
                     >
 
                 </div>
 
 
-                {{-- Tahun --}}
+                {{-- EMAIL --}}
 
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
-                    >
-                        Tahun Berdiri
-                    </label>
-
-                    <input
-                        type="number"
-                        name="founded_year"
-                        value="{{ $settings['founded_year'] ?? '' }}"
-                        placeholder="2000"
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
-                    >
-
-                </div>
-
-
-                {{-- Deskripsi --}}
-
-                <div class="md:col-span-2">
-
-                    <label
-                        class="mb-2 block
-                               text-sm font-semibold"
-                    >
-                        Deskripsi Pesantren
-                    </label>
-
-                    <textarea
-                        name="site_description"
-                        rows="5"
-                        placeholder="Tuliskan deskripsi singkat pesantren..."
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
-                    >{{ $settings['site_description'] ?? '' }}</textarea>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- KONTAK --}}
-
-        <div
-            class="overflow-hidden
-                   rounded-2xl bg-white
-                   shadow-sm ring-1
-                   ring-gray-100"
-        >
-
-            <div
-                class="border-b border-gray-100
-                       px-6 py-5"
-            >
-
-                <div class="flex items-center gap-3">
-
-                    <div
-                        class="flex h-10 w-10
-                               items-center justify-center
-                               rounded-xl
-                               bg-[#F4C542]/20
-                               text-[#9A7500]"
-                    >
-
-                        <i
-                            data-lucide="phone"
-                            class="h-5 w-5"
-                        ></i>
-
-                    </div>
-
-                    <div>
-
-                        <h2 class="font-black">
-                            Informasi Kontak
-                        </h2>
-
-                        <p
-                            class="mt-1 text-xs
-                                   text-gray-400"
-                        >
-                            Informasi yang dapat dihubungi
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="grid gap-6 p-6
-                       md:grid-cols-2"
-            >
-
-                {{-- Email --}}
-
-                <div>
-
-                    <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
                         Email
                     </label>
@@ -338,25 +226,31 @@
                     <input
                         type="email"
                         name="email"
-                        value="{{ $settings['email'] ?? '' }}"
-                        placeholder="info@darelarifien.sch.id"
+                        value="{{ old(
+                            'email',
+                            $settings['email'] ?? ''
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
+                               text-sm outline-none
+                               transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
+                        placeholder="info@darelarifien.sch.id"
                     >
 
                 </div>
 
 
-                {{-- Telepon --}}
+                {{-- PHONE --}}
 
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
                         Nomor Telepon
                     </label>
@@ -364,25 +258,31 @@
                     <input
                         type="text"
                         name="phone"
-                        value="{{ $settings['phone'] ?? '' }}"
-                        placeholder="08xxxxxxxxxx"
+                        value="{{ old(
+                            'phone',
+                            $settings['phone'] ?? ''
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
+                               text-sm outline-none
+                               transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
+                        placeholder="08xxxxxxxxxx"
                     >
 
                 </div>
 
 
-                {{-- WhatsApp --}}
+                {{-- WHATSAPP --}}
 
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
                         WhatsApp
                     </label>
@@ -390,65 +290,20 @@
                     <input
                         type="text"
                         name="whatsapp"
-                        value="{{ $settings['whatsapp'] ?? '' }}"
+                        value="{{ old(
+                            'whatsapp',
+                            $settings['whatsapp'] ?? ''
+                        ) }}"
+                        class="w-full rounded-xl
+                               border border-gray-200
+                               bg-gray-50 px-4 py-3
+                               text-sm outline-none
+                               transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
                         placeholder="628xxxxxxxxxx"
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
                     >
-
-                </div>
-
-
-                {{-- Website --}}
-
-                <div>
-
-                    <label
-                        class="mb-2 block
-                               text-sm font-semibold"
-                    >
-                        Website
-                    </label>
-
-                    <input
-                        type="url"
-                        name="website"
-                        value="{{ $settings['website'] ?? '' }}"
-                        placeholder="https://..."
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
-                    >
-
-                </div>
-
-
-                {{-- Alamat --}}
-
-                <div class="md:col-span-2">
-
-                    <label
-                        class="mb-2 block
-                               text-sm font-semibold"
-                    >
-                        Alamat
-                    </label>
-
-                    <textarea
-                        name="address"
-                        rows="4"
-                        placeholder="Alamat lengkap pesantren..."
-                        class="w-full rounded-xl
-                               border border-gray-200
-                               bg-gray-50 px-4 py-3
-                               outline-none
-                               focus:border-[#087443]"
-                    >{{ $settings['address'] ?? '' }}</textarea>
 
                 </div>
 
@@ -457,66 +312,198 @@
         </div>
 
 
-        {{-- SOSIAL MEDIA --}}
+        {{-- ================================= --}}
+        {{-- DESKRIPSI --}}
+        {{-- ================================= --}}
 
         <div
-            class="overflow-hidden
-                   rounded-2xl bg-white
-                   shadow-sm ring-1
-                   ring-gray-100"
+            class="rounded-3xl bg-white
+                   p-6 shadow-sm
+                   ring-1 ring-gray-100"
         >
 
-            <div
-                class="border-b border-gray-100
-                       px-6 py-5"
+            <h2 class="text-lg font-black">
+                Tentang Pesantren
+            </h2>
+
+            <p
+                class="mt-1 text-sm
+                       text-gray-400"
             >
+                Deskripsi singkat yang akan
+                digunakan pada website.
+            </p>
 
-                <div class="flex items-center gap-3">
 
-                    <div
-                        class="flex h-10 w-10
-                               items-center justify-center
-                               rounded-xl
-                               bg-black/5"
+            <textarea
+                name="school_description"
+                rows="5"
+                class="mt-6 w-full
+                       rounded-xl
+                       border border-gray-200
+                       bg-gray-50 px-4 py-3
+                       text-sm leading-7
+                       outline-none
+                       transition
+                       focus:border-[#087443]
+                       focus:ring-2
+                       focus:ring-[#087443]/10"
+                placeholder="Tuliskan deskripsi pesantren..."
+            >{{ old(
+                'school_description',
+                $settings['school_description'] ?? ''
+            ) }}</textarea>
+
+        </div>
+
+
+        {{-- ================================= --}}
+        {{-- ALAMAT --}}
+        {{-- ================================= --}}
+
+        <div
+            class="rounded-3xl bg-white
+                   p-6 shadow-sm
+                   ring-1 ring-gray-100"
+        >
+
+            <h2 class="text-lg font-black">
+                Informasi Kontak
+            </h2>
+
+
+            <div class="mt-6">
+
+                <label
+                    class="mb-2 block text-sm
+                           font-bold text-gray-700"
+                >
+                    Alamat
+                </label>
+
+                <textarea
+                    name="address"
+                    rows="4"
+                    class="w-full rounded-xl
+                           border border-gray-200
+                           bg-gray-50 px-4 py-3
+                           text-sm leading-7
+                           outline-none transition
+                           focus:border-[#087443]
+                           focus:ring-2
+                           focus:ring-[#087443]/10"
+                    placeholder="Alamat lengkap pesantren..."
+                >{{ old(
+                    'address',
+                    $settings['address'] ?? ''
+                ) }}</textarea>
+
+            </div>
+
+        </div>
+
+
+        {{-- ================================= --}}
+        {{-- VISI MISI --}}
+        {{-- ================================= --}}
+
+        <div
+            class="rounded-3xl bg-white
+                   p-6 shadow-sm
+                   ring-1 ring-gray-100"
+        >
+
+            <h2 class="text-lg font-black">
+                Visi & Misi
+            </h2>
+
+
+            <div class="mt-6 space-y-6">
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
                     >
+                        Visi
+                    </label>
 
-                        <i
-                            data-lucide="share-2"
-                            class="h-5 w-5"
-                        ></i>
+                    <textarea
+                        name="vision"
+                        rows="4"
+                        class="w-full rounded-xl
+                               border border-gray-200
+                               bg-gray-50 px-4 py-3
+                               text-sm leading-7
+                               outline-none transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
+                    >{{ old(
+                        'vision',
+                        $settings['vision'] ?? ''
+                    ) }}</textarea>
 
-                    </div>
+                </div>
 
-                    <div>
 
-                        <h2 class="font-black">
-                            Sosial Media
-                        </h2>
+                <div>
 
-                        <p
-                            class="mt-1 text-xs
-                                   text-gray-400"
-                        >
-                            Tautan media sosial pesantren
-                        </p>
+                    <label
+                        class="mb-2 block text-sm
+                               font-bold text-gray-700"
+                    >
+                        Misi
+                    </label>
 
-                    </div>
+                    <textarea
+                        name="mission"
+                        rows="6"
+                        class="w-full rounded-xl
+                               border border-gray-200
+                               bg-gray-50 px-4 py-3
+                               text-sm leading-7
+                               outline-none transition
+                               focus:border-[#087443]
+                               focus:ring-2
+                               focus:ring-[#087443]/10"
+                    >{{ old(
+                        'mission',
+                        $settings['mission'] ?? ''
+                    ) }}</textarea>
 
                 </div>
 
             </div>
 
+        </div>
+
+
+        {{-- ================================= --}}
+        {{-- SOCIAL MEDIA --}}
+        {{-- ================================= --}}
+
+        <div
+            class="rounded-3xl bg-white
+                   p-6 shadow-sm
+                   ring-1 ring-gray-100"
+        >
+
+            <h2 class="text-lg font-black">
+                Media Sosial
+            </h2>
 
             <div
-                class="grid gap-6 p-6
+                class="mt-6 grid gap-6
                        md:grid-cols-3"
             >
 
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold"
                     >
                         Facebook
                     </label>
@@ -524,13 +511,16 @@
                     <input
                         type="text"
                         name="facebook"
-                        value="{{ $settings['facebook'] ?? '' }}"
-                        placeholder="URL Facebook"
+                        value="{{ old(
+                            'facebook',
+                            $settings['facebook'] ?? ''
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
+                               text-sm outline-none
                                focus:border-[#087443]"
+                        placeholder="https://facebook.com/..."
                     >
 
                 </div>
@@ -539,8 +529,8 @@
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold"
                     >
                         Instagram
                     </label>
@@ -548,13 +538,16 @@
                     <input
                         type="text"
                         name="instagram"
-                        value="{{ $settings['instagram'] ?? '' }}"
-                        placeholder="URL Instagram"
+                        value="{{ old(
+                            'instagram',
+                            $settings['instagram'] ?? ''
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
+                               text-sm outline-none
                                focus:border-[#087443]"
+                        placeholder="https://instagram.com/..."
                     >
 
                 </div>
@@ -563,8 +556,8 @@
                 <div>
 
                     <label
-                        class="mb-2 block
-                               text-sm font-semibold"
+                        class="mb-2 block text-sm
+                               font-bold"
                     >
                         YouTube
                     </label>
@@ -572,13 +565,16 @@
                     <input
                         type="text"
                         name="youtube"
-                        value="{{ $settings['youtube'] ?? '' }}"
-                        placeholder="URL YouTube"
+                        value="{{ old(
+                            'youtube',
+                            $settings['youtube'] ?? ''
+                        ) }}"
                         class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
-                               outline-none
+                               text-sm outline-none
                                focus:border-[#087443]"
+                        placeholder="https://youtube.com/..."
                     >
 
                 </div>
@@ -596,19 +592,22 @@
 
             <button
                 type="submit"
-                class="inline-flex items-center
-                       gap-2 rounded-xl
+                class="inline-flex
+                       items-center gap-2
+                       rounded-xl
                        bg-[#087443]
-                       px-6 py-3.5
-                       font-bold text-white
+                       px-6 py-3
+                       text-sm font-black
+                       text-white
                        shadow-lg
+                       shadow-[#087443]/20
                        transition
                        hover:bg-[#062E1F]"
             >
 
                 <i
                     data-lucide="save"
-                    class="h-5 w-5"
+                    class="h-4 w-4"
                 ></i>
 
                 Simpan Pengaturan
