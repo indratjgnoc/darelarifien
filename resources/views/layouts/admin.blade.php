@@ -123,23 +123,24 @@
 
 
                     <a
-                        href="#"
-                        class="mt-1 flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+    href="{{ route('admin.settings') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.settings')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
 
-                        <i
-                            data-lucide="settings"
-                            class="h-5 w-5"
-                        ></i>
+    <i
+        data-lucide="settings"
+        class="h-5 w-5"
+    ></i>
 
-                        <span>Pengaturan</span>
+    <span>Pengaturan</span>
 
-                    </a>
+</a>
 
                 </div>
 
@@ -157,24 +158,25 @@
                     </p>
 
 
-                    <a
-                        href="#"
-                        class="flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+                  <a
+        href="{{ route('admin.news.index') }}"
+        class="flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.news.*')
+                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                    : 'text-white/70 hover:bg-white/5 hover:text-white'
+               }}"
+    >
 
-                        <i
-                            data-lucide="newspaper"
-                            class="h-5 w-5"
-                        ></i>
+        <i
+            data-lucide="newspaper"
+            class="h-5 w-5"
+        ></i>
 
-                        <span>Berita</span>
+        <span>Berita</span>
 
-                    </a>
+    </a>
 
 
                     <a
@@ -253,24 +255,24 @@
 
 
                     <a
-                        href="#"
-                        class="flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+    href="{{ route('admin.programs.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.programs.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
 
-                        <i
-                            data-lucide="graduation-cap"
-                            class="h-5 w-5"
-                        ></i>
+    <i
+        data-lucide="graduation-cap"
+        class="h-5 w-5"
+    ></i>
 
-                        <span>Program Pendidikan</span>
+    <span>Program Pendidikan</span>
 
-                    </a>
-
+</a>
 
                     <a
                         href="#"

@@ -8,14 +8,12 @@ class Announcement extends Model
 {
     protected $fillable = [
         'title',
-        'slug',
         'content',
-        'is_published',
         'published_at',
+        'is_active',
     ];
 
     protected $casts = [
-        'is_published' => 'boolean',
         'published_at' => 'datetime',
     ];
 }
