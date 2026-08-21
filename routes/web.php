@@ -1,22 +1,56 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PublicRegistrationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\SettingController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\GalleryController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PublicController;
+
 
 /*
 Route::get('/', function () {
     return view('frontend.home');
 })->name('home');*/
+
+
+Route::get( '/pendaftaran',
+    [PublicRegistrationController::class, 'create']
+)->name('registration.create');
+
+Route::post('/pendaftaran',
+    [PublicRegistrationController::class, 'store']
+)->name('registration.store');
+
+Route::get('/pendaftaran/sukses/{registrationNumber}',
+    [PublicRegistrationController::class, 'success']
+)->name('registration.success');
+
+
+Route::get(
+    'registrations/{registration}/document',
+    [
+        \App\Http\Controllers\Admin\RegistrationController::class,
+        'document'
+    ]
+)->name('registrations.document');
+
+Route::resource(
+        'registrations',
+        \App\Http\Controllers\Admin\RegistrationController::class
+    )->only([
+        'index',
+        'show',
+        'update',
+        'destroy',
+    ]);
 
 // ==============================
 // WEBSITE PUBLIC
@@ -109,6 +143,15 @@ Route::prefix('admin')
         Route::put('/settings', [SettingController::class, 'update'])
             ->name('settings.update');
 
+            /*
+        |--------------------------------------------------------------------------
+        | Profile
+        |--------------------------------------------------------------------------
+        */
+            Route::get('/profil',
+    [PublicController::class, 'profile']
+)->name('profile');
+
 Route::resource('events', EventController::class)
     ->except([
         'show',
@@ -150,6 +193,21 @@ Route::resource('events', EventController::class)
     ->except([
         'show',
     ]);
+
+    /*
+        |--------------------------------------------------------------------------
+        | Registrations
+        |--------------------------------------------------------------------------
+        */
+    Route::resource(
+    'registrations',
+    \App\Http\Controllers\Admin\RegistrationController::class
+)->only([
+    'index',
+    'show',
+    'update',
+    'destroy',
+]);
         /*
         |--------------------------------------------------------------------------
         | News

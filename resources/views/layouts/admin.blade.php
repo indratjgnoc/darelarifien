@@ -103,26 +103,6 @@
                     </p>
 
                     <a
-                        href="#"
-                        class="flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
-
-                        <i
-                            data-lucide="building-2"
-                            class="h-5 w-5"
-                        ></i>
-
-                        <span>Profil Pesantren</span>
-
-                    </a>
-
-
-                    <a
     href="{{ route('admin.settings') }}"
     class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
@@ -177,6 +157,26 @@
         <span>Berita</span>
 
     </a>
+
+    <a
+    href="{{ route('admin.registrations.index') }}"
+    class="flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.registrations.*')
+                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                    : 'text-white/70 hover:bg-white/5 hover:text-white'
+               }}"
+>
+
+    <i
+        data-lucide="clipboard-pen"
+        class="h-5 w-5"
+    ></i>
+
+    <span>Pendaftaran</span>
+
+</a>
 
 <a
     href="{{ route('admin.announcements.index') }}"
