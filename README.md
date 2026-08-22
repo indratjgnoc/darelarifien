@@ -7,53 +7,390 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# Website Pesantren
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Website Pesantren adalah aplikasi manajemen dan informasi pesantren berbasis web yang dibangun menggunakan **Laravel**. Aplikasi ini dirancang untuk membantu pengelolaan data pesantren sekaligus menyediakan informasi dan layanan bagi calon santri, santri, guru, dan pengelola pesantren.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Website menggunakan konsep desain modern dengan **warna hijau sebagai warna utama**, dipadukan dengan warna **hitam dan kuning** sebagai warna pendukung.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Fitur Utama
 
-## Learning Laravel
+### 🌐 Informasi Website
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+* 🏠 Halaman beranda
+* 🕌 Profil pesantren
+* 📢 Berita dan informasi
+* 📅 Agenda kegiatan
+* 🖼️ Galeri
+* 📞 Informasi kontak
+* 📍 Informasi lokasi pesantren
+* 📄 Halaman informasi lainnya
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📝 Pendaftaran Santri
 
-## Laravel Sponsors
+* Formulir pendaftaran santri baru
+* Pengisian data calon santri
+* Upload dokumen persyaratan
+* Informasi persyaratan pendaftaran
+* Status pendaftaran
+* Pengelolaan data pendaftar oleh admin
+* Verifikasi data calon santri
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 👨‍🏫 Manajemen Guru
 
-### Premium Partners
+* Data guru
+* Profil guru
+* Data mata pelajaran
+* Informasi pengajar
+* Pengelolaan data guru oleh admin
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 👨‍🎓 Manajemen Santri
 
-## Contributing
+* Data santri
+* Profil santri
+* Informasi kelas
+* Data akademik
+* Pengelolaan data santri
+* Status santri
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 👥 Role & Hak Akses
 
-## Code of Conduct
+Aplikasi memiliki sistem role dan permission untuk membatasi akses berdasarkan jenis pengguna.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Contoh role:
 
-## Security Vulnerabilities
+| Role         | Akses                                                       |
+| ------------ | ----------------------------------------------------------- |
+| Admin        | Mengelola seluruh data dan fitur                            |
+| Guru         | Mengakses fitur yang berkaitan dengan guru dan pembelajaran |
+| Santri       | Mengakses informasi dan fitur khusus santri                 |
+| Calon Santri | Mengakses dan mengelola proses pendaftaran                  |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> Role dapat disesuaikan dengan implementasi yang digunakan pada project.
 
-## License
+### 📚 Manajemen Akademik
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* Data kelas
+* Data mata pelajaran
+* Data guru
+* Data santri
+* Jadwal pembelajaran
+* Pengelolaan data akademik
+
+### 📰 Manajemen Konten
+
+Admin dapat mengelola berbagai konten website, seperti:
+
+* Berita
+* Pengumuman
+* Agenda
+* Galeri
+* Halaman informasi
+* Banner
+* Konten profil pesantren
+
+### 📊 Dashboard
+
+Dashboard admin menyediakan informasi ringkas mengenai data pesantren, seperti:
+
+* Jumlah santri
+* Jumlah guru
+* Jumlah pendaftar
+* Jumlah kelas
+* Data pendaftaran terbaru
+* Informasi aktivitas terbaru
+
+## 🎨 Tampilan
+
+Website menggunakan kombinasi warna:
+
+* 🟢 **Hijau** — warna utama dan identitas pesantren
+* ⚫ **Hitam** — warna pendukung untuk memberikan kontras
+* 🟡 **Kuning** — warna aksen untuk menonjolkan informasi tertentu
+
+Desain dibuat dengan pendekatan modern, sederhana, dan responsif sehingga dapat digunakan pada desktop maupun perangkat mobile.
+
+## 🛠️ Teknologi
+
+Project ini dibangun menggunakan:
+
+* **Laravel**
+* **PHP**
+* **MySQL**
+* **Blade**
+* **HTML5**
+* **CSS3**
+* **JavaScript**
+* **Bootstrap / Tailwind CSS**
+* **Composer**
+* **NPM**
+
+> Sesuaikan daftar teknologi dengan teknologi yang benar-benar digunakan dalam project.
+
+## 📋 Persyaratan
+
+Sebelum menjalankan project, pastikan sudah terinstall:
+
+* PHP
+* Composer
+* MySQL
+* Node.js
+* NPM
+* Git
+
+## 🚀 Instalasi
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/indratjgnoc/darelarifien.git
+```
+
+Masuk ke direktori project:
+
+```bash
+cd darelarifien
+```
+
+### 2. Install Dependency
+
+Install dependency Laravel:
+
+```bash
+composer install
+```
+
+Install dependency frontend:
+
+```bash
+npm install
+```
+
+### 3. Konfigurasi Environment
+
+Copy `.env.example` menjadi `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Kemudian sesuaikan konfigurasi database:
+
+```env
+APP_NAME="Website Pesantren"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pesantren
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+### 5. Membuat Database
+
+Buat database MySQL, misalnya:
+
+```text
+pesantren
+```
+
+Kemudian jalankan migration:
+
+```bash
+php artisan migrate
+```
+
+Jika project memiliki seeder:
+
+```bash
+php artisan db:seed
+```
+
+atau:
+
+```bash
+php artisan migrate --seed
+```
+
+### 6. Storage Link
+
+Jika aplikasi menggunakan upload gambar atau dokumen:
+
+```bash
+php artisan storage:link
+```
+
+### 7. Jalankan Aplikasi
+
+Jalankan server Laravel:
+
+```bash
+php artisan serve
+```
+
+Kemudian buka:
+
+```text
+http://127.0.0.1:8000
+```
+
+Untuk menjalankan frontend:
+
+```bash
+npm run dev
+```
+
+## 📁 Struktur Project
+
+```text
+website-pesantren/
+├── app/
+│   ├── Http/
+│   ├── Models/
+│   └── ...
+├── bootstrap/
+├── config/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── public/
+├── resources/
+│   ├── css/
+│   ├── js/
+│   └── views/
+├── routes/
+│   ├── web.php
+│   └── ...
+├── storage/
+├── tests/
+├── .env.example
+├── .gitignore
+├── artisan
+├── composer.json
+├── package.json
+└── README.md
+```
+
+## 🔐 Keamanan
+
+Informasi sensitif tidak boleh dimasukkan ke repository.
+
+File `.env` harus masuk ke `.gitignore`:
+
+```gitignore
+.env
+.env.local
+.env.production
+```
+
+Gunakan `.env.example` sebagai template konfigurasi:
+
+```env
+APP_NAME="Website Pesantren"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+```
+
+## 👤 Sistem Role
+
+Sistem role digunakan untuk mengatur hak akses setiap pengguna.
+
+Contoh alur:
+
+```text
+                    Website Pesantren
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+           Admin          Guru          Santri
+             │             │             │
+       ┌─────┴─────┐       │             │
+       │           │       │             │
+    Kelola      Verifikasi  Akademik    Profil
+     Data       Pendaftaran  & Kelas     & Data
+```
+
+Setiap role hanya dapat mengakses fitur sesuai dengan hak akses yang diberikan.
+
+## 📌 Modul Sistem
+
+Secara umum aplikasi terdiri dari beberapa modul:
+
+```text
+Website Pesantren
+│
+├── Landing Page
+│   ├── Beranda
+│   ├── Profil
+│   ├── Berita
+│   ├── Agenda
+│   ├── Galeri
+│   └── Kontak
+│
+├── Pendaftaran
+│   ├── Form Pendaftaran
+│   ├── Data Pendaftar
+│   ├── Upload Dokumen
+│   └── Verifikasi
+│
+├── Akademik
+│   ├── Santri
+│   ├── Guru
+│   ├── Kelas
+│   ├── Mata Pelajaran
+│   └── Jadwal
+│
+└── Dashboard
+    ├── User
+    ├── Role
+    ├── Konten
+    ├── Pendaftaran
+    └── Data Pesantren
+```
+
+## 📱 Responsive Design
+
+Website dirancang agar dapat digunakan pada berbagai perangkat:
+
+* 💻 Desktop
+* 💻 Laptop
+* 📱 Tablet
+* 📱 Smartphone
+
+## 🧑‍💻 Development
+
+Untuk menjalankan project dalam mode development:
+
+```bash
+php artisan serve
+```
+
+Pada terminal lain:
+
+```bash
+npm run dev
+```
+
+## 📄 License
+
+Project ini dikembangkan untuk kebutuhan pengelolaan dan penyediaan informasi pesantren.
+Jika ada saran silahkan pull requests
