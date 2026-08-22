@@ -156,6 +156,20 @@ Route::resource('events', EventController::class)
         Route::resource('programs', ProgramController::class)
             ->except(['show']);
 
+            /*
+        |--------------------------------------------------------------------------
+        | News
+        |--------------------------------------------------------------------------
+        */
+            Route::get(
+    '/berita',
+    [NewsController::class, 'index']
+)->name('news.index');
+
+Route::get(
+    '/berita/{news}',
+    [NewsController::class, 'show']
+)->name('news.show');
 
         /*
         |--------------------------------------------------------------------------

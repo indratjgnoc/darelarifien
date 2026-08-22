@@ -4,28 +4,144 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class NewsController extends Controller
 {
-    public function index()
+    /**
+     * Daftar berita.
+     */
+    public function index(Request $request): View
     {
-        $news = News::latest()->paginate(10);
+        $query = News::query()
+            ->with('user');
 
-        return view('admin.news.index', compact('news'));
+        /*
+        |--------------------------------------------------------------------------
+        | SEARCH
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where(
+                    'title',
+                    'like',
+                    "%{$search}%"
+                );
+
+                $q->orWhere(
+                    'category',
+                    'like',
+                    "%{$search}%"
+                );
+
+            });
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('status')) {
+
+            if ($request->status === 'published') {
+
+                $query->where(
+                    'is_published',
+                    true
+                );
+
+            } elseif ($request->status === 'draft') {
+
+                $query->where(
+                    'is_published',
+                    false
+                );
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA
+        |--------------------------------------------------------------------------
+        */
+
+        $news = $query
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTICS
+        |--------------------------------------------------------------------------
+        */
+
+        $statistics = [
+
+            'total' =>
+                News::count(),
+
+            'published' =>
+                News::where(
+                    'is_published',
+                    true
+                )->count(),
+
+            'draft' =>
+                News::where(
+                    'is_published',
+                    false
+                )->count(),
+
+        ];
+
+
+        return view(
+            'admin.news.index',
+            compact(
+                'news',
+                'statistics'
+            )
+        );
     }
 
-    public function create()
+
+    /**
+     * Form tambah berita.
+     */
+    public function create(): View
     {
-        return view('admin.news.create');
+        return view(
+            'admin.news.create'
+        );
     }
 
-    public function store(Request $request)
-    {
+
+    /**
+     * Simpan berita.
+     */
+    public function store(
+        Request $request
+    ): RedirectResponse {
+
         $validated = $request->validate([
+
             'title' => [
                 'required',
                 'string',
@@ -39,7 +155,7 @@ class NewsController extends Controller
             ],
 
             'excerpt' => [
-                'nullable',
+                'required',
                 'string',
                 'max:500',
             ],
@@ -53,7 +169,7 @@ class NewsController extends Controller
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:5120',
             ],
 
             'is_published' => [
@@ -61,47 +177,127 @@ class NewsController extends Controller
                 'boolean',
             ],
 
-            'published_at' => [
-                'nullable',
-                'date',
-            ],
         ]);
 
-        $validated['slug'] = $this->generateUniqueSlug(
+
+        /*
+        |--------------------------------------------------------------------------
+        | SLUG
+        |--------------------------------------------------------------------------
+        */
+
+        $slug = $this->generateUniqueSlug(
             $validated['title']
         );
 
-        $validated['user_id'] = Auth::id();
 
-        $validated['is_published'] =
-            $request->boolean('is_published');
+        /*
+        |--------------------------------------------------------------------------
+        | THUMBNAIL
+        |--------------------------------------------------------------------------
+        */
+
+        $thumbnail = null;
 
         if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] =
-                $request->file('thumbnail')
-                    ->store('news', 'public');
+
+            $thumbnail =
+                $request
+                    ->file('thumbnail')
+                    ->store(
+                        'news',
+                        'public'
+                    );
         }
 
-        News::create($validated);
+
+        /*
+        |--------------------------------------------------------------------------
+        | PUBLISH
+        |--------------------------------------------------------------------------
+        */
+
+        $isPublished =
+            $request->boolean(
+                'is_published'
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE
+        |--------------------------------------------------------------------------
+        */
+
+        News::create([
+
+            'title' =>
+                $validated['title'],
+
+            'slug' =>
+                $slug,
+
+            'category' =>
+                $validated['category'],
+
+            'thumbnail' =>
+                $thumbnail,
+
+            'excerpt' =>
+                $validated['excerpt'],
+
+            'content' =>
+                $validated['content'],
+
+            'is_published' =>
+                $isPublished,
+
+            'published_at' =>
+                $isPublished
+                    ? now()
+                    : null,
+
+            'user_id' =>
+                Auth::id(),
+
+        ]);
+
 
         return redirect()
-            ->route('admin.news.index')
+            ->route(
+                'admin.news.index'
+            )
             ->with(
                 'success',
                 'Berita berhasil ditambahkan.'
             );
     }
 
-    public function edit(News $news)
-    {
-        return view('admin.news.edit', compact('news'));
+
+    /**
+     * Form edit.
+     */
+    public function edit(
+        News $news
+    ): View {
+
+        return view(
+            'admin.news.edit',
+            compact('news')
+        );
     }
 
+
+    /**
+     * Update berita.
+     */
     public function update(
         Request $request,
         News $news
-    ) {
+    ): RedirectResponse {
+
         $validated = $request->validate([
+
             'title' => [
                 'required',
                 'string',
@@ -115,7 +311,7 @@ class NewsController extends Controller
             ],
 
             'excerpt' => [
-                'nullable',
+                'required',
                 'string',
                 'max:500',
             ],
@@ -129,7 +325,7 @@ class NewsController extends Controller
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:5120',
             ],
 
             'is_published' => [
@@ -137,92 +333,212 @@ class NewsController extends Controller
                 'boolean',
             ],
 
-            'published_at' => [
-                'nullable',
-                'date',
-            ],
         ]);
 
-        if ($news->title !== $validated['title']) {
-            $validated['slug'] =
+
+        /*
+        |--------------------------------------------------------------------------
+        | SLUG
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $news->title !==
+            $validated['title']
+        ) {
+
+            $slug =
                 $this->generateUniqueSlug(
                     $validated['title'],
                     $news->id
                 );
+
+        } else {
+
+            $slug = $news->slug;
         }
 
-        $validated['is_published'] =
-            $request->boolean('is_published');
+
+        /*
+        |--------------------------------------------------------------------------
+        | THUMBNAIL
+        |--------------------------------------------------------------------------
+        */
+
+        $thumbnail =
+            $news->thumbnail;
 
         if ($request->hasFile('thumbnail')) {
 
             if (
-                $news->thumbnail &&
+                $thumbnail &&
                 Storage::disk('public')
-                    ->exists($news->thumbnail)
+                    ->exists($thumbnail)
             ) {
                 Storage::disk('public')
-                    ->delete($news->thumbnail);
+                    ->delete($thumbnail);
             }
 
-            $validated['thumbnail'] =
-                $request->file('thumbnail')
-                    ->store('news', 'public');
+            $thumbnail =
+                $request
+                    ->file('thumbnail')
+                    ->store(
+                        'news',
+                        'public'
+                    );
         }
 
-        $news->update($validated);
+
+        /*
+        |--------------------------------------------------------------------------
+        | PUBLISH
+        |--------------------------------------------------------------------------
+        */
+
+        $isPublished =
+            $request->boolean(
+                'is_published'
+            );
+
+
+        $publishedAt =
+            $news->published_at;
+
+
+        if (
+            $isPublished &&
+            !$publishedAt
+        ) {
+            $publishedAt = now();
+        }
+
+
+        if (!$isPublished) {
+            $publishedAt = null;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE
+        |--------------------------------------------------------------------------
+        */
+
+        $news->update([
+
+            'title' =>
+                $validated['title'],
+
+            'slug' =>
+                $slug,
+
+            'category' =>
+                $validated['category'],
+
+            'thumbnail' =>
+                $thumbnail,
+
+            'excerpt' =>
+                $validated['excerpt'],
+
+            'content' =>
+                $validated['content'],
+
+            'is_published' =>
+                $isPublished,
+
+            'published_at' =>
+                $publishedAt,
+
+        ]);
+
 
         return redirect()
-            ->route('admin.news.index')
+            ->route(
+                'admin.news.index'
+            )
             ->with(
                 'success',
                 'Berita berhasil diperbarui.'
             );
     }
 
-    public function destroy(News $news)
-    {
+
+    /**
+     * Hapus berita.
+     */
+    public function destroy(
+        News $news
+    ): RedirectResponse {
+
         if (
             $news->thumbnail &&
             Storage::disk('public')
                 ->exists($news->thumbnail)
         ) {
+
             Storage::disk('public')
-                ->delete($news->thumbnail);
+                ->delete(
+                    $news->thumbnail
+                );
         }
+
 
         $news->delete();
 
+
         return redirect()
-            ->route('admin.news.index')
+            ->route(
+                'admin.news.index'
+            )
             ->with(
                 'success',
                 'Berita berhasil dihapus.'
             );
     }
 
+
+    /**
+     * Generate slug unik.
+     */
     private function generateUniqueSlug(
         string $title,
         ?int $ignoreId = null
     ): string {
-        $slug = Str::slug($title);
 
-        $originalSlug = $slug;
+        $baseSlug =
+            Str::slug($title);
+
+        $slug = $baseSlug;
 
         $counter = 1;
 
+
         while (
-            News::where('slug', $slug)
-                ->when(
-                    $ignoreId,
-                    fn ($query) =>
-                        $query->where('id', '!=', $ignoreId)
-                )
-                ->exists()
+            News::where(
+                'slug',
+                $slug
+            )
+            ->when(
+                $ignoreId,
+                fn ($query) =>
+                    $query->where(
+                        'id',
+                        '!=',
+                        $ignoreId
+                    )
+            )
+            ->exists()
         ) {
-            $slug = $originalSlug . '-' . $counter;
+
+            $slug =
+                $baseSlug .
+                '-' .
+                $counter;
+
             $counter++;
         }
+
 
         return $slug;
     }

@@ -1,23 +1,38 @@
-@extends('layouts.public')
+@extends('layouts.app')
 
-@section('title', 'Pesantren ')
+@section('title', 'Beranda')
+
+@section(
+    'description',
+    'Website resmi Pesantren Darel Arifien. Informasi pendidikan, program, kegiatan dan pendaftaran santri.'
+)
 
 @section('content')
 
-{{-- ========================================= --}}
-{{-- HERO --}}
-{{-- ========================================= --}}
+{{-- =========================================================
+   HERO
+========================================================= --}}
 
 <section
     class="relative overflow-hidden
            bg-[#062E1F]"
 >
 
-    {{-- DECORATION --}}
+    {{-- Decorative --}}
 
     <div
-        class="absolute -right-32
-               -top-32 h-96 w-96
+        class="absolute -right-40
+               -top-40
+               h-[500px] w-[500px]
+               rounded-full
+               bg-[#087443]/30
+               blur-3xl"
+    ></div>
+
+    <div
+        class="absolute -bottom-40
+               -left-40
+               h-[500px] w-[500px]
                rounded-full
                bg-[#F4C542]/10
                blur-3xl"
@@ -25,296 +40,263 @@
 
 
     <div
-        class="absolute -left-32
-               bottom-0 h-96 w-96
-               rounded-full
-               bg-green-400/10
-               blur-3xl"
-    ></div>
-
-
-    <div
         class="relative mx-auto
+               grid min-h-[680px]
                max-w-7xl
-               px-5 py-24
-               lg:px-8
-               lg:py-32"
+               items-center
+               gap-12
+               px-6 py-20
+               sm:px-10
+               lg:grid-cols-2
+               lg:px-16"
     >
 
-        <div
-            class="grid items-center
-                   gap-14
-                   lg:grid-cols-2"
-        >
+        {{-- LEFT --}}
 
+        <div>
 
-            {{-- TEXT --}}
+            <div
+                class="inline-flex
+                       items-center gap-2
+                       rounded-full
+                       border
+                       border-[#F4C542]/20
+                       bg-[#F4C542]/10
+                       px-4 py-2"
+            >
 
-            <div>
-
-                <div
-                    class="inline-flex
-                           items-center gap-2
+                <span
+                    class="h-2 w-2
                            rounded-full
-                           border border-[#F4C542]/20
-                           bg-[#F4C542]/10
-                           px-4 py-2"
-                >
+                           bg-[#F4C542]"
+                ></span>
 
-                    <span
-                        class="h-2 w-2
-                               rounded-full
-                               bg-[#F4C542]"
-                    ></span>
-
-                    <span
-                        class="text-xs
-                               font-bold
-                               uppercase
-                               tracking-widest
-                               text-[#F4C542]"
-                    >
-                        Selamat Datang
-                    </span>
-
-                </div>
-
-
-                <h1
-                    class="mt-7
-                           text-4xl
+                <span
+                    class="text-xs
                            font-black
-                           leading-tight
-                           text-white
-                           sm:text-5xl
-                           lg:text-6xl"
+                           uppercase
+                           tracking-[0.15em]
+                           text-[#F4C542]"
                 >
-
-                    Membangun Generasi
-                    <span
-                        class="text-[#F4C542]"
-                    >
-                        Berilmu
-                    </span>
-                    & Berakhlak.
-
-                </h1>
-
-
-                <p
-                    class="mt-6 max-w-xl
-                           text-lg
-                           leading-8
-                           text-white/60"
-                >
-                    Pesantren {{ $settings['school_name'] ?? '' }} hadir
-                    sebagai tempat menuntut ilmu,
-                    membentuk karakter dan
-                    mempersiapkan generasi Islam
-                    yang unggul.
-                </p>
-
-
-                <div
-                    class="mt-8 flex
-                           flex-col gap-3
-                           sm:flex-row"
-                >
-
-                    <a
-                        href="#pendaftaran"
-                        class="inline-flex
-                               items-center
-                               justify-center gap-2
-                               rounded-xl
-                               bg-[#F4C542]
-                               px-6 py-4
-                               font-black
-                               text-[#062E1F]
-                               shadow-xl
-                               transition
-                               hover:-translate-y-1"
-                    >
-
-                        Daftar Sekarang
-
-                        <i
-                            data-lucide="arrow-right"
-                            class="h-5 w-5"
-                        ></i>
-
-                    </a>
-
-
-                    <a
-                        href="#profil"
-                        class="inline-flex
-                               items-center
-                               justify-center
-                               gap-2
-                               rounded-xl
-                               border
-                               border-white/15
-                               px-6 py-4
-                               font-bold
-                               text-white
-                               transition
-                               hover:bg-white/10"
-                    >
-
-                        Kenali Pesantren
-
-                    </a>
-
-                </div>
-
-
-                {{-- TRUST --}}
-
-                <div
-                    class="mt-10 flex
-                           flex-wrap gap-8"
-                >
-
-                    <div>
-
-                        <p
-                            class="text-2xl
-                                   font-black
-                                   text-white"
-                        >
-                            Islami
-                        </p>
-
-                        <p
-                            class="mt-1 text-xs
-                                   text-white/40"
-                        >
-                            Pendidikan Berkarakter
-                        </p>
-
-                    </div>
-
-
-                    <div>
-
-                        <p
-                            class="text-2xl
-                                   font-black
-                                   text-white"
-                        >
-                            Terarah
-                        </p>
-
-                        <p
-                            class="mt-1 text-xs
-                                   text-white/40"
-                        >
-                            Pembinaan Santri
-                        </p>
-
-                    </div>
-
-
-                    <div>
-
-                        <p
-                            class="text-2xl
-                                   font-black
-                                   text-white"
-                        >
-                            Unggul
-                        </p>
-
-                        <p
-                            class="mt-1 text-xs
-                                   text-white/40"
-                        >
-                            Generasi Masa Depan
-                        </p>
-
-                    </div>
-
-                </div>
+                    Selamat Datang
+                </span>
 
             </div>
 
 
-            {{-- HERO VISUAL --}}
+            <h1
+                class="mt-7
+                       text-4xl
+                       font-black
+                       leading-[1.08]
+                       tracking-tight
+                       text-white
+                       sm:text-6xl"
+            >
+
+                Membangun Generasi
+                <span
+                    class="text-[#F4C542]"
+                >
+                    Berilmu
+                </span>
+                dan
+                <span
+                    class="text-[#F4C542]"
+                >
+                    Berakhlak
+                </span>
+            </h1>
+
+
+            <p
+                class="mt-7
+                       max-w-xl
+                       text-base
+                       leading-8
+                       text-white/60
+                       sm:text-lg"
+            >
+                Pesantren Darel Arifien hadir
+                sebagai tempat pendidikan
+                yang memadukan ilmu,
+                pembentukan karakter,
+                dan nilai-nilai keislaman.
+            </p>
+
 
             <div
-                class="relative"
+                class="mt-9
+                       flex flex-wrap
+                       gap-4"
+            >
+
+                <a
+                    href="{{ route(
+                        'registration.create'
+                    ) }}"
+                    class="inline-flex
+                           items-center
+                           gap-2
+                           rounded-xl
+                           bg-[#F4C542]
+                           px-6 py-3.5
+                           text-sm
+                           font-black
+                           text-[#062E1F]
+                           transition
+                           hover:-translate-y-1
+                           hover:bg-[#FFD85C]"
+                >
+
+                    Mulai Pendaftaran
+
+                    <i
+                        data-lucide="arrow-up-right"
+                        class="h-4 w-4"
+                    ></i>
+
+                </a>
+
+
+                <a
+                    href="#profil"
+                    class="inline-flex
+                           items-center
+                           gap-2
+                           rounded-xl
+                           border
+                           border-white/15
+                           px-6 py-3.5
+                           text-sm
+                           font-black
+                           text-white
+                           transition
+                           hover:bg-white/5"
+                >
+
+                    Kenali Kami
+
+                    <i
+                        data-lucide="arrow-down"
+                        class="h-4 w-4"
+                    ></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {{-- RIGHT VISUAL --}}
+
+        <div
+            class="relative hidden
+                   lg:block"
+        >
+
+            <div
+                class="relative
+                       mx-auto
+                       h-[470px]
+                       max-w-[470px]"
             >
 
                 <div
-                    class="relative
+                    class="absolute
+                           inset-8
+                           rounded-[3rem]
+                           bg-[#087443]/30
+                           rotate-6"
+                ></div>
+
+
+                <div
+                    class="absolute
+                           inset-0
                            overflow-hidden
-                           rounded-[2rem]
+                           rounded-[3rem]
                            border
                            border-white/10
-                           bg-white/5
-                           p-3
+                           bg-gradient-to-br
+                           from-[#087443]
+                           to-[#041F15]
                            shadow-2xl"
                 >
 
                     <div
-                        class="flex aspect-[4/3]
+                        class="absolute
+                               inset-0
+                               bg-[radial-gradient(circle_at_30%_20%,rgba(244,197,66,0.2),transparent_30%)]"
+                    ></div>
+
+
+                    <div
+                        class="relative
+                               flex h-full
+                               flex-col
                                items-center
                                justify-center
-                               rounded-[1.5rem]
-                               bg-gradient-to-br
-                               from-[#087443]
-                               to-[#041D14]"
+                               p-10
+                               text-center"
                     >
 
                         <div
-                            class="text-center"
+                            class="flex h-28 w-28
+                                   items-center
+                                   justify-center
+                                   rounded-3xl
+                                   bg-[#F4C542]
+                                   shadow-2xl"
                         >
 
-                            <div
-                                class="mx-auto flex
-                                       h-24 w-24
-                                       items-center
-                                       justify-center
-                                       rounded-3xl
-                                       bg-[#F4C542]
-                                       text-[#062E1F]
-                                       shadow-2xl"
-                            >
-
-                                <i
-                                    data-lucide="landmark"
-                                    class="h-12 w-12"
-                                ></i>
-
-                            </div>
-
-
-                            <p
-                                class="mt-6 text-2xl
+                            <span
+                                class="text-4xl
                                        font-black
-                                       text-white"
+                                       text-[#062E1F]"
                             >
-                                {{ $settings['school_name'] ?? '' }}
-                            </p>
-
-
-                            <p
-                                class="mt-2 text-sm
-                                       text-white/50"
-                            >
-                                Pesantren
-                            </p>
+                                DA
+                            </span>
 
                         </div>
 
-                    </div>
 
-                </div>
-  
+                        <p
+                            class="mt-8
+                                   text-xs
+                                   font-black
+                                   uppercase
+                                   tracking-[0.3em]
+                                   text-[#F4C542]"
+                        >
+                            Pesantren
+                        </p>
 
-                        </div>
-                        
+
+                        <h2
+                            class="mt-3
+                                   text-3xl
+                                   font-black
+                                   text-white"
+                        >
+                            Darel Arifien
+                        </h2>
+
+
+                        <p
+                            class="mt-4
+                                   max-w-xs
+                                   text-sm
+                                   leading-6
+                                   text-white/50"
+                        >
+                            Tempat tumbuh,
+                            belajar dan
+                            membentuk generasi
+                            masa depan.
+                        </p>
+
                     </div>
 
                 </div>
@@ -328,29 +310,32 @@
 </section>
 
 
-{{-- ========================================= --}}
-{{-- PROFIL --}}
-{{-- ========================================= --}}
+{{-- =========================================================
+   PROFIL
+========================================================= --}}
 
 <section
     id="profil"
-    class="bg-white py-24"
+    class="bg-white"
 >
 
     <div
-        class="mx-auto max-w-7xl
-               px-5 lg:px-8"
+        class="mx-auto
+               grid max-w-7xl
+               gap-12
+               px-6 py-20
+               sm:px-10
+               lg:grid-cols-2
+               lg:px-16"
     >
 
-        <div
-            class="max-w-2xl"
-        >
+        <div>
 
             <p
-                class="text-sm
+                class="text-xs
                        font-black
                        uppercase
-                       tracking-widest
+                       tracking-[0.2em]
                        text-[#087443]"
             >
                 Tentang Kami
@@ -358,164 +343,105 @@
 
 
             <h2
-                class="mt-3 text-3xl
+                class="mt-4
+                       text-3xl
                        font-black
-                       text-[#111111]
+                       leading-tight
                        sm:text-4xl"
             >
-                Tempat Tumbuhnya
-                Generasi Islami
+                Pendidikan yang
+                membentuk ilmu
+                sekaligus karakter.
             </h2>
-
-
-            <p
-                class="mt-5
-                       leading-8
-                       text-gray-500"
-            >
-                Pesantren {{ $settings['school_name'] ?? '' }} berkomitmen
-                memberikan pendidikan yang
-                mengintegrasikan ilmu agama,
-                ilmu pengetahuan dan pembentukan
-                akhlak.
-            </p>
 
         </div>
 
 
-        <div
-            class="mt-14 grid gap-6
-                   md:grid-cols-3"
-        >
+        <div>
+
+            <p
+                class="text-base
+                       leading-8
+                       text-gray-500"
+            >
+                Pesantren Darel Arifien
+                berkomitmen menghadirkan
+                lingkungan pendidikan yang
+                mendorong santri untuk
+                berkembang secara akademik,
+                spiritual dan sosial.
+            </p>
+
 
             <div
-                class="rounded-2xl
-                       bg-[#F5F7F6]
-                       p-7"
+                class="mt-8
+                       grid gap-4
+                       sm:grid-cols-2"
             >
 
                 <div
-                    class="flex h-12 w-12
-                           items-center
-                           justify-center
-                           rounded-xl
-                           bg-[#087443]
-                           text-white"
+                    class="rounded-2xl
+                           bg-[#F5F7F6]
+                           p-5"
                 >
 
                     <i
                         data-lucide="book-open"
-                        class="h-6 w-6"
+                        class="h-7 w-7
+                               text-[#087443]"
                     ></i>
+
+                    <h3
+                        class="mt-4
+                               font-black"
+                    >
+                        Pendidikan
+                    </h3>
+
+                    <p
+                        class="mt-2
+                               text-sm
+                               leading-6
+                               text-gray-500"
+                    >
+                        Pembelajaran yang
+                        terarah dan
+                        berkelanjutan.
+                    </p>
 
                 </div>
 
 
-                <h3
-                    class="mt-5 text-lg
-                           font-black"
-                >
-                    Pendidikan
-                </h3>
-
-
-                <p
-                    class="mt-3 text-sm
-                           leading-7
-                           text-gray-500"
-                >
-                    Pembelajaran yang terarah
-                    dan seimbang antara ilmu
-                    agama dan ilmu umum.
-                </p>
-
-            </div>
-
-
-            <div
-                class="rounded-2xl
-                       bg-[#F5F7F6]
-                       p-7"
-            >
-
                 <div
-                    class="flex h-12 w-12
-                           items-center
-                           justify-center
-                           rounded-xl
-                           bg-[#F4C542]
-                           text-[#062E1F]"
+                    class="rounded-2xl
+                           bg-[#F5F7F6]
+                           p-5"
                 >
 
                     <i
                         data-lucide="heart-handshake"
-                        class="h-6 w-6"
+                        class="h-7 w-7
+                               text-[#087443]"
                     ></i>
 
-                </div>
+                    <h3
+                        class="mt-4
+                               font-black"
+                    >
+                        Akhlak
+                    </h3>
 
-
-                <h3
-                    class="mt-5 text-lg
-                           font-black"
-                >
-                    Akhlak
-                </h3>
-
-
-                <p
-                    class="mt-3 text-sm
-                           leading-7
-                           text-gray-500"
-                >
-                    Membentuk pribadi santri
-                    yang santun, disiplin dan
-                    bertanggung jawab.
-                </p>
-
-            </div>
-
-
-            <div
-                class="rounded-2xl
-                       bg-[#F5F7F6]
-                       p-7"
-            >
-
-                <div
-                    class="flex h-12 w-12
-                           items-center
-                           justify-center
-                           rounded-xl
-                           bg-[#062E1F]
-                           text-[#F4C542]"
-                >
-
-                    <i
-                        data-lucide="users"
-                        class="h-6 w-6"
-                    ></i>
+                    <p
+                        class="mt-2
+                               text-sm
+                               leading-6
+                               text-gray-500"
+                    >
+                        Membentuk karakter
+                        dan akhlak mulia.
+                    </p>
 
                 </div>
-
-
-                <h3
-                    class="mt-5 text-lg
-                           font-black"
-                >
-                    Pembinaan
-                </h3>
-
-
-                <p
-                    class="mt-3 text-sm
-                           leading-7
-                           text-gray-500"
-                >
-                    Lingkungan yang mendukung
-                    perkembangan santri secara
-                    akademik dan spiritual.
-                </p>
 
             </div>
 
@@ -526,48 +452,51 @@
 </section>
 
 
-{{-- ========================================= --}}
-{{-- PROGRAM --}}
-{{-- ========================================= --}}
+{{-- =========================================================
+   PROGRAM
+========================================================= --}}
 
 <section
     id="program"
-    class="bg-[#F5F7F6]
-           py-24"
+    class="bg-[#F5F7F6]"
 >
 
     <div
-        class="mx-auto max-w-7xl
-               px-5 lg:px-8"
+        class="mx-auto
+               max-w-7xl
+               px-6 py-20
+               sm:px-10
+               lg:px-16"
     >
 
         <div
             class="flex flex-col
-                   gap-5
-                   md:flex-row
-                   md:items-end
-                   md:justify-between"
+                   gap-4
+                   sm:flex-row
+                   sm:items-end
+                   sm:justify-between"
         >
 
             <div>
 
                 <p
-                    class="text-sm
+                    class="text-xs
                            font-black
                            uppercase
-                           tracking-widest
+                           tracking-[0.2em]
                            text-[#087443]"
                 >
-                    Pendidikan
+                    Program Pendidikan
                 </p>
 
 
                 <h2
-                    class="mt-3 text-3xl
-                           font-black
-                           sm:text-4xl"
+                    class="mt-3
+                           text-3xl
+                           font-black"
                 >
-                    Program Pendidikan
+                    Pilihan Program
+                    Darel Arifien
                 </h2>
 
             </div>
@@ -576,18 +505,23 @@
 
 
         <div
-            class="mt-12 grid gap-6
-                   md:grid-cols-2
-                   lg:grid-cols-3"
+            class="mt-10
+                   grid gap-6
+                   md:grid-cols-3"
         >
 
-            @forelse ($programs as $program)
+            @forelse (
+                $programs as $program
+            )
 
                 <div
-                    class="group rounded-2xl
-                           bg-white p-7
+                    class="group
+                           rounded-3xl
+                           bg-white
+                           p-7
                            shadow-sm
-                           ring-1 ring-gray-100
+                           ring-1
+                           ring-gray-100
                            transition
                            hover:-translate-y-1
                            hover:shadow-xl"
@@ -598,70 +532,62 @@
                                items-center
                                justify-center
                                rounded-2xl
-                               bg-[#087443]/10
-                               text-[#087443]"
+                               bg-[#087443]/10"
                     >
 
-                        <i
-                            data-lucide="{{ $program->icon ?: 'book-open' }}"
-                            class="h-7 w-7"
-                        ></i>
+                        @if ($program->icon)
+
+                            <i
+                                data-lucide="{{ $program->icon }}"
+                                class="h-7 w-7
+                                       text-[#087443]"
+                            ></i>
+
+                        @else
+
+                            <i
+                                data-lucide="graduation-cap"
+                                class="h-7 w-7
+                                       text-[#087443]"
+                            ></i>
+
+                        @endif
 
                     </div>
 
 
-                    <a
-    href="{{ route('program.show', $program->slug) }}"
-    class="mt-6 block text-xl
-           font-black
-           transition
-           group-hover:text-[#087443]"
->
-    {{ $program->title }}
-</a>
+                    <h3
+                        class="mt-6
+                               text-xl
+                               font-black"
+                    >
+                        {{ $program->title }}
+                    </h3>
 
 
                     <p
-                        class="mt-3 line-clamp-3
+                        class="mt-3
                                text-sm
                                leading-7
                                text-gray-500"
                     >
                         {{ $program->description }}
                     </p>
-<a
-    href="{{ route('program.show', $program->slug) }}"
-    class="mt-5 inline-flex
-           items-center gap-2
-           text-sm font-black
-           text-[#087443]"
->
-    Selengkapnya
 
-    <i
-        data-lucide="arrow-right"
-        class="h-4 w-4"
-    ></i>
-</a>
                 </div>
 
             @empty
 
                 <div
-                    class="md:col-span-2
-                           lg:col-span-3
+                    class="md:col-span-3
                            rounded-2xl
                            bg-white
-                           p-10 text-center"
+                           p-10
+                           text-center
+                           text-gray-400"
                 >
-
-                    <p
-                        class="text-gray-400"
-                    >
-                        Program pendidikan
-                        belum tersedia.
-                    </p>
-
+                    Program pendidikan
+                    belum tersedia.
                 </div>
 
             @endforelse
@@ -673,119 +599,339 @@
 </section>
 
 
-{{-- ========================================= --}}
-{{-- BERITA --}}
-{{-- ========================================= --}}
+{{-- =========================================================
+   GURU
+========================================================= --}}
 
 <section
-    id="berita"
-    class="bg-white py-24"
+    id="guru"
+    class="bg-white"
 >
 
     <div
-        class="mx-auto max-w-7xl
-               px-5 lg:px-8"
+        class="mx-auto
+               max-w-7xl
+               px-6 py-20
+               sm:px-10
+               lg:px-16"
     >
 
         <p
-            class="text-sm
+            class="text-xs
                    font-black
                    uppercase
-                   tracking-widest
+                   tracking-[0.2em]
                    text-[#087443]"
         >
-            Informasi
+            Pengasuh & Tenaga Pendidik
         </p>
 
 
         <h2
-            class="mt-3 text-3xl
-                   font-black
-                   sm:text-4xl"
+            class="mt-3
+                   text-3xl
+                   font-black"
         >
-            Berita Terbaru
+            Dibimbing oleh
+            pendidik terbaik
         </h2>
 
 
         <div
-            class="mt-12 grid gap-6
+            class="mt-10
+                   grid gap-6
+                   sm:grid-cols-2
+                   lg:grid-cols-4"
+        >
+
+            @forelse (
+                $teachers as $teacher
+            )
+
+                <div
+                    class="overflow-hidden
+                           rounded-3xl
+                           bg-[#F5F7F6]
+                           transition
+                           hover:-translate-y-1
+                           hover:shadow-xl"
+                >
+
+                    @if ($teacher->photo)
+
+                        <img
+                            src="{{ asset(
+                                'storage/' .
+                                $teacher->photo
+                            ) }}"
+                            alt="{{ $teacher->name }}"
+                            class="h-72 w-full
+                                   object-cover"
+                        >
+
+                    @else
+
+                        <div
+                            class="flex h-72
+                                   items-center
+                                   justify-center
+                                   bg-[#062E1F]"
+                        >
+
+                            <i
+                                data-lucide="user-round"
+                                class="h-16 w-16
+                                       text-[#F4C542]"
+                            ></i>
+
+                        </div>
+
+                    @endif
+
+
+                    <div
+                        class="p-6"
+                    >
+
+                        <h3
+                            class="font-black"
+                        >
+                            {{ $teacher->name }}
+                        </h3>
+
+
+                        <p
+                            class="mt-1
+                                   text-sm
+                                   font-bold
+                                   text-[#087443]"
+                        >
+                            {{ $teacher->position }}
+                        </p>
+
+
+                        @if ($teacher->education)
+
+                            <p
+                                class="mt-3
+                                       text-xs
+                                       leading-5
+                                       text-gray-500"
+                            >
+                                {{ $teacher->education }}
+                            </p>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+            @empty
+
+                <div
+                    class="sm:col-span-2
+                           lg:col-span-4
+                           rounded-2xl
+                           bg-[#F5F7F6]
+                           p-10
+                           text-center
+                           text-gray-400"
+                >
+                    Data pengasuh dan guru
+                    belum tersedia.
+                </div>
+
+            @endforelse
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{{-- =========================================================
+   BERITA
+========================================================= --}}
+
+<section
+    class="bg-[#F5F7F6]"
+>
+
+    <div
+        class="mx-auto
+               max-w-7xl
+               px-6 py-20
+               sm:px-10
+               lg:px-16"
+    >
+
+        <div
+            class="flex
+                   items-end
+                   justify-between"
+        >
+
+            <div>
+
+                <p
+                    class="text-xs
+                           font-black
+                           uppercase
+                           tracking-[0.2em]
+                           text-[#087443]"
+                >
+                    Informasi Terbaru
+                </p>
+
+
+                <h2
+                    class="mt-3
+                           text-3xl
+                           font-black"
+                >
+                    Berita Pesantren
+                </h2>
+
+            </div>
+
+
+            <a
+                href="{{ route(
+                    'news.index'
+                ) }}"
+                class="hidden
+                       items-center
+                       gap-2
+                       text-sm
+                       font-black
+                       text-[#087443]
+                       sm:flex"
+            >
+
+                Semua Berita
+
+                <i
+                    data-lucide="arrow-right"
+                    class="h-4 w-4"
+                ></i>
+
+            </a>
+
+        </div>
+
+
+        <div
+            class="mt-10
+                   grid gap-7
                    md:grid-cols-3"
         >
 
             @forelse ($news as $item)
 
                 <article
-                    class="overflow-hidden
-                           rounded-2xl
+                    class="group overflow-hidden
+                           rounded-3xl
                            bg-white
                            shadow-sm
-                           ring-1 ring-gray-100
-                           transition
-                           hover:-translate-y-1
-                           hover:shadow-xl"
+                           ring-1
+                           ring-gray-100"
                 >
 
+                    @if ($item->thumbnail)
+
+                        <img
+                            src="{{ asset(
+                                'storage/' .
+                                $item->thumbnail
+                            ) }}"
+                            alt="{{ $item->title }}"
+                            class="h-56 w-full
+                                   object-cover
+                                   transition
+                                   duration-500
+                                   group-hover:scale-105"
+                        >
+
+                    @else
+
+                        <div
+                            class="flex h-56
+                                   items-center
+                                   justify-center
+                                   bg-[#062E1F]"
+                        >
+
+                            <i
+                                data-lucide="newspaper"
+                                class="h-10 w-10
+                                       text-[#F4C542]"
+                            ></i>
+
+                        </div>
+
+                    @endif
+
+
                     <div
-                        class="aspect-[16/10]
-                               bg-[#062E1F]"
+                        class="p-6"
                     >
 
-                        @if ($item->thumbnail)
-
-                            <img
-                                src="{{ asset(
-                                    'storage/' .
-                                    $item->thumbnail
-                                ) }}"
-                                alt="{{ $item->title }}"
-                                class="h-full w-full
-                                       object-cover"
-                            >
-
-                        @else
-
-                            <div
-                                class="flex h-full
-                                       items-center
-                                       justify-center"
-                            >
-
-                                <i
-                                    data-lucide="newspaper"
-                                    class="h-12 w-12
-                                           text-[#F4C542]"
-                                ></i>
-
-                            </div>
-
-                        @endif
-
-                    </div>
-
-
-                    <div class="p-6">
-
-                        <p
-                            class="text-xs
-                                   font-bold
-                                   uppercase
-                                   tracking-wider
-                                   text-[#087443]"
+                        <div
+                            class="flex
+                                   items-center
+                                   justify-between"
                         >
-                            {{ $item->category ?: 'Berita' }}
-                        </p>
+
+                            <span
+                                class="text-xs
+                                       font-black
+                                       text-[#087443]"
+                            >
+                                {{ $item->category }}
+                            </span>
+
+
+                            <span
+                                class="text-xs
+                                       text-gray-400"
+                            >
+                                {{
+                                    $item->published_at
+                                        ?->format(
+                                            'd M Y'
+                                        )
+                                }}
+                            </span>
+
+                        </div>
 
 
                         <h3
-                            class="mt-3 text-lg
-                                   font-black"
+                            class="mt-4
+                                   line-clamp-2
+                                   text-xl
+                                   font-black
+                                   leading-snug
+                                   group-hover:text-[#087443]"
                         >
-                            {{ $item->title }}
+
+                            <a
+                                href="{{ route(
+                                    'news.show',
+                                    $item
+                                ) }}"
+                            >
+                                {{ $item->title }}
+                            </a>
+
                         </h3>
 
 
                         <p
-                            class="mt-3 line-clamp-2
+                            class="mt-3
+                                   line-clamp-2
                                    text-sm
                                    leading-6
                                    text-gray-500"
@@ -801,206 +947,14 @@
 
                 <div
                     class="md:col-span-3
-                           py-12 text-center
-                           text-gray-400"
-                >
-                    Belum ada berita.
-                </div>
-
-            @endforelse
-
-        </div>
-
-    </div>
-
-</section>
-
-{{-- ========================================= --}}
-{{-- AGENDA --}}
-{{-- ========================================= --}}
-
-<section
-    id="agenda"
-    class="bg-[#F5F7F6] py-24"
->
-
-    <div
-        class="mx-auto max-w-7xl
-               px-5 lg:px-8"
-    >
-
-        <div
-            class="flex flex-col gap-5
-                   md:flex-row
-                   md:items-end
-                   md:justify-between"
-        >
-
-            <div>
-
-                <p
-                    class="text-sm font-black
-                           uppercase
-                           tracking-widest
-                           text-[#087443]"
-                >
-                    Kegiatan
-                </p>
-
-                <h2
-                    class="mt-3 text-3xl
-                           font-black
-                           sm:text-4xl"
-                >
-                    Agenda Pesantren
-                </h2>
-
-            </div>
-
-
-            <a
-                href="{{ route('events.index') }}"
-                class="inline-flex
-                       items-center gap-2
-                       text-sm font-black
-                       text-[#087443]"
-            >
-
-                Lihat Semua
-
-                <i
-                    data-lucide="arrow-right"
-                    class="h-4 w-4"
-                ></i>
-
-            </a>
-
-        </div>
-
-
-        <div
-            class="mt-12 grid gap-5
-                   md:grid-cols-2
-                   lg:grid-cols-4"
-        >
-
-            @forelse ($events as $event)
-
-                <a
-                    href="{{ route(
-                        'events.show',
-                        $event->slug
-                    ) }}"
-                    class="group rounded-2xl
-                           bg-white p-6
-                           shadow-sm
-                           ring-1 ring-gray-100
-                           transition
-                           hover:-translate-y-1
-                           hover:shadow-xl"
-                >
-
-                    @if ($event->start_at)
-
-                        <div
-                            class="flex h-14 w-14
-                                   flex-col
-                                   items-center
-                                   justify-center
-                                   rounded-xl
-                                   bg-[#087443]
-                                   text-white"
-                        >
-
-                            <span
-                                class="text-lg
-                                       font-black
-                                       leading-none"
-                            >
-                                {{ $event->start_at->format('d') }}
-                            </span>
-
-                            <span
-                                class="mt-1 text-[9px]
-                                       font-bold
-                                       uppercase"
-                            >
-                                {{ $event->start_at->format('M') }}
-                            </span>
-
-                        </div>
-
-                    @else
-
-                        <div
-                            class="flex h-14 w-14
-                                   items-center
-                                   justify-center
-                                   rounded-xl
-                                   bg-[#F4C542]
-                                   text-[#062E1F]"
-                        >
-
-                            <i
-                                data-lucide="calendar"
-                                class="h-6 w-6"
-                            ></i>
-
-                        </div>
-
-                    @endif
-
-
-                    <h3
-                        class="mt-6 text-lg
-                               font-black
-                               leading-7
-                               transition
-                               group-hover:text-[#087443]"
-                    >
-                        {{ $event->title }}
-                    </h3>
-
-
-                    @if ($event->location)
-
-                        <div
-                            class="mt-3 flex
-                                   items-center gap-2
-                                   text-xs
-                                   text-gray-400"
-                        >
-
-                            <i
-                                data-lucide="map-pin"
-                                class="h-4 w-4
-                                       text-[#087443]"
-                            ></i>
-
-                            {{ $event->location }}
-
-                        </div>
-
-                    @endif
-
-                </a>
-
-            @empty
-
-                <div
-                    class="md:col-span-2
-                           lg:col-span-4
                            rounded-2xl
                            bg-white
-                           p-10 text-center"
+                           p-10
+                           text-center
+                           text-gray-400"
                 >
-
-                    <p
-                        class="text-gray-400"
-                    >
-                        Belum ada agenda.
-                    </p>
-
+                    Belum ada berita
+                    yang dipublikasikan.
                 </div>
 
             @endforelse
@@ -1011,204 +965,28 @@
 
 </section>
 
-{{-- ========================================= --}}
-{{-- GALERI --}}
-{{-- ========================================= --}}
+
+{{-- =========================================================
+   CTA
+========================================================= --}}
 
 <section
-    id="galeri"
-    class="bg-white py-24"
->
-
-    <div class="mx-auto max-w-7xl px-5 lg:px-8">
-
-        <div
-            class="flex flex-col gap-5
-                   md:flex-row
-                   md:items-end
-                   md:justify-between"
-        >
-
-            <div>
-
-                <p
-                    class="text-sm font-black
-                           uppercase
-                           tracking-widest
-                           text-[#087443]"
-                >
-                    Dokumentasi
-                </p>
-
-                <h2
-                    class="mt-3 text-3xl
-                           font-black
-                           sm:text-4xl"
-                >
-                    Galeri Pesantren
-                </h2>
-
-            </div>
-
-
-            <a
-                href="{{ route('gallery.index') }}"
-                class="inline-flex
-                       items-center gap-2
-                       text-sm font-black
-                       text-[#087443]"
-            >
-
-                Lihat Semua
-
-                <i
-                    data-lucide="arrow-right"
-                    class="h-4 w-4"
-                ></i>
-
-            </a>
-
-        </div>
-
-
-        @if ($galleries->count())
-
-            <div
-                class="mt-12 grid gap-5
-                       sm:grid-cols-2
-                       lg:grid-cols-3"
-            >
-
-                @foreach ($galleries as $gallery)
-
-                    <a
-                        href="{{ route('gallery.index') }}"
-                        class="group relative
-                               aspect-[4/3]
-                               overflow-hidden
-                               rounded-2xl
-                               bg-[#062E1F]"
-                    >
-
-                        @if ($gallery->image)
-
-                            <img
-                                src="{{ asset(
-                                    'storage/' .
-                                    $gallery->image
-                                ) }}"
-                                alt="{{ $gallery->title }}"
-                                class="h-full w-full
-                                       object-cover
-                                       transition
-                                       duration-700
-                                       group-hover:scale-110"
-                            >
-
-                        @else
-
-                            <div
-                                class="flex h-full
-                                       items-center
-                                       justify-center"
-                            >
-
-                                <i
-                                    data-lucide="image"
-                                    class="h-12 w-12
-                                           text-[#F4C542]"
-                                ></i>
-
-                            </div>
-
-                        @endif
-
-
-                        <div
-                            class="absolute inset-0
-                                   bg-gradient-to-t
-                                   from-black/80
-                                   via-transparent
-                                   to-transparent"
-                        ></div>
-
-
-                        <div
-                            class="absolute bottom-0
-                                   left-0 right-0
-                                   p-6"
-                        >
-
-                            @if ($gallery->category)
-
-                                <p
-                                    class="text-[10px]
-                                           font-black
-                                           uppercase
-                                           tracking-widest
-                                           text-[#F4C542]"
-                                >
-                                    {{ $gallery->category }}
-                                </p>
-
-                            @endif
-
-
-                            <h3
-                                class="mt-2 text-lg
-                                       font-black
-                                       text-white"
-                            >
-                                {{ $gallery->title }}
-                            </h3>
-
-                        </div>
-
-                    </a>
-
-                @endforeach
-
-            </div>
-
-        @else
-
-            <div
-                class="mt-12 rounded-2xl
-                       bg-[#F5F7F6]
-                       p-10 text-center"
-            >
-                <p class="text-gray-400">
-                    Belum ada dokumentasi.
-                </p>
-            </div>
-
-        @endif
-
-    </div>
-
-</section>
-
-{{-- ========================================= --}}
-{{-- PENDAFTARAN --}}
-{{-- ========================================= --}}
-
-<section
-    id="pendaftaran"
-    class="bg-[#062E1F]
-           py-20"
+    class="bg-[#062E1F]"
 >
 
     <div
-        class="mx-auto max-w-5xl
-               px-5 text-center
-               lg:px-8"
+        class="mx-auto
+               max-w-5xl
+               px-6 py-20
+               text-center
+               sm:px-10"
     >
 
         <p
-            class="text-sm
+            class="text-xs
                    font-black
                    uppercase
-                   tracking-widest
+                   tracking-[0.25em]
                    text-[#F4C542]"
         >
             Bergabung Bersama Kami
@@ -1216,47 +994,54 @@
 
 
         <h2
-            class="mt-4 text-3xl
+            class="mt-5
+                   text-3xl
                    font-black
                    text-white
                    sm:text-4xl"
         >
-            Siapkan Masa Depan
-            Bersama {{ $settings['school_name'] ?? '' }}
+            Mari tumbuh dan belajar
+            bersama Darel Arifien.
         </h2>
 
 
         <p
             class="mx-auto mt-5
                    max-w-2xl
+                   text-sm
                    leading-7
                    text-white/50"
         >
             Jadilah bagian dari lingkungan
-            pendidikan yang membentuk ilmu,
-            karakter dan akhlak.
+            pendidikan yang mengutamakan
+            ilmu, akhlak dan kemandirian.
         </p>
 
 
         <a
-            href="#"
-            class="mt-8 inline-flex
-                   items-center gap-2
+            href="{{ route(
+                'registration.create'
+            ) }}"
+            class="mt-8
+                   inline-flex
+                   items-center
+                   gap-2
                    rounded-xl
                    bg-[#F4C542]
-                   px-7 py-4
+                   px-7 py-3.5
+                   text-sm
                    font-black
                    text-[#062E1F]
-                   shadow-xl
                    transition
-                   hover:-translate-y-1"
+                   hover:-translate-y-1
+                   hover:bg-[#FFD85C]"
         >
 
-            Mulai Pendaftaran
+            Daftar Sekarang
 
             <i
                 data-lucide="arrow-right"
-                class="h-5 w-5"
+                class="h-4 w-4"
             ></i>
 
         </a>
@@ -1265,4 +1050,4 @@
 
 </section>
 
-@endsection
+@endsection 

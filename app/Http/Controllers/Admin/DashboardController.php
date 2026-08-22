@@ -3,38 +3,69 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Gallery;
+use App\Models\Announcement;
+use App\Models\Event;
 use App\Models\News;
 use App\Models\Program;
 use App\Models\Registration;
 use App\Models\Teacher;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         /*
         |--------------------------------------------------------------------------
-        | Statistik
+        | STATISTIK UTAMA
         |--------------------------------------------------------------------------
         */
 
-        $stats = [
-            'programs' => Program::count(),
+        $statistics = [
+            'registrations' => Registration::count(),
 
-            'teachers' => Teacher::count(),
+            'pending' => Registration::where(
+                'status',
+                'pending'
+            )->count(),
+
+            'processed' => Registration::where(
+                'status',
+                'processed'
+            )->count(),
+
+            'accepted' => Registration::where(
+                'status',
+                'accepted'
+            )->count(),
+
+            'rejected' => Registration::where(
+                'status',
+                'rejected'
+            )->count(),
 
             'news' => News::count(),
 
-            'gallery' => Gallery::count(),
+            'teachers' => Teacher::count(),
 
-            'registrations' => Registration::count(),
+            'programs' => Program::count(),
         ];
 
 
         /*
         |--------------------------------------------------------------------------
-        | Berita terbaru
+        | PENDAFTAR TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $latestRegistrations = Registration::latest()
+            ->take(6)
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA TERBARU
         |--------------------------------------------------------------------------
         */
 
@@ -45,54 +76,50 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Pendaftaran terbaru
+        | PENGUMUMAN
         |--------------------------------------------------------------------------
         */
 
-        $latestRegistrations = Registration::latest()
+        $latestAnnouncements = Announcement::latest()
             ->take(5)
             ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | Data untuk grafik pendaftaran
+        | EVENT TERDEKAT
         |--------------------------------------------------------------------------
         */
 
-        $registrationChart = Registration::query()
-            ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
+        $upcomingEvents = Event::where(
+            'is_published',
+            true
+        )
+            ->where(
+                'start_at',
+                '>=',
+                now()
+            )
+            ->orderBy('start_at')
+            ->take(5)
             ->get();
 
 
-        $chartLabels = [];
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
 
-        $chartData = [];
-
-        for ($month = 1; $month <= 12; $month++) {
-
-            $chartLabels[] = now()
-                ->setMonth($month)
-                ->translatedFormat('M');
-
-            $result = $registrationChart
-                ->firstWhere('month', $month);
-
-            $chartData[] = $result
-                ? $result->total
-                : 0;
-        }
-
-
-        return view('admin.dashboard', compact(
-            'stats',
-            'latestNews',
-            'latestRegistrations',
-            'chartLabels',
-            'chartData'
-        ));
+        return view(
+            'admin.dashboard',
+            compact(
+                'statistics',
+                'latestRegistrations',
+                'latestNews',
+                'latestAnnouncements',
+                'upcomingEvents'
+            )
+        );
     }
 }
