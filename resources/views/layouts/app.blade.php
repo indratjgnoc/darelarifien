@@ -11,13 +11,10 @@
 
     <meta
         name="description"
-        content="@yield(
-            'description',
-            'Website Resmi Pesantren {{ $settings['school_name'] ?? '' }}'
-        )">
+        content="@yield('description', 'Website Resmi Pesantren')">
 
     <title>
-        @yield('title', 'Pesantren {{ $settings['school_name'] ?? '' }}')
+        @yield('title', 'Pesantren')
     </title>
 
     @vite([

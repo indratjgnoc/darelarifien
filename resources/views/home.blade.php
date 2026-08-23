@@ -2,10 +2,9 @@
 
 @section('title', 'Beranda')
 
-@section(
-    'description',
-    'Website resmi Pesantren {{ $settings['school_name'] ?? '' }}. Informasi pendidikan, program, kegiatan dan pendaftaran santri.'
-)
+@section('description')
+    Website resmi Pesantren {{ $settings['school_name'] ?? '' }}. Informasi pendidikan, program, kegiatan dan pendaftaran santri.
+@endsection
 
 @section('content')
 
