@@ -158,26 +158,6 @@
 
     </a>
 
-    <a
-    href="{{ route('admin.registrations.index') }}"
-    class="flex items-center gap-3
-               rounded-xl px-4 py-3
-               transition
-               {{ request()->routeIs('admin.registrations.*')
-                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                    : 'text-white/70 hover:bg-white/5 hover:text-white'
-               }}"
->
-
-    <i
-        data-lucide="clipboard-pen"
-        class="h-5 w-5"
-    ></i>
-
-    <span>Pendaftaran</span>
-
-</a>
-
 <a
     href="{{ route('admin.announcements.index') }}"
     class="mt-1 flex items-center gap-3
@@ -297,7 +277,42 @@
 
                 </div>
 
+{{-- Komunikasi --}}
 
+<div class="pt-6">
+
+    <p
+        class="mb-3 px-4
+               text-[11px]
+               font-bold uppercase
+               tracking-widest
+               text-white/30"
+    >
+        Komunikasi
+    </p>
+
+
+     <a
+    href="{{ route('admin.contacts.index') }}"
+    class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.contacts.*')
+                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                : 'text-white/70 hover:bg-white/5 hover:text-white'
+           }}"
+>
+
+    <i
+         data-lucide="messages-square"
+        class="h-5 w-5"
+    ></i>
+
+    <span>Pesan Masuk</span>
+
+</a>
+
+</div>
                 {{-- Pendaftaran --}}
                 <div class="pt-6">
 
@@ -312,27 +327,30 @@
 
 
                     <a
-                        href="#"
-                        class="flex items-center gap-3
-                               rounded-xl px-4 py-3
-                               text-white/70
-                               transition
-                               hover:bg-white/5
-                               hover:text-white"
-                    >
+    href="{{ route('admin.registrations.index') }}"
+    class="flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.registrations.*')
+                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                    : 'text-white/70 hover:bg-white/5 hover:text-white'
+               }}"
+>
 
-                        <i
-                            data-lucide="clipboard-list"
-                            class="h-5 w-5"
-                        ></i>
+    <i
+        data-lucide="clipboard-pen"
+        class="h-5 w-5"
+    ></i>
 
-                        <span>Calon Santri</span>
+    <span>Calon Santri</span>
 
-                    </a>
+</a>
 
                 </div>
 
             </nav>
+
+
 
 
             {{-- Bottom Sidebar --}}

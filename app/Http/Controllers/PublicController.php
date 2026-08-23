@@ -6,6 +6,11 @@ use App\Models\Event;
 use App\Models\Gallery;
 use App\Models\News;
 use App\Models\Program;
+use App\Models\Teacher;
+use App\Models\Setting;
+use App\Models\Contact;
+
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PublicController extends Controller
@@ -15,15 +20,86 @@ class PublicController extends Controller
     | PROGRAM
     |--------------------------------------------------------------------------
     */
-
-    public function program(Program $program): View
+    public function programs()
     {
-        abort_unless($program->is_active, 404);
+        $programs = Program::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
-        return view('public.program.show', compact('program'));
+        return view('public.program.index', compact('programs'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | GURU
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function teachers()
+    {
+        $teachers = Teacher::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('public.teachers.index', compact('teachers'));
     }
 
 
+    public function contact()
+    {
+        $settings = Setting::pluck('value', 'key');
+
+        return view('public.contact', compact('settings'));
+    }
+
+
+    //Kontak
+    public function storeContact(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:150',
+            ],
+
+            'phone' => [
+                'nullable',
+                'string',
+                'max:30',
+            ],
+
+            'subject' => [
+                'required',
+                'string',
+                'max:200',
+            ],
+
+            'message' => [
+                'required',
+                'string',
+                'max:5000',
+            ],
+        ]);
+
+        Contact::create($validated);
+
+        return redirect()
+            ->route('contact')
+            ->with(
+                'success',
+                'Pesan Anda berhasil dikirim. Terima kasih telah menghubungi kami.'
+            );
+    }
     /*
     |--------------------------------------------------------------------------
     | BERITA
@@ -55,25 +131,25 @@ class PublicController extends Controller
     */
 
     public function events(): View
-{
-    $events = Event::where('is_published', true)
-        ->where(function ($query) {
-            $query->whereNull('start_at')
-                ->orWhere('start_at', '>=', now());
-        })
-        ->orderBy('start_at')
-        ->paginate(9);
+    {
+        $events = Event::where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('start_at')
+                    ->orWhere('start_at', '>=', now());
+            })
+            ->orderBy('start_at')
+            ->paginate(9);
 
-    return view('public.events.index', compact('events'));
-}
+        return view('public.events.index', compact('events'));
+    }
 
 
-   public function eventShow(Event $event): View
-{
-    abort_unless($event->is_published, 404);
+    public function eventShow(Event $event): View
+    {
+        abort_unless($event->is_published, 404);
 
-    return view('public.events.show', compact('event'));
-}
+        return view('public.events.show', compact('event'));
+    }
 
 
     /*

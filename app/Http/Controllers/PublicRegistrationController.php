@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Program;
 use App\Models\Registration;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,9 +14,49 @@ class PublicRegistrationController extends Controller
 {
     public function create(): View
     {
-        $programs = Program::where('is_active', true)
+        /*
+        |--------------------------------------------------------------------------
+        | CEK STATUS PENDAFTARAN
+        |--------------------------------------------------------------------------
+        */
+
+        $registrationOpen = Setting::where(
+            'key',
+            'registration_open'
+        )->value('value');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENDAFTARAN DITUTUP
+        |--------------------------------------------------------------------------
+        */
+
+        if ($registrationOpen !== '1') {
+
+            return view(
+                'public.registrations.closed'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL PROGRAM AKTIF
+        |--------------------------------------------------------------------------
+        */
+
+        $programs = Program::query()
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TAMPILKAN FORM PENDAFTARAN
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'public.registrations.create',
@@ -26,6 +67,34 @@ class PublicRegistrationController extends Controller
 
     public function store(Request $request)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | CEK STATUS PENDAFTARAN
+        |--------------------------------------------------------------------------
+        |
+        | Mencegah submit manual ketika pendaftaran sudah ditutup.
+        |
+        */
+
+        $registrationOpen = Setting::where(
+            'key',
+            'registration_open'
+        )->value('value');
+
+
+        if ($registrationOpen !== '1') {
+
+            return redirect()
+                ->route('registration.create');
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
         $validated = $request->validate([
 
             'student_name' => [
@@ -128,62 +197,62 @@ class PublicRegistrationController extends Controller
 
             $documentPath =
                 $request->file('document')
-                    ->store(
-                        'registrations',
-                        'public'
-                    );
+                ->store(
+                    'registrations',
+                    'public'
+                );
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | SIMPAN
+        | SIMPAN PENDAFTARAN
         |--------------------------------------------------------------------------
         */
 
         $registration = Registration::create([
 
             'registration_number' =>
-                $registrationNumber,
+            $registrationNumber,
 
             'student_name' =>
-                $validated['student_name'],
+            $validated['student_name'],
 
             'gender' =>
-                $validated['gender'],
+            $validated['gender'],
 
             'birth_date' =>
-                $validated['birth_date'],
+            $validated['birth_date'],
 
             'birth_place' =>
-                $validated['birth_place'],
+            $validated['birth_place'],
 
             'address' =>
-                $validated['address'],
+            $validated['address'],
 
             'phone' =>
-                $validated['phone'],
+            $validated['phone'],
 
             'email' =>
-                $validated['email'] ?? null,
+            $validated['email'] ?? null,
 
             'parent_name' =>
-                $validated['parent_name'],
+            $validated['parent_name'],
 
             'parent_phone' =>
-                $validated['parent_phone'],
+            $validated['parent_phone'],
 
             'school_origin' =>
-                $validated['school_origin'],
+            $validated['school_origin'],
 
             'program' =>
-                $validated['program'],
+            $validated['program'],
 
             'document' =>
-                $documentPath,
+            $documentPath,
 
             'status' =>
-                'pending',
+            'pending',
 
         ]);
 

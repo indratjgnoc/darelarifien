@@ -33,7 +33,7 @@
 
             <p class="mt-2 text-gray-500">
                 Kelola kegiatan dan agenda
-                Pesantren Darel Arifien.
+                Pesantren {{ $settings['school_name'] ?? '' }}.
             </p>
 
         </div>

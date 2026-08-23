@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicRegistrationController;
+
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProgramController;
@@ -13,48 +15,60 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\RegistrationController;
+use App\Http\Controllers\Admin\ContactController;
+
+/*
+|--------------------------------------------------------------------------
+| WEBSITE PUBLIC
+|--------------------------------------------------------------------------
+*/
 
 
 /*
-Route::get('/', function () {
-    return view('frontend.home');
-})->name('home');*/
-
-
-Route::get( '/pendaftaran',
-    [PublicRegistrationController::class, 'create']
-)->name('registration.create');
-
-Route::post('/pendaftaran',
-    [PublicRegistrationController::class, 'store']
-)->name('registration.store');
-
-Route::get('/pendaftaran/sukses/{registrationNumber}',
-    [PublicRegistrationController::class, 'success']
-)->name('registration.success');
-
-Route::resource(
-        'registrations',
-        \App\Http\Controllers\Admin\RegistrationController::class
-    )->only([
-        'index',
-        'show',
-        'update',
-        'destroy',
-    ]);
-
-// ==============================
-// WEBSITE PUBLIC
-// ==============================
+|--------------------------------------------------------------------------
+| Home
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+
+/*
+|--------------------------------------------------------------------------
+| Profil
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/profil', [PublicController::class, 'profile'])
     ->name('profile');
 
+/*
+|--------------------------------------------------------------------------
+| PENGASUH
+|--------------------------------------------------------------------------
+*/
+Route::get('/pengasuh', [PublicController::class, 'teachers'])
+    ->name('teachers.index');
+/*
+|--------------------------------------------------------------------------
+| Program
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/program', [PublicController::class, 'programs'])
+    ->name('programs.index');
+
 Route::get('/program/{program:slug}', [PublicController::class, 'program'])
     ->name('program.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| Berita
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/berita', [PublicController::class, 'news'])
     ->name('news.index');
@@ -62,49 +76,103 @@ Route::get('/berita', [PublicController::class, 'news'])
 Route::get('/berita/{news:slug}', [PublicController::class, 'newsShow'])
     ->name('news.show');
 
+
+/*
+|--------------------------------------------------------------------------
+| Agenda
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/agenda', [PublicController::class, 'events'])
     ->name('events.index');
 
 Route::get('/agenda/{event:slug}', [PublicController::class, 'eventShow'])
     ->name('events.show');
 
-Route::get('/galeri', [PublicController::class, 'gallery'])
-    ->name('gallery.index');
-    
-    Route::get(
-    '/admin/settings',
-    [SettingController::class, 'index']
-)->name('admin.settings.index');
 
-Route::put(
-    '/admin/settings',
-    [SettingController::class, 'update']
-)->name('admin.settings.update');
-    
 /*
 |--------------------------------------------------------------------------
-| Authentication
+| Galeri
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/galeri', [PublicController::class, 'gallery'])
+    ->name('gallery.index');
+
+/*
+|--------------------------------------------------------------------------
+| Kontak
+|--------------------------------------------------------------------------
+*/
+Route::get('/kontak', [PublicController::class, 'contact'])
+    ->name('contact');
+
+Route::post('/kontak', [PublicController::class, 'storeContact'])
+    ->name('contact.store');
+
+/*
+|--------------------------------------------------------------------------
+| Pendaftaran
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/pendaftaran',
+    [PublicRegistrationController::class, 'create']
+)->name('registration.create');
+
+Route::post(
+    '/pendaftaran',
+    [PublicRegistrationController::class, 'store']
+)->name('registration.store');
+
+Route::get(
+    '/pendaftaran/sukses/{registrationNumber}',
+    [PublicRegistrationController::class, 'success']
+)->name('registration.success');
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATION
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
+    Route::get(
+        '/login',
+        [AuthController::class, 'showLogin']
+    )->name('login');
 
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.process');
+    Route::post(
+        '/login',
+        [AuthController::class, 'login']
+    )->name('login.process');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])
+
+Route::post(
+    '/logout',
+    [AuthController::class, 'logout']
+)
     ->middleware('auth')
     ->name('logout');
 
 
 /*
 |--------------------------------------------------------------------------
-| Admin
+| ADMIN
 |--------------------------------------------------------------------------
+|
+| Semua route di bawah ini:
+|
+| /admin/...
+|
+| hanya dapat diakses oleh:
+| - user yang login
+| - user dengan role admin
+|
 */
 
 Route::prefix('admin')
@@ -112,14 +180,17 @@ Route::prefix('admin')
     ->middleware(['auth', 'admin'])
     ->group(function () {
 
+
         /*
         |--------------------------------------------------------------------------
         | Dashboard
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get(
+            '/dashboard',
+            [DashboardController::class, 'index']
+        )->name('dashboard');
 
 
         /*
@@ -128,25 +199,17 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/settings', [SettingController::class, 'index'])
-            ->name('settings');
+        Route::get(
+            '/settings',
+            [SettingController::class, 'index']
+        )->name('settings');
 
-        Route::put('/settings', [SettingController::class, 'update'])
-            ->name('settings.update');
+        Route::put(
+            '/settings',
+            [SettingController::class, 'update']
+        )->name('settings.update');
 
-            /*
-        |--------------------------------------------------------------------------
-        | Profile
-        |--------------------------------------------------------------------------
-        */
-            Route::get('/profil',
-    [PublicController::class, 'profile']
-)->name('profile');
 
-Route::resource('events', EventController::class)
-    ->except([
-        'show',
-    ]);
         /*
         |--------------------------------------------------------------------------
         | Programs
@@ -154,71 +217,23 @@ Route::resource('events', EventController::class)
         */
 
         Route::resource('programs', ProgramController::class)
-            ->except(['show']);
+            ->except([
+                'show',
+            ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | News
-        |--------------------------------------------------------------------------
-        */
-            Route::get(
-    '/berita',
-    [NewsController::class, 'index']
-)->name('news.index');
-
-Route::get(
-    '/berita/{news}',
-    [NewsController::class, 'show']
-)->name('news.show');
 
         /*
         |--------------------------------------------------------------------------
         | Teachers
         |--------------------------------------------------------------------------
         */
-            Route::resource('teachers', TeacherController::class)
-    ->except([
-        'show',
-    ]);
-        /*
-        |--------------------------------------------------------------------------
-        | Announcements
-        |--------------------------------------------------------------------------
-        */
-    Route::resource('announcements', AnnouncementController::class)
-    ->except([
-        'show',
-    ]);
-    /*
-        |--------------------------------------------------------------------------
-        | Galleries
-        |--------------------------------------------------------------------------
-        */
-    Route::resource('galleries', GalleryController::class)
-    ->except([
-        'show',
-    ]);
 
-   /*
-|--------------------------------------------------------------------------
-| Registrations
-|--------------------------------------------------------------------------
-*/
+        Route::resource('teachers', TeacherController::class)
+            ->except([
+                'show',
+            ]);
 
-Route::get(
-    '/registrations/{registration}/document',
-    [\App\Http\Controllers\Admin\RegistrationController::class, 'document']
-)->name('registrations.document');
 
-Route::resource(
-    'registrations',
-    \App\Http\Controllers\Admin\RegistrationController::class
-)->only([
-    'index',
-    'show',
-    'update',
-    'destroy',
-]);
         /*
         |--------------------------------------------------------------------------
         | News
@@ -226,5 +241,79 @@ Route::resource(
         */
 
         Route::resource('news', NewsController::class)
-            ->except(['show']);
+            ->except([
+                'show',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Announcements
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource('announcements', AnnouncementController::class)
+            ->except([
+                'show',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Events
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource('events', EventController::class)
+            ->except([
+                'show',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Galleries
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource('galleries', GalleryController::class)
+            ->except([
+                'show',
+            ]);
+
+            /*
+|--------------------------------------------------------------------------
+| Contacts
+|--------------------------------------------------------------------------
+*/
+
+Route::resource(
+    'contacts',
+    ContactController::class
+)->only([
+    'index',
+    'show',
+    'destroy',
+]);
+        /*
+        |--------------------------------------------------------------------------
+        | Registrations
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/registrations/{registration}/document',
+            [RegistrationController::class, 'document']
+        )->name('registrations.document');
+
+
+        Route::resource(
+            'registrations',
+            RegistrationController::class
+        )->only([
+            'index',
+            'show',
+            'update',
+            'destroy',
+        ]);
     });

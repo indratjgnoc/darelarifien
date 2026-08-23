@@ -41,7 +41,7 @@
             >
                 Selamat datang kembali.
                 Pantau aktivitas Pesantren
-                Darel Arifien dari sini.
+                {{ $settings['school_name'] ?? '' }} dari sini.
             </p>
 
         </div>

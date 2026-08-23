@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.app')
 
 @section('title', 'Berita')
 
@@ -20,7 +20,7 @@
 
         <p class="mt-5 max-w-2xl leading-8 text-white/50">
             Informasi terbaru seputar kegiatan dan perkembangan
-            Pesantren Darel Arifien.
+            Pesantren {{ $settings['school_name'] ?? '' }}.
         </p>
 
     </div>

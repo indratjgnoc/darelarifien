@@ -38,7 +38,7 @@
                        text-gray-500"
             >
                 Kelola informasi dan berita
-                Pesantren Darel Arifien.
+                Pesantren {{ $settings['school_name'] ?? '' }}.
             </p>
 
         </div>

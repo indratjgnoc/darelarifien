@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.app')
 
 @section('title', 'Galeri')
 
@@ -29,7 +29,7 @@
         >
             Dokumentasi kegiatan, pembelajaran,
             dan berbagai aktivitas Pesantren
-            Darel Arifien.
+            {{ $settings['school_name'] ?? '' }}.
         </p>
 
     </div>

@@ -38,7 +38,7 @@
 
         <p class="mt-2 text-gray-500">
             Publikasikan informasi resmi
-            Pesantren Darel Arifien.
+            Pesantren {{ $settings['school_name'] ?? '' }}.
         </p>
 
     </div>

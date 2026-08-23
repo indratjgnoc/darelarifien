@@ -27,7 +27,7 @@
 
                 <div>
                     <h3 class="font-bold tracking-wide">
-                        DAREL ARIFIEN
+                        {{ $settings['school_name'] ?? '' }}
                     </h3>
 
                     <p class="text-xs text-gray-400">
@@ -38,7 +38,7 @@
             </div>
 
             <p class="text-sm leading-7 text-gray-400">
-                Pesantren Darel Arifien hadir untuk membentuk
+                Pesantren {{ $settings['school_name'] ?? '' }} hadir untuk membentuk
                 generasi yang berilmu, berakhlak mulia,
                 mandiri dan berpegang teguh pada nilai-nilai
                 Al-Qur'an dan Sunnah.
@@ -135,7 +135,7 @@
                     ></i>
 
                     <span>
-                        Alamat Pesantren Darel Arifien
+                        Alamat Pesantren {{ $settings['school_name'] ?? '' }}
                     </span>
 
                 </li>
@@ -189,7 +189,7 @@
             >
                 Dapatkan informasi terbaru mengenai
                 kegiatan dan aktivitas Pesantren
-                Darel Arifien.
+                {{ $settings['school_name'] ?? '' }}.
             </p>
 
             <div class="flex gap-3">
@@ -253,7 +253,7 @@
 
             <p>
                 © {{ date('Y') }}
-                Pesantren Darel Arifien.
+                Pesantren {{ $settings['school_name'] ?? '' }}.
                 Semua Hak Dilindungi.
             </p>
 

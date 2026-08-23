@@ -9,7 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Login | Darel Arifien</title>
+    <title>Login | {{ $settings['school_name'] ?? '' }}</title>
 
     @vite([
         'resources/css/app.css',
@@ -36,7 +36,7 @@
                 </div>
 
                 <h1 class="mt-5 text-2xl font-black text-gray-900">
-                    Darel Arifien
+                   {{ $settings['school_name'] ?? '' }}
                 </h1>
 
                 <p class="mt-2 text-sm text-gray-500">

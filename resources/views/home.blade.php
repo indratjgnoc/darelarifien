@@ -4,7 +4,7 @@
 
 @section(
     'description',
-    'Website resmi Pesantren Darel Arifien. Informasi pendidikan, program, kegiatan dan pendaftaran santri.'
+    'Website resmi Pesantren {{ $settings['school_name'] ?? '' }}. Informasi pendidikan, program, kegiatan dan pendaftaran santri.'
 )
 
 @section('content')
@@ -117,7 +117,7 @@
                        text-white/60
                        sm:text-lg"
             >
-                Pesantren Darel Arifien hadir
+                Pesantren {{ $settings['school_name'] ?? '' }} hadir
                 sebagai tempat pendidikan
                 yang memadukan ilmu,
                 pembentukan karakter,
@@ -130,59 +130,6 @@
                        flex flex-wrap
                        gap-4"
             >
-
-                <a
-                    href="{{ route(
-                        'registration.create'
-                    ) }}"
-                    class="inline-flex
-                           items-center
-                           gap-2
-                           rounded-xl
-                           bg-[#F4C542]
-                           px-6 py-3.5
-                           text-sm
-                           font-black
-                           text-[#062E1F]
-                           transition
-                           hover:-translate-y-1
-                           hover:bg-[#FFD85C]"
-                >
-
-                    Mulai Pendaftaran
-
-                    <i
-                        data-lucide="arrow-up-right"
-                        class="h-4 w-4"
-                    ></i>
-
-                </a>
-
-
-                <a
-                    href="#profil"
-                    class="inline-flex
-                           items-center
-                           gap-2
-                           rounded-xl
-                           border
-                           border-white/15
-                           px-6 py-3.5
-                           text-sm
-                           font-black
-                           text-white
-                           transition
-                           hover:bg-white/5"
-                >
-
-                    Kenali Kami
-
-                    <i
-                        data-lucide="arrow-down"
-                        class="h-4 w-4"
-                    ></i>
-
-                </a>
 
             </div>
 
@@ -280,7 +227,7 @@
                                    font-black
                                    text-white"
                         >
-                            Darel Arifien
+                           {{ $settings['school_name'] ?? '' }}
                         </h2>
 
 
@@ -364,7 +311,7 @@
                        leading-8
                        text-gray-500"
             >
-                Pesantren Darel Arifien
+                Pesantren {{ $settings['school_name'] ?? '' }}
                 berkomitmen menghadirkan
                 lingkungan pendidikan yang
                 mendorong santri untuk
@@ -496,7 +443,7 @@
                            font-black"
                 >
                     Pilihan Program
-                    Darel Arifien
+                    {{ $settings['school_name'] ?? '' }}
                 </h2>
 
             </div>
@@ -1001,7 +948,7 @@
                    sm:text-4xl"
         >
             Mari tumbuh dan belajar
-            bersama Darel Arifien.
+            bersama {{ $settings['school_name'] ?? '' }}.
         </h2>
 
 

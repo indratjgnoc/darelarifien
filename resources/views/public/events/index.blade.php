@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.app')
 
 @section('title', 'Agenda Pesantren')
 
@@ -28,7 +28,7 @@
         >
             Lihat berbagai kegiatan dan agenda
             yang dilaksanakan di Pesantren
-            Darel Arifien.
+            {{ $settings['school_name'] ?? '' }}.
         </p>
 
     </div>

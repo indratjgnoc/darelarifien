@@ -12,13 +12,17 @@ class SettingController extends Controller
     {
         $settings = Setting::pluck('value', 'key');
 
-        return view('admin.settings.index', compact('settings'));
+        return view(
+            'admin.settings.index',
+            compact('settings')
+        );
     }
 
 
     public function update(Request $request)
     {
         $validated = $request->validate([
+
             'school_name' => [
                 'required',
                 'string',
@@ -86,8 +90,26 @@ class SettingController extends Controller
                 'nullable',
                 'string',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pendaftaran Siswa Baru
+            |--------------------------------------------------------------------------
+            */
+
+            'registration_open' => [
+                'nullable',
+                'boolean',
+            ],
+
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan Pengaturan
+        |--------------------------------------------------------------------------
+        */
 
         foreach ($validated as $key => $value) {
 
@@ -97,6 +119,26 @@ class SettingController extends Controller
             );
 
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Checkbox OFF
+        |--------------------------------------------------------------------------
+        |
+        | Checkbox HTML tidak mengirim value ketika tidak dicentang.
+        | Karena itu kita harus menyimpan 0 secara manual.
+        |
+        */
+
+        Setting::updateOrCreate(
+            ['key' => 'registration_open'],
+            [
+                'value' => $request->has('registration_open')
+                    ? '1'
+                    : '0',
+            ]
+        );
 
 
         return back()->with(

@@ -93,7 +93,7 @@
                         class="text-lg font-extrabold leading-tight
                                tracking-wide text-[#04532F]"
                     >
-                        DAREL ARIFIEN
+                        {{ $settings['school_name'] ?? '' }}
                     </h1>
 
                     <p
