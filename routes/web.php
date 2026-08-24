@@ -17,6 +17,9 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Guru\GuruDashboardController;
+use App\Http\Controllers\Guru\GuruProfileController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -159,20 +162,43 @@ Route::post(
     ->middleware('auth')
     ->name('logout');
 
+// ==============================
+// GURU
+// ==============================
+
+Route::prefix('guru')
+    ->name('guru.')
+    ->middleware(['auth', 'role:guru'])
+    ->group(function () {
+
+        Route::get('/dashboard', [
+            GuruDashboardController::class,
+            'index'
+        ])->name('dashboard');
+    });
+
+    Route::prefix('guru')
+    ->name('guru.')
+    ->middleware('auth')
+    ->group(function () {
+
+        Route::get(
+            '/dashboard',
+            [GuruDashboardController::class, 'index']
+        )->name('dashboard');
+
+
+        Route::get(
+            '/profil',
+            [GuruProfileController::class, 'index']
+        )->name('profile');
+
+    });
 
 /*
 |--------------------------------------------------------------------------
 | ADMIN
 |--------------------------------------------------------------------------
-|
-| Semua route di bawah ini:
-|
-| /admin/...
-|
-| hanya dapat diakses oleh:
-| - user yang login
-| - user dengan role admin
-|
 */
 
 Route::prefix('admin')
@@ -281,20 +307,20 @@ Route::prefix('admin')
                 'show',
             ]);
 
-            /*
+        /*
 |--------------------------------------------------------------------------
 | Contacts
 |--------------------------------------------------------------------------
 */
 
-Route::resource(
-    'contacts',
-    ContactController::class
-)->only([
-    'index',
-    'show',
-    'destroy',
-]);
+        Route::resource(
+            'contacts',
+            ContactController::class
+        )->only([
+            'index',
+            'show',
+            'destroy',
+        ]);
         /*
         |--------------------------------------------------------------------------
         | Registrations
