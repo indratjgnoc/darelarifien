@@ -25,15 +25,41 @@
 
             <div class="mb-8 text-center">
 
-                <div
-                    class="mx-auto flex h-20 w-20
-                           items-center justify-center
-                           rounded-2xl bg-[#F4C542]"
-                >
-                    <span class="text-2xl font-black text-black">
-                        DA
-                    </span>
-                </div>
+               <div class="mb-6 flex justify-center">
+
+    @if (!empty($settings['logo']))
+
+        <img
+            src="{{ asset('storage/' . $settings['logo']) }}"
+            alt="{{ $settings['school_name'] ?? 'Pesantren' }}"
+            class="h-30 w-30 rounded-2xl
+                   object-contain
+                   bg-white
+                   p-2
+                   shadow-lg"
+        >
+
+    @else
+
+        <div
+            class="flex h-20 w-20
+                   items-center justify-center
+                   rounded-2xl
+                   bg-[#F4C542]
+                   text-[#062E1F]
+                   shadow-lg"
+        >
+
+            <i
+                data-lucide="landmark"
+                class="h-10 w-10"
+            ></i>
+
+        </div>
+
+    @endif
+
+</div>
 
                 <h1 class="mt-5 text-2xl font-black text-gray-900">
                    {{ $settings['school_name'] ?? '' }}

@@ -4,24 +4,15 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="csrf-token"
-        content="{{ csrf_token() }}"
-    >
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
         @yield('title', 'Dashboard') - {{ $settings['school_name'] ?? 'n' }}
     </title>
 
-    @vite([
-        'resources/css/app.css',
-        'resources/js/app.js'
-    ])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-[#F5F7F6] text-gray-900">
@@ -32,28 +23,27 @@
         <aside
             class="fixed inset-y-0 left-0 z-50
                    flex w-72 flex-col
-                   bg-[#062E1F] text-white"
-        >
+                   bg-[#062E1F] text-white">
 
             {{-- Logo --}}
             <div
                 class="flex h-24 items-center
                        gap-4 border-b
-                       border-white/10 px-7"
-            >
+                       border-white/10 px-7">
 
-                <div
-                    class="flex h-12 w-12
-                           items-center justify-center
-                           rounded-xl bg-[#F4C542]"
-                >
-                    <span
-                        class="text-lg font-black
-                               text-[#111111]"
-                    >
-                        DA
-                    </span>
-                </div>
+                @if (!empty($settings['logo']))
+                    <img src="{{ asset('storage/' . $settings['logo']) }}"
+                        alt="{{ $settings['school_name'] ?? 'Pesantren' }}" class="h-15 w-15 rounded-xl object-contain">
+                @else
+                    <div
+                        class="flex h-11 w-11
+               items-center justify-center
+               rounded-xl
+               bg-[#F4C542]
+               text-[#062E1F]">
+                        <i data-lucide="landmark" class="h-6 w-6"></i>
+                    </div>
+                @endif
 
                 <div>
                     <h1 class="font-black tracking-wide">
@@ -72,18 +62,13 @@
             <nav class="flex-1 space-y-2 overflow-y-auto p-5">
 
                 {{-- Dashboard --}}
-                <a
-                    href="{{ route('admin.dashboard') }}"
+                <a href="{{ route('admin.dashboard') }}"
                     class="flex items-center gap-3
                            rounded-xl px-4 py-3
                            font-semibold
-                           bg-[#087443]"
-                >
+                           bg-[#087443]">
 
-                    <i
-                        data-lucide="layout-dashboard"
-                        class="h-5 w-5"
-                    ></i>
+                    <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
 
                     <span>Dashboard</span>
 
@@ -97,30 +82,23 @@
                         class="mb-3 px-4 text-[11px]
                                font-bold uppercase
                                tracking-widest
-                               text-white/30"
-                    >
+                               text-white/30">
                         Website
                     </p>
 
-                    <a
-    href="{{ route('admin.settings') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.settings') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.settings')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="settings"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="settings" class="h-5 w-5"></i>
 
-    <span>Pengaturan</span>
+                        <span>Pengaturan</span>
 
-</a>
+                    </a>
 
                 </div>
 
@@ -132,92 +110,67 @@
                         class="mb-3 px-4 text-[11px]
                                font-bold uppercase
                                tracking-widest
-                               text-white/30"
-                    >
+                               text-white/30">
                         Konten
                     </p>
 
 
-                  <a
-        href="{{ route('admin.news.index') }}"
-        class="flex items-center gap-3
+                    <a href="{{ route('admin.news.index') }}"
+                        class="flex items-center gap-3
                rounded-xl px-4 py-3
                transition
                {{ request()->routeIs('admin.news.*')
-                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                    : 'text-white/70 hover:bg-white/5 hover:text-white'
-               }}"
-    >
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-        <i
-            data-lucide="newspaper"
-            class="h-5 w-5"
-        ></i>
+                        <i data-lucide="newspaper" class="h-5 w-5"></i>
 
-        <span>Berita</span>
+                        <span>Berita</span>
 
-    </a>
+                    </a>
 
-<a
-    href="{{ route('admin.announcements.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.announcements.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.announcements.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="megaphone"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="megaphone" class="h-5 w-5"></i>
 
-    <span>Pengumuman</span>
+                        <span>Pengumuman</span>
 
-</a>
+                    </a>
 
 
-<a
-    href="{{ route('admin.events.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.events.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.events.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="calendar-days"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="calendar-days" class="h-5 w-5"></i>
 
-    <span>Agenda / Event</span>
+                        <span>Agenda / Event</span>
 
-</a>
+                    </a>
 
-<a
-    href="{{ route('admin.galleries.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.galleries.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.galleries.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="images"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="images" class="h-5 w-5"></i>
 
-    <span>Galeri</span>
+                        <span>Galeri</span>
 
-</a>
+                    </a>
 
                 </div>
 
@@ -229,90 +182,70 @@
                         class="mb-3 px-4 text-[11px]
                                font-bold uppercase
                                tracking-widest
-                               text-white/30"
-                    >
+                               text-white/30">
                         Akademik
                     </p>
 
 
-                    <a
-    href="{{ route('admin.programs.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.programs.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.programs.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="graduation-cap"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="graduation-cap" class="h-5 w-5"></i>
 
-    <span>Program Pendidikan</span>
+                        <span>Program Pendidikan</span>
 
-</a>
+                    </a>
 
-                   <a
-    href="{{ route('admin.teachers.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.teachers.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.teachers.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="users-round"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="users-round" class="h-5 w-5"></i>
 
-    <span>Ustadz & Ustadzah</span>
+                        <span>Ustadz & Ustadzah</span>
 
-</a>
+                    </a>
 
                 </div>
 
-{{-- Komunikasi --}}
+                {{-- Komunikasi --}}
 
-<div class="pt-6">
+                <div class="pt-6">
 
-    <p
-        class="mb-3 px-4
+                    <p
+                        class="mb-3 px-4
                text-[11px]
                font-bold uppercase
                tracking-widest
-               text-white/30"
-    >
-        Komunikasi
-    </p>
+               text-white/30">
+                        Komunikasi
+                    </p>
 
 
-     <a
-    href="{{ route('admin.contacts.index') }}"
-    class="mt-1 flex items-center gap-3
+                    <a href="{{ route('admin.contacts.index') }}"
+                        class="mt-1 flex items-center gap-3
            rounded-xl px-4 py-3
            transition
            {{ request()->routeIs('admin.contacts.*')
-                ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                : 'text-white/70 hover:bg-white/5 hover:text-white'
-           }}"
->
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-         data-lucide="messages-square"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="messages-square" class="h-5 w-5"></i>
 
-    <span>Pesan Masuk</span>
+                        <span>Pesan Masuk</span>
 
-</a>
+                    </a>
 
-</div>
+                </div>
                 {{-- Pendaftaran --}}
                 <div class="pt-6">
 
@@ -320,31 +253,24 @@
                         class="mb-3 px-4 text-[11px]
                                font-bold uppercase
                                tracking-widest
-                               text-white/30"
-                    >
+                               text-white/30">
                         Pendaftaran
                     </p>
 
 
-                    <a
-    href="{{ route('admin.registrations.index') }}"
-    class="flex items-center gap-3
+                    <a href="{{ route('admin.registrations.index') }}"
+                        class="flex items-center gap-3
                rounded-xl px-4 py-3
                transition
                {{ request()->routeIs('admin.registrations.*')
-                    ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-                    : 'text-white/70 hover:bg-white/5 hover:text-white'
-               }}"
->
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-    <i
-        data-lucide="clipboard-pen"
-        class="h-5 w-5"
-    ></i>
+                        <i data-lucide="clipboard-pen" class="h-5 w-5"></i>
 
-    <span>Calon Santri</span>
+                        <span>Calon Santri</span>
 
-</a>
+                    </a>
 
                 </div>
 
@@ -354,33 +280,23 @@
 
 
             {{-- Bottom Sidebar --}}
-            <div
-                class="border-t
-                       border-white/10 p-5"
-            >
+            <div class="border-t
+                       border-white/10 p-5">
 
-                <form
-                    action="{{ route('logout') }}"
-                    method="POST"
-                >
+                <form action="{{ route('logout') }}" method="POST">
 
                     @csrf
 
-                    <button
-                        type="submit"
+                    <button type="submit"
                         class="flex w-full
                                items-center gap-3
                                rounded-xl px-4 py-3
                                text-white/60
                                transition
                                hover:bg-red-500/10
-                               hover:text-red-400"
-                    >
+                               hover:text-red-400">
 
-                        <i
-                            data-lucide="log-out"
-                            class="h-5 w-5"
-                        ></i>
+                        <i data-lucide="log-out" class="h-5 w-5"></i>
 
                         <span>Keluar</span>
 
@@ -403,23 +319,19 @@
                        justify-between
                        border-b border-gray-200
                        bg-white/90 px-8
-                       backdrop-blur"
-            >
+                       backdrop-blur">
 
                 <div>
 
                     <p
                         class="text-xs font-semibold
                                uppercase tracking-wider
-                               text-[#087443]"
-                    >
+                               text-[#087443]">
                         Administrator Panel
                     </p>
 
-                    <h2
-                        class="text-lg font-black
-                               text-[#111111]"
-                    >
+                    <h2 class="text-lg font-black
+                               text-[#111111]">
                         @yield('title', 'Dashboard')
                     </h2>
 
@@ -427,25 +339,17 @@
 
 
                 {{-- Profile --}}
-                <div
-                    class="flex items-center gap-3"
-                >
+                <div class="flex items-center gap-3">
 
-                    <div
-                        class="hidden text-right sm:block"
-                    >
+                    <div class="hidden text-right sm:block">
 
-                        <p
-                            class="text-sm font-bold
-                                   text-gray-800"
-                        >
+                        <p class="text-sm font-bold
+                                   text-gray-800">
                             {{ auth()->user()->name }}
                         </p>
 
-                        <p
-                            class="text-xs
-                                   text-gray-400"
-                        >
+                        <p class="text-xs
+                                   text-gray-400">
                             Administrator
                         </p>
 
@@ -457,8 +361,7 @@
                                justify-center
                                rounded-full
                                bg-[#087443]
-                               font-bold text-white"
-                    >
+                               font-bold text-white">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
 

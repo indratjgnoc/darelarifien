@@ -5,28 +5,20 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="@yield('description', 'Website Resmi Pesantren')">
+    <meta name="description" content="@yield('description', 'Website Resmi Pesantren')">
 
     <title>
         @yield('title', 'Pesantren')
     </title>
 
-    @vite([
-    'resources/css/app.css',
-    'resources/js/app.js'
-    ])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
 
 
-<body
-    class="min-h-screen
+<body class="min-h-screen
            bg-[#F5F7F6]
            text-gray-900
            antialiased">
@@ -53,26 +45,20 @@
 
             {{-- LOGO --}}
 
-            <a
-                href="{{ route('home') }}"
-                class="flex items-center gap-3">
-
-                <div
-                    class="flex h-11 w-11
-                           items-center
-                           justify-center
-                           rounded-xl
-                           bg-[#F4C542]
-                           shadow-lg">
-
-                    <span
-                        class="text-lg
-                               font-black
-                               text-[#062E1F]">
-                        DA
-                    </span>
-
-                </div>
+            <a href="{{ route('home') }}" class="flex items-center gap-3">
+                @if (!empty($settings['logo']))
+                    <img src="{{ asset('storage/' . $settings['logo']) }}"
+                        alt="{{ $settings['school_name'] ?? 'Pesantren' }}" class="h-11 w-11 rounded-xl object-contain">
+                @else
+                    <div
+                        class="flex h-11 w-11
+               items-center justify-center
+               rounded-xl
+               bg-[#F4C542]
+               text-[#062E1F]">
+                        <i data-lucide="landmark" class="h-6 w-6"></i>
+                    </div>
+                @endif
 
 
                 <div>
@@ -108,8 +94,7 @@
                        gap-1
                        lg:flex">
 
-                <a
-                    href="{{ route('home') }}"
+                <a href="{{ route('home') }}"
                     class="rounded-xl px-4 py-2.5
                            text-sm font-bold
                            text-white/70
@@ -120,8 +105,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('profile') }}"
+                <a href="{{ route('profile') }}"
                     class="rounded-xl px-4 py-2.5
                            text-sm font-bold
                            text-white/70
@@ -132,8 +116,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('programs.index') }}"
+                <a href="{{ route('programs.index') }}"
                     class="rounded-xl px-4 py-2.5
                            text-sm font-bold
                            text-white/70
@@ -144,8 +127,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('teachers.index') }}"
+                <a href="{{ route('teachers.index') }}"
                     class="rounded-xl px-4 py-2
            text-sm font-semibold
            text-white/80
@@ -156,8 +138,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('news.index') }}"
+                <a href="{{ route('news.index') }}"
                     class="rounded-xl px-4 py-2.5
                            text-sm font-bold
                            text-white/70
@@ -168,8 +149,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('contact') }}"
+                <a href="{{ route('contact') }}"
                     class="rounded-xl px-4 py-2.5
                            text-sm font-bold
                            text-white/70
@@ -184,10 +164,7 @@
 
             {{-- CTA --}}
 
-            <a
-                href="{{ route(
-                    'registration.create'
-                ) }}"
+            <a href="{{ route('registration.create') }}"
                 class="hidden
                        items-center
                        gap-2
@@ -204,18 +181,14 @@
 
                 Daftar Sekarang
 
-                <i
-                    data-lucide="arrow-up-right"
-                    class="h-4 w-4"></i>
+                <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
 
             </a>
 
 
             {{-- MOBILE BUTTON --}}
 
-            <button
-                type="button"
-                id="mobile-menu-button"
+            <button type="button" id="mobile-menu-button"
                 class="flex h-11 w-11
                        items-center
                        justify-center
@@ -224,9 +197,7 @@
                        hover:bg-white/5
                        lg:hidden">
 
-                <i
-                    data-lucide="menu"
-                    class="h-6 w-6"></i>
+                <i data-lucide="menu" class="h-6 w-6"></i>
 
             </button>
 
@@ -234,23 +205,20 @@
 
         {{-- MOBILE MENU --}}
 
-        <div
-            id="mobile-menu"
+        <div id="mobile-menu"
             class="hidden
            border-t
            border-white/10
            bg-[#062E1F]
            lg:hidden">
 
-            <nav
-                class="flex
+            <nav class="flex
                flex-col
                gap-1
                px-6
                py-4">
 
-                <a
-                    href="{{ route('home') }}"
+                <a href="{{ route('home') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -263,8 +231,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('profile') }}"
+                <a href="{{ route('profile') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -277,8 +244,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('programs.index') }}"
+                <a href="{{ route('programs.index') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -291,8 +257,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('teachers.index') }}"
+                <a href="{{ route('teachers.index') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -305,8 +270,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('news.index') }}"
+                <a href="{{ route('news.index') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -319,8 +283,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('contact') }}"
+                <a href="{{ route('contact') }}"
                     class="rounded-xl
                    px-4 py-3
                    text-sm
@@ -333,8 +296,7 @@
                 </a>
 
 
-                <a
-                    href="{{ route('registration.create') }}"
+                <a href="{{ route('registration.create') }}"
                     class="mt-3
                    flex
                    items-center
@@ -351,9 +313,7 @@
 
                     Daftar Sekarang
 
-                    <i
-                        data-lucide="arrow-up-right"
-                        class="h-4 w-4"></i>
+                    <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
 
                 </a>
 
@@ -372,9 +332,7 @@
 
         {{-- FOOTER --}}
 
-        <footer
-            id="kontak"
-            class="bg-[#041F15]
+        <footer id="kontak" class="bg-[#041F15]
                text-white">
 
             <div
@@ -384,44 +342,38 @@
                    sm:px-10
                    lg:px-16">
 
-                <div
-                    class="grid gap-10
+                <div class="grid gap-10
                        md:grid-cols-2
                        lg:grid-cols-4">
 
                     {{-- BRAND --}}
 
-                    <div
-                        class="lg:col-span-2">
+                    <div class="lg:col-span-2">
 
-                        <div
-                            class="flex items-center gap-3">
-
-                            <div
-                                class="flex h-11 w-11
-                                   items-center
-                                   justify-center
-                                   rounded-xl
-                                   bg-[#F4C542]">
-
-                                <span
-                                    class="font-black
-                                       text-[#062E1F]">
-                                    DA
-                                </span>
-
-                            </div>
+                        <div class="flex items-center gap-3">
+                            @if (!empty($settings['logo']))
+                                <img src="{{ asset('storage/' . $settings['logo']) }}"
+                                    alt="{{ $settings['school_name'] ?? 'Pesantren' }}"
+                                    class="h-11 w-11 rounded-xl object-contain">
+                            @else
+                                <div
+                                    class="flex h-11 w-11
+               items-center justify-center
+               rounded-xl
+               bg-[#F4C542]
+               text-[#062E1F]">
+                                    <i data-lucide="landmark" class="h-6 w-6"></i>
+                                </div>
+                            @endif
 
 
                             <div>
 
-                                <p
-                                    class="font-black">
+                                <p class="font-black">
                                     {{ $settings['school_name'] ?? '' }}
                                 </p>
 
-                                <p
-                                    class="text-xs
+                                <p class="text-xs
                                        text-white/40">
                                     Pesantren
                                 </p>
@@ -465,11 +417,9 @@
                                text-sm
                                text-white/50">
 
-                            <div
-                                class="flex gap-3">
+                            <div class="flex gap-3">
 
-                                <i
-                                    data-lucide="map-pin"
+                                <i data-lucide="map-pin"
                                     class="mt-0.5
                                        h-5 w-5
                                        shrink-0
@@ -482,11 +432,9 @@
                             </div>
 
 
-                            <div
-                                class="flex gap-3">
+                            <div class="flex gap-3">
 
-                                <i
-                                    data-lucide="phone"
+                                <i data-lucide="phone"
                                     class="h-5 w-5
                                        shrink-0
                                        text-[#F4C542]"></i>
@@ -498,11 +446,9 @@
                             </div>
 
 
-                            <div
-                                class="flex gap-3">
+                            <div class="flex gap-3">
 
-                                <i
-                                    data-lucide="mail"
+                                <i data-lucide="mail"
                                     class="h-5 w-5
                                        shrink-0
                                        text-[#F4C542]"></i>
@@ -526,8 +472,7 @@
                        border-white/10
                        pt-6">
 
-                    <p
-                        class="text-center
+                    <p class="text-center
                            text-xs
                            text-white/30">
                         © {{ date('Y') }}

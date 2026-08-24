@@ -36,7 +36,7 @@
 
         <p class="mt-2 text-gray-500">
             Tambahkan data pengajar Pesantren
-            Darel Arifien.
+            {{ $settings['school_name'] ?? '' }}..
         </p>
 
     </div>

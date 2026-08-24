@@ -90,7 +90,7 @@
         @endif
 
 
-        <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
 
             @csrf
             @method('PUT')
@@ -169,6 +169,81 @@
                     </div>
 
 
+                    {{-- LOGO PESANTREN --}}
+
+                    <div class="md:col-span-2">
+
+                        <label class="mb-2 block text-sm font-bold text-gray-700">
+                            Logo Pesantren
+                        </label>
+
+                        <div class="flex flex-col gap-5 md:flex-row md:items-center">
+
+                            {{-- PREVIEW LOGO --}}
+                            <div
+                                class="flex h-28 w-28 shrink-0
+                   items-center justify-center
+                   overflow-hidden
+                   rounded-2xl
+                   border border-gray-200
+                   bg-gray-50">
+
+                                @if (!empty($settings['logo']))
+                                    <img src="{{ asset('storage/' . $settings['logo']) }}"
+                                        alt="Logo {{ $settings['school_name'] ?? 'Pesantren' }}"
+                                        class="h-full w-full object-contain p-3">
+                                @else
+                                    <div class="text-center text-gray-400">
+
+                                        <i data-lucide="image" class="mx-auto h-8 w-8"></i>
+
+                                        <p class="mt-1 text-[10px] font-semibold">
+                                            Belum ada logo
+                                        </p>
+
+                                    </div>
+                                @endif
+
+                            </div>
+
+
+                            {{-- UPLOAD --}}
+                            <div class="flex-1">
+
+                                <input type="file" name="logo" accept="image/png,image/jpeg,image/jpg,image/webp"
+                                    class="block w-full rounded-xl
+                       border border-gray-200
+                       bg-gray-50
+                       px-4 py-3
+                       text-sm
+                       file:mr-4
+                       file:rounded-lg
+                       file:border-0
+                       file:bg-[#087443]
+                       file:px-4
+                       file:py-2
+                       file:text-sm
+                       file:font-bold
+                       file:text-white
+                       hover:file:bg-[#062E1F]">
+
+                                <p class="mt-2 text-xs text-gray-400">
+                                    Format: PNG, JPG, JPEG atau WEBP.
+                                    Maksimal 2 MB.
+                                </p>
+
+                                @error('logo')
+                                    <p class="mt-2 text-xs font-semibold text-red-600">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
                     {{-- EMAIL --}}
 
                     <div>
@@ -178,8 +253,7 @@
                             Email
                         </label>
 
-                        <input type="email" name="email"
-                            value="{{ old('email', $settings['email'] ?? '') }}"
+                        <input type="email" name="email" value="{{ old('email', $settings['email'] ?? '') }}"
                             class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
@@ -202,8 +276,7 @@
                             Nomor Telepon
                         </label>
 
-                        <input type="text" name="phone"
-                            value="{{ old('phone', $settings['phone'] ?? '') }}"
+                        <input type="text" name="phone" value="{{ old('phone', $settings['phone'] ?? '') }}"
                             class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
@@ -226,8 +299,7 @@
                             WhatsApp
                         </label>
 
-                        <input type="text" name="whatsapp"
-                            value="{{ old('whatsapp', $settings['whatsapp'] ?? '') }}"
+                        <input type="text" name="whatsapp" value="{{ old('whatsapp', $settings['whatsapp'] ?? '') }}"
                             class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
@@ -397,8 +469,7 @@
                             Facebook
                         </label>
 
-                        <input type="text" name="facebook"
-                            value="{{ old('facebook', $settings['facebook'] ?? '') }}"
+                        <input type="text" name="facebook" value="{{ old('facebook', $settings['facebook'] ?? '') }}"
                             class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
@@ -435,8 +506,7 @@
                             YouTube
                         </label>
 
-                        <input type="text" name="youtube"
-                            value="{{ old('youtube', $settings['youtube'] ?? '') }}"
+                        <input type="text" name="youtube" value="{{ old('youtube', $settings['youtube'] ?? '') }}"
                             class="w-full rounded-xl
                                border border-gray-200
                                bg-gray-50 px-4 py-3
