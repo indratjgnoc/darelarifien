@@ -1,265 +1,181 @@
 @extends('layouts.guru')
 
-@section('title', 'Profil Saya')
-
-@section('page-title', 'Profil Saya')
+@section('title', 'Profil Guru')
 
 @section('content')
 
-<div class="mx-auto max-w-5xl">
+<div class="max-w-5xl mx-auto">
 
-    @if (!$teacher)
+    {{-- HEADER --}}
+    <div class="mb-8">
 
-        <div
-            class="rounded-3xl
-                   border border-yellow-200
-                   bg-yellow-50
-                   p-6
-                   text-yellow-800"
-        >
+        <h1 class="text-2xl font-black text-gray-900">
+            Profil Saya
+        </h1>
 
-            <div class="flex items-start gap-4">
+        <p class="mt-1 text-sm text-gray-500">
+            Informasi profil dan data akademik Anda.
+        </p>
 
-                <div
-                    class="flex h-11 w-11
-                           shrink-0
-                           items-center justify-center
-                           rounded-xl
-                           bg-yellow-100"
-                >
+    </div>
 
-                    <i data-lucide="triangle-alert" class="h-5 w-5"></i>
+
+    {{-- PROFILE CARD --}}
+    <div class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-100">
+
+        <div class="h-32 bg-gradient-to-r from-[#062E1F] to-[#087443]">
+        </div>
+
+
+        <div class="px-6 pb-8">
+
+            <div class="-mt-16 mb-6 flex flex-col gap-5 sm:flex-row sm:items-end">
+
+                {{-- FOTO --}}
+                <div class="h-32 w-32 overflow-hidden rounded-3xl border-4 border-white bg-gray-100 shadow-lg">
+
+                    @if ($teacher && $teacher->photo)
+
+                        <img
+                            src="{{ asset('storage/' . $teacher->photo) }}"
+                            alt="{{ $teacher->name }}"
+                            class="h-full w-full object-cover"
+                        >
+
+                    @else
+
+                        <div class="flex h-full w-full items-center justify-center text-gray-400">
+
+                            <i data-lucide="user" class="h-14 w-14"></i>
+
+                        </div>
+
+                    @endif
 
                 </div>
 
-                <div>
 
-                    <h2 class="font-black">
-                        Profil guru belum terhubung
+                {{-- NAMA --}}
+                <div class="pb-1">
+
+                    <h2 class="text-2xl font-black text-gray-900">
+
+                        {{ $teacher->name ?? $user->name }}
+
                     </h2>
 
-                    <p class="mt-1 text-sm">
-                        Akun Anda sudah memiliki role guru,
-                        tetapi belum terhubung dengan data guru.
+                    <p class="mt-1 text-sm font-semibold text-[#087443]">
+
+                        {{ $teacher->position ?? 'Guru' }}
+
                     </p>
 
                 </div>
 
             </div>
 
-        </div>
 
-    @else
+            {{-- DATA --}}
+            <div class="grid gap-5 md:grid-cols-2">
 
-        {{-- HEADER PROFIL --}}
+                {{-- EMAIL --}}
+                <div class="rounded-2xl bg-gray-50 p-5">
 
-        <div
-            class="overflow-hidden
-                   rounded-3xl
-                   bg-[#062E1F]
-                   shadow-xl"
-        >
+                    <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Email
+                    </p>
 
-            <div class="p-8">
+                    <p class="mt-2 font-semibold text-gray-900">
+                        {{ $user->email }}
+                    </p>
 
-                <div
-                    class="flex flex-col
-                           gap-6
-                           md:flex-row
-                           md:items-center"
-                >
+                </div>
 
-                    {{-- FOTO --}}
 
-                    <div
-                        class="flex h-28 w-28
-                               shrink-0
-                               items-center
-                               justify-center
-                               overflow-hidden
-                               rounded-3xl
-                               bg-[#087443]
-                               text-white"
-                    >
+                {{-- JABATAN --}}
+                <div class="rounded-2xl bg-gray-50 p-5">
 
-                        @if ($teacher->photo)
+                    <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Jabatan
+                    </p>
 
-                            <img
-                                src="{{ asset('storage/' . $teacher->photo) }}"
-                                alt="{{ $teacher->name }}"
-                                class="h-full w-full object-cover"
-                            >
+                    <p class="mt-2 font-semibold text-gray-900">
+                        {{ $teacher->position ?? '-' }}
+                    </p>
+
+                </div>
+
+
+                {{-- PENDIDIKAN --}}
+                <div class="rounded-2xl bg-gray-50 p-5">
+
+                    <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Pendidikan
+                    </p>
+
+                    <p class="mt-2 font-semibold text-gray-900">
+                        {{ $teacher->education ?? '-' }}
+                    </p>
+
+                </div>
+
+
+                {{-- STATUS --}}
+                <div class="rounded-2xl bg-gray-50 p-5">
+
+                    <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Status
+                    </p>
+
+                    <div class="mt-2">
+
+                        @if ($teacher?->is_active)
+
+                            <span class="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+
+                                <span class="h-2 w-2 rounded-full bg-green-500"></span>
+
+                                Aktif
+
+                            </span>
 
                         @else
 
-                            <i
-                                data-lucide="user"
-                                class="h-12 w-12"
-                            ></i>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
+
+                                <span class="h-2 w-2 rounded-full bg-red-500"></span>
+
+                                Tidak Aktif
+
+                            </span>
 
                         @endif
 
                     </div>
 
-
-                    {{-- DATA UTAMA --}}
-
-                    <div>
-
-                        <p
-                            class="text-xs
-                                   font-bold
-                                   uppercase
-                                   tracking-widest
-                                   text-[#F4C542]"
-                        >
-                            Profil Guru
-                        </p>
-
-                        <h2
-                            class="mt-2
-                                   text-3xl
-                                   font-black
-                                   text-white"
-                        >
-                            {{ $teacher->name }}
-                        </h2>
-
-                        <p class="mt-2 text-white/60">
-                            {{ $teacher->position ?: 'Guru' }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- DETAIL --}}
-
-        <div class="mt-6 grid gap-6 md:grid-cols-2">
-
-            {{-- PENDIDIKAN --}}
-
-            <div
-                class="rounded-3xl
-                       bg-white
-                       p-6
-                       shadow-sm
-                       ring-1 ring-gray-100"
-            >
-
-                <div class="flex items-center gap-3">
-
-                    <div
-                        class="flex h-11 w-11
-                               items-center justify-center
-                               rounded-xl
-                               bg-[#087443]/10
-                               text-[#087443]"
-                    >
-
-                        <i data-lucide="graduation-cap" class="h-5 w-5"></i>
-
-                    </div>
-
-                    <div>
-
-                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
-                            Pendidikan
-                        </p>
-
-                        <p class="mt-1 font-black text-gray-900">
-                            {{ $teacher->education ?: 'Belum diisi' }}
-                        </p>
-
-                    </div>
-
                 </div>
 
             </div>
 
 
-            {{-- EMAIL AKUN --}}
+            {{-- BIO --}}
+            <div class="mt-5 rounded-2xl bg-gray-50 p-5">
 
-            <div
-                class="rounded-3xl
-                       bg-white
-                       p-6
-                       shadow-sm
-                       ring-1 ring-gray-100"
-            >
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Biografi
+                </p>
 
-                <div class="flex items-center gap-3">
+                <p class="mt-3 leading-7 text-gray-700">
 
-                    <div
-                        class="flex h-11 w-11
-                               items-center justify-center
-                               rounded-xl
-                               bg-blue-50
-                               text-blue-600"
-                    >
+                    {{ $teacher->bio ?? 'Belum ada informasi biografi.' }}
 
-                        <i data-lucide="mail" class="h-5 w-5"></i>
-
-                    </div>
-
-                    <div class="min-w-0">
-
-                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">
-                            Email Akun
-                        </p>
-
-                        <p class="mt-1 truncate font-black text-gray-900">
-                            {{ auth()->user()->email }}
-                        </p>
-
-                    </div>
-
-                </div>
+                </p>
 
             </div>
 
         </div>
 
-
-        {{-- BIO --}}
-
-        <div
-            class="mt-6
-                   rounded-3xl
-                   bg-white
-                   p-6
-                   shadow-sm
-                   ring-1 ring-gray-100"
-        >
-
-            <h2 class="text-lg font-black text-gray-900">
-                Tentang Saya
-            </h2>
-
-            <div class="mt-4 text-sm leading-7 text-gray-600">
-
-                @if ($teacher->bio)
-
-                    {!! nl2br(e($teacher->bio)) !!}
-
-                @else
-
-                    <span class="text-gray-400">
-                        Belum ada biodata.
-                    </span>
-
-                @endif
-
-            </div>
-
-        </div>
-
-    @endif
+    </div>
 
 </div>
 

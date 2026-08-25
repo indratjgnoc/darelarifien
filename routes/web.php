@@ -17,108 +17,60 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\GuruProfileController;
 
-
 /*
-|--------------------------------------------------------------------------
+|--------------------
 | WEBSITE PUBLIC
-|--------------------------------------------------------------------------
-*/
-
-
-/*
-|--------------------------------------------------------------------------
-| Home
-|--------------------------------------------------------------------------
+|--------------------
 */
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
-
-/*
-|--------------------------------------------------------------------------
-| Profil
-|--------------------------------------------------------------------------
-*/
-
+//Profil
 Route::get('/profil', [PublicController::class, 'profile'])
     ->name('profile');
 
-/*
-|--------------------------------------------------------------------------
-| PENGASUH
-|--------------------------------------------------------------------------
-*/
+//PENGASUH
 Route::get('/pengasuh', [PublicController::class, 'teachers'])
     ->name('teachers.index');
-/*
-|--------------------------------------------------------------------------
-| Program
-|--------------------------------------------------------------------------
-*/
 
+//Program
 Route::get('/program', [PublicController::class, 'programs'])
     ->name('programs.index');
 
 Route::get('/program/{program:slug}', [PublicController::class, 'program'])
     ->name('program.show');
 
-
-/*
-|--------------------------------------------------------------------------
-| Berita
-|--------------------------------------------------------------------------
-*/
-
+//Berita
 Route::get('/berita', [PublicController::class, 'news'])
     ->name('news.index');
 
 Route::get('/berita/{news:slug}', [PublicController::class, 'newsShow'])
     ->name('news.show');
 
-
-/*
-|--------------------------------------------------------------------------
-| Agenda
-|--------------------------------------------------------------------------
-*/
-
+//Agenda
 Route::get('/agenda', [PublicController::class, 'events'])
     ->name('events.index');
 
 Route::get('/agenda/{event:slug}', [PublicController::class, 'eventShow'])
     ->name('events.show');
 
-
-/*
-|--------------------------------------------------------------------------
-| Galeri
-|--------------------------------------------------------------------------
-*/
-
+//Galeri
 Route::get('/galeri', [PublicController::class, 'gallery'])
     ->name('gallery.index');
 
-/*
-|--------------------------------------------------------------------------
-| Kontak
-|--------------------------------------------------------------------------
-*/
+//Kontak
 Route::get('/kontak', [PublicController::class, 'contact'])
     ->name('contact');
 
 Route::post('/kontak', [PublicController::class, 'storeContact'])
     ->name('contact.store');
 
-/*
-|--------------------------------------------------------------------------
-| Pendaftaran
-|--------------------------------------------------------------------------
-*/
-
+//Pendaftaran
 Route::get(
     '/pendaftaran',
     [PublicRegistrationController::class, 'create']
@@ -134,13 +86,11 @@ Route::get(
     [PublicRegistrationController::class, 'success']
 )->name('registration.success');
 
-
 /*
 |--------------------------------------------------------------------------
 | AUTHENTICATION
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
 
     Route::get(
@@ -154,7 +104,6 @@ Route::middleware('guest')->group(function () {
     )->name('login.process');
 });
 
-
 Route::post(
     '/logout',
     [AuthController::class, 'logout']
@@ -163,7 +112,7 @@ Route::post(
     ->name('logout');
 
 // ==============================
-// GURU
+// ROLE GURU
 // ==============================
 
 Route::prefix('guru')
@@ -177,7 +126,7 @@ Route::prefix('guru')
         ])->name('dashboard');
     });
 
-    Route::prefix('guru')
+Route::prefix('guru')
     ->name('guru.')
     ->middleware('auth')
     ->group(function () {
@@ -187,18 +136,16 @@ Route::prefix('guru')
             [GuruDashboardController::class, 'index']
         )->name('dashboard');
 
-
         Route::get(
             '/profil',
             [GuruProfileController::class, 'index']
         )->name('profile');
-
     });
 
 /*
-|--------------------------------------------------------------------------
-| ADMIN
-|--------------------------------------------------------------------------
+|----------------------------
+| ROLE ADMIN
+|----------------------------
 */
 
 Route::prefix('admin')
@@ -206,25 +153,13 @@ Route::prefix('admin')
     ->middleware(['auth', 'admin'])
     ->group(function () {
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Dashboard
-        |--------------------------------------------------------------------------
-        */
-
+        //Dashboard
         Route::get(
             '/dashboard',
             [DashboardController::class, 'index']
         )->name('dashboard');
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Settings
-        |--------------------------------------------------------------------------
-        */
-
+        //Settings
         Route::get(
             '/settings',
             [SettingController::class, 'index']
@@ -236,83 +171,49 @@ Route::prefix('admin')
         )->name('settings.update');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Programs
-        |--------------------------------------------------------------------------
-        */
-
+        //Programs
         Route::resource('programs', ProgramController::class)
             ->except([
                 'show',
             ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Teachers
-        |--------------------------------------------------------------------------
-        */
-
+        //Teachers
         Route::resource('teachers', TeacherController::class)
             ->except([
                 'show',
             ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | News
-        |--------------------------------------------------------------------------
-        */
-
+        //News
         Route::resource('news', NewsController::class)
             ->except([
                 'show',
             ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Announcements
-        |--------------------------------------------------------------------------
-        */
-
+        //Announcements
         Route::resource('announcements', AnnouncementController::class)
             ->except([
                 'show',
             ]);
 
+        //Schedule
+        Route::resource('schedules', ScheduleController::class)
+        ->except([
+                'show',
+            ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Events
-        |--------------------------------------------------------------------------
-        */
-
+        //Events
         Route::resource('events', EventController::class)
             ->except([
                 'show',
             ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Galleries
-        |--------------------------------------------------------------------------
-        */
-
+        //Galleries
         Route::resource('galleries', GalleryController::class)
             ->except([
                 'show',
             ]);
 
-        /*
-|--------------------------------------------------------------------------
-| Contacts
-|--------------------------------------------------------------------------
-*/
-
+        //Contacts
         Route::resource(
             'contacts',
             ContactController::class
@@ -321,17 +222,12 @@ Route::prefix('admin')
             'show',
             'destroy',
         ]);
-        /*
-        |--------------------------------------------------------------------------
-        | Registrations
-        |--------------------------------------------------------------------------
-        */
 
+        //Registrations
         Route::get(
             '/registrations/{registration}/document',
             [RegistrationController::class, 'document']
         )->name('registrations.document');
-
 
         Route::resource(
             'registrations',

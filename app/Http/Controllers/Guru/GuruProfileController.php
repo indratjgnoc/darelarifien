@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class GuruProfileController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $teacher = Auth::user()->teacher;
+        $user = Auth::user();
 
-        return view('guru.profile', compact('teacher'));
+        $teacher = $user->teacher;
+
+        return view('guru.profile', compact(
+            'user',
+            'teacher'
+        ));
     }
 }
