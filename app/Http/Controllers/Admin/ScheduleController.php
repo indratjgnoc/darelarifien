@@ -9,12 +9,6 @@ use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | INDEX
-    |--------------------------------------------------------------------------
-    */
-
     public function index()
     {
         $schedules = Schedule::with('teacher')
@@ -39,12 +33,6 @@ class ScheduleController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
-
     public function create()
     {
         $teachers = Teacher::query()
@@ -59,129 +47,70 @@ class ScheduleController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CEK BENTROK JADWAL
-    |--------------------------------------------------------------------------
-    |
-    | Aturan:
-    |
-    | 1. Guru tidak boleh mengajar 2 mapel
-    |    pada waktu yang sama.
-    |
-    | 2. Kelas tidak boleh memiliki 2 mapel
-    |    pada waktu yang sama.
-    |
-    | 3. Hanya jadwal aktif yang diperiksa.
-    |
-    | 4. Saat edit, jadwal yang sedang diedit
-    |    tidak dihitung sebagai bentrok.
-    |
-    */
-
+    /**
+     * Cek bentrok jadwal.
+     *
+     * Yang dicek:
+     * 1. Guru
+     * 2. Kelas
+     * 3. Ruangan
+     */
     private function hasConflict(
         Request $request,
         ?Schedule $schedule = null
     ): ?string {
 
+        /*
+        |--------------------------------------------------------------------------
+        | QUERY DASAR
+        |--------------------------------------------------------------------------
+        */
+
         $query = Schedule::query()
-
-            // Hari harus sama
-            ->where(
-                'day',
-                $request->day
-            )
-
-            // Hanya jadwal aktif
-            ->where(
-                'is_active',
-                true
-            )
-
-            /*
-            |--------------------------------------------------------------------------
-            | CEK WAKTU BENTROK
-            |--------------------------------------------------------------------------
-            |
-            | Jadwal bentrok apabila:
-            |
-            | jadwal_lama.mulai < jadwal_baru.selesai
-            |
-            | DAN
-            |
-            | jadwal_lama.selesai > jadwal_baru.mulai
-            |
-            */
-
+            ->where('day', $request->day)
+            ->where('is_active', true)
             ->where(function ($query) use ($request) {
 
                 /*
                 |--------------------------------------------------------------------------
-                | BENTROK GURU
+                | WAKTU BENTROK
                 |--------------------------------------------------------------------------
+                |
+                | Contoh:
+                |
+                | Jadwal A : 08:00 - 09:00
+                | Jadwal B : 08:30 - 09:30
+                |
+                | => bentrok
+                |
+                | Tetapi:
+                |
+                | Jadwal A : 08:00 - 09:00
+                | Jadwal B : 09:00 - 10:00
+                |
+                | => tidak bentrok
+                |
                 */
 
-                $query->where(function ($query) use ($request) {
-
-                    $query
-                        ->where(
-                            'teacher_id',
-                            $request->teacher_id
-                        )
-
-                        ->where(
-                            'start_time',
-                            '<',
-                            $request->end_time
-                        )
-
-                        ->where(
-                            'end_time',
-                            '>',
-                            $request->start_time
-                        );
-
-                })
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | ATAU BENTROK KELAS
-                |--------------------------------------------------------------------------
-                */
-
-                ->orWhere(function ($query) use ($request) {
-
-                    $query
-                        ->where(
-                            'class_name',
-                            $request->class_name
-                        )
-
-                        ->where(
-                            'start_time',
-                            '<',
-                            $request->end_time
-                        )
-
-                        ->where(
-                            'end_time',
-                            '>',
-                            $request->start_time
-                        );
-
-                });
+                $query->where(
+                    'start_time',
+                    '<',
+                    $request->end_time
+                )->where(
+                    'end_time',
+                    '>',
+                    $request->start_time
+                );
 
             });
 
 
         /*
         |--------------------------------------------------------------------------
-        | EDIT
+        | JIKA EDIT
         |--------------------------------------------------------------------------
         |
-        | Jangan anggap jadwal yang sedang diedit
-        | sebagai jadwal bentrok dengan dirinya sendiri.
+        | Jangan membandingkan jadwal dengan dirinya sendiri.
         |
         */
 
@@ -192,28 +121,21 @@ class ScheduleController extends Controller
                 '!=',
                 $schedule->id
             );
-
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | CARI JADWAL BENTROK
+        | AMBIL SEMUA JADWAL YANG BENTROK
         |--------------------------------------------------------------------------
         */
 
-        $conflict = $query
+        $conflicts = $query
             ->with('teacher')
-            ->first();
+            ->get();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TIDAK ADA BENTROK
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$conflict) {
+        if ($conflicts->isEmpty()) {
 
             return null;
 
@@ -222,70 +144,106 @@ class ScheduleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | GURU DAN KELAS SAMA-SAMA BENTROK
+        | CEK SATU PER SATU
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $conflict->teacher_id == $request->teacher_id
-            &&
-            $conflict->class_name == $request->class_name
-        ) {
+        foreach ($conflicts as $conflict) {
 
-            return
-                "Jadwal bentrok: guru dan kelas sudah memiliki jadwal pada waktu tersebut.";
+
+            /*
+            |--------------------------------------------------------------------------
+            | 1. BENTROK GURU
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $conflict->teacher_id ==
+                $request->teacher_id
+            ) {
+
+                $teacherName =
+                    optional($conflict->teacher)->name
+                    ?? 'Guru tersebut';
+
+                return
+                    "Jadwal bentrok. {$teacherName} "
+                    . "sudah mengajar pada hari {$conflict->day} "
+                    . "pukul "
+                    . date('H:i', strtotime($conflict->start_time))
+                    . " - "
+                    . date('H:i', strtotime($conflict->end_time))
+                    . ".";
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2. BENTROK KELAS
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                strcasecmp(
+                    trim($conflict->class_name),
+                    trim($request->class_name)
+                ) === 0
+            ) {
+
+                return
+                    "Jadwal bentrok. Kelas "
+                    . $conflict->class_name
+                    . " sudah memiliki mata pelajaran "
+                    . "\""
+                    . $conflict->subject
+                    . "\" pada hari "
+                    . $conflict->day
+                    . " pukul "
+                    . date('H:i', strtotime($conflict->start_time))
+                    . " - "
+                    . date('H:i', strtotime($conflict->end_time))
+                    . ".";
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. BENTROK RUANGAN
+            |--------------------------------------------------------------------------
+            |
+            | Ruangan kosong tidak perlu dianggap bentrok.
+            |
+            */
+
+            if (
+                filled($request->room) &&
+                filled($conflict->room) &&
+                strcasecmp(
+                    trim($conflict->room),
+                    trim($request->room)
+                ) === 0
+            ) {
+
+                return
+                    "Jadwal bentrok. Ruangan "
+                    . $conflict->room
+                    . " sedang digunakan untuk kelas "
+                    . $conflict->class_name
+                    . " pada hari "
+                    . $conflict->day
+                    . " pukul "
+                    . date('H:i', strtotime($conflict->start_time))
+                    . " - "
+                    . date('H:i', strtotime($conflict->end_time))
+                    . ".";
+            }
 
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | GURU BENTROK
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            $conflict->teacher_id == $request->teacher_id
-        ) {
-
-            return
-                "Jadwal bentrok: {$conflict->teacher->name} masih mengajar pada waktu tersebut.";
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | KELAS BENTROK
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            $conflict->class_name == $request->class_name
-        ) {
-
-            return
-                "Jadwal bentrok: kelas {$conflict->class_name} sudah memiliki mata pelajaran pada waktu tersebut.";
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FALLBACK
-        |--------------------------------------------------------------------------
-        */
-
-        return
-            "Jadwal bentrok dengan jadwal yang sudah ada.";
+        return null;
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE
-    |--------------------------------------------------------------------------
-    */
 
     public function store(Request $request)
     {
@@ -340,12 +298,23 @@ class ScheduleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['is_active'] =
+            $request->boolean('is_active');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | CEK BENTROK
         |--------------------------------------------------------------------------
         */
 
         $conflict = $this->hasConflict(
-            $request
+            $request,
+            null
         );
 
 
@@ -362,29 +331,15 @@ class ScheduleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | STATUS
-        |--------------------------------------------------------------------------
-        */
-
-        $validated['is_active'] =
-            $request->boolean('is_active');
-
-
-        /*
-        |--------------------------------------------------------------------------
         | SIMPAN
         |--------------------------------------------------------------------------
         */
 
-        Schedule::create(
-            $validated
-        );
+        Schedule::create($validated);
 
 
         return redirect()
-            ->route(
-                'admin.schedules.index'
-            )
+            ->route('admin.schedules.index')
             ->with(
                 'success',
                 'Jadwal mengajar berhasil ditambahkan.'
@@ -392,16 +347,8 @@ class ScheduleController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW
-    |--------------------------------------------------------------------------
-    */
-
-    public function show(
-        Schedule $schedule
-    ) {
-
+    public function show(Schedule $schedule)
+    {
         return redirect()
             ->route(
                 'admin.schedules.edit',
@@ -410,24 +357,12 @@ class ScheduleController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | EDIT
-    |--------------------------------------------------------------------------
-    */
-
-    public function edit(
-        Schedule $schedule
-    ) {
-
+    public function edit(Schedule $schedule)
+    {
         $teachers = Teacher::query()
-            ->where(
-                'is_active',
-                true
-            )
+            ->where('is_active', true)
             ->orderBy('name')
             ->get();
-
 
         return view(
             'admin.schedules.edit',
@@ -438,12 +373,6 @@ class ScheduleController extends Controller
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
 
     public function update(
         Request $request,
@@ -501,12 +430,18 @@ class ScheduleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | STATUS
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['is_active'] =
+            $request->boolean('is_active');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | CEK BENTROK
         |--------------------------------------------------------------------------
-        |
-        | Kirim $schedule supaya jadwal yang sedang
-        | diedit tidak dianggap bentrok dengan dirinya sendiri.
-        |
         */
 
         $conflict = $this->hasConflict(
@@ -528,29 +463,15 @@ class ScheduleController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | STATUS
-        |--------------------------------------------------------------------------
-        */
-
-        $validated['is_active'] =
-            $request->boolean('is_active');
-
-
-        /*
-        |--------------------------------------------------------------------------
         | UPDATE
         |--------------------------------------------------------------------------
         */
 
-        $schedule->update(
-            $validated
-        );
+        $schedule->update($validated);
 
 
         return redirect()
-            ->route(
-                'admin.schedules.index'
-            )
+            ->route('admin.schedules.index')
             ->with(
                 'success',
                 'Jadwal mengajar berhasil diperbarui.'
@@ -558,23 +479,12 @@ class ScheduleController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE
-    |--------------------------------------------------------------------------
-    */
-
-    public function destroy(
-        Schedule $schedule
-    ) {
-
+    public function destroy(Schedule $schedule)
+    {
         $schedule->delete();
 
-
         return redirect()
-            ->route(
-                'admin.schedules.index'
-            )
+            ->route('admin.schedules.index')
             ->with(
                 'success',
                 'Jadwal mengajar berhasil dihapus.'

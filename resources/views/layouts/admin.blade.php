@@ -215,6 +215,20 @@
 
                     </a>
 
+                    <a href="{{ route('admin.schedules.index') }}"
+                        class="mt-1 flex items-center gap-3
+           rounded-xl px-4 py-3
+           transition
+           {{ request()->routeIs('admin.schedules.*')
+               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="users-round" class="h-5 w-5"></i>
+
+                        <span>Schedules</span>
+
+                    </a>
+
                 </div>
 
                 {{-- Komunikasi --}}

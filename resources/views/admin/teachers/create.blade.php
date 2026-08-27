@@ -268,6 +268,86 @@
 
         </div>
 
+{{-- AKUN LOGIN GURU --}}
+
+<div class="md:col-span-2 mt-4 rounded-2xl border border-[#087443]/20 bg-[#EAF4EF] p-5">
+
+    <div class="mb-5">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="flex h-10 w-10 items-center justify-center
+                       rounded-xl bg-[#087443] text-white"
+            >
+                <i data-lucide="shield-user" class="h-5 w-5"></i>
+            </div>
+
+            <div>
+
+                <h3 class="font-black text-gray-900">
+                    Akun Login Guru
+                </h3>
+
+                <p class="text-sm text-gray-500">
+                    Akun ini digunakan guru untuk masuk ke halaman guru.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid gap-5 md:grid-cols-2">
+
+        {{-- EMAIL --}}
+        <div>
+
+            <label class="mb-2 block text-sm font-bold text-gray-700">
+                Email Login
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                placeholder="contoh@gurudarelarifien.sch.id"
+                class="w-full rounded-xl border border-gray-200 bg-white
+                       px-4 py-3 text-sm outline-none
+                       focus:border-[#087443]
+                       focus:ring-2 focus:ring-[#087443]/10"
+            >
+
+        </div>
+
+
+        {{-- PASSWORD --}}
+        <div>
+
+            <label class="mb-2 block text-sm font-bold text-gray-700">
+                Password
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                required
+                minlength="8"
+                placeholder="Minimal 8 karakter"
+                class="w-full rounded-xl border border-gray-200 bg-white
+                       px-4 py-3 text-sm outline-none
+                       focus:border-[#087443]
+                       focus:ring-2 focus:ring-[#087443]/10"
+            >
+
+        </div>
+
+    </div>
+
+</div>
 
         {{-- DISPLAY SETTINGS --}}
 
