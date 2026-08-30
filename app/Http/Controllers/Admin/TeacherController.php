@@ -385,28 +385,13 @@ class TeacherController extends Controller
                     ->delete($teacher->photo);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | HAPUS USER
-            |--------------------------------------------------------------------------
-            */
-
+            //HAPUS USER
             $user = $teacher->user;
 
-            /*
-            |--------------------------------------------------------------------------
-            | HAPUS TEACHER
-            |--------------------------------------------------------------------------
-            */
-
+            //HAPUS TEACHER
             $teacher->delete();
 
-            /*
-            |--------------------------------------------------------------------------
-            | HAPUS AKUN
-            |--------------------------------------------------------------------------
-            */
-
+            //HAPUS AKUN
             if ($user) {
                 $user->delete();
             }
@@ -429,9 +414,8 @@ class TeacherController extends Controller
     ): string {
         $slug = Str::slug($name);
 
-        /*
-        | Jika nama kosong setelah slugging.
-        */
+        //Jika nama kosong setelah slugging.
+        
         if ($slug === '') {
             $slug = 'teacher';
         }
