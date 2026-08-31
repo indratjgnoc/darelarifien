@@ -143,21 +143,21 @@ class TeacherController extends Controller
                 ),
 
                 'position' =>
-                    $validated['position'] ?? null,
+                $validated['position'] ?? null,
 
                 'education' =>
-                    $validated['education'] ?? null,
+                $validated['education'] ?? null,
 
                 'photo' => $photoPath,
 
                 'bio' =>
-                    $validated['bio'] ?? null,
+                $validated['bio'] ?? null,
 
                 'is_active' =>
-                    $request->boolean('is_active'),
+                $request->boolean('is_active'),
 
                 'sort_order' =>
-                    $validated['sort_order'] ?? 0,
+                $validated['sort_order'] ?? 0,
             ]);
         });
 
@@ -185,11 +185,10 @@ class TeacherController extends Controller
     /**
      * Memperbarui data guru dan akun login.
      */
-    public function update(
-        Request $request,
-        Teacher $teacher
-    ) {
+    public function update(Request $request, Teacher $teacher)
+    {
         $validated = $request->validate([
+
             'name' => [
                 'required',
                 'string',
@@ -217,7 +216,7 @@ class TeacherController extends Controller
                 'required',
                 'email',
                 'max:255',
-                'unique:users,email,' . $teacher->user_id,
+                'unique:users,email,' . ($teacher->user_id ?? 'NULL'),
             ],
 
             'password' => [
@@ -234,7 +233,6 @@ class TeacherController extends Controller
             'sort_order' => [
                 'nullable',
                 'integer',
-                'min:0',
             ],
 
             'photo' => [
@@ -243,7 +241,9 @@ class TeacherController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
+
         ]);
+
 
         DB::transaction(function () use (
             $request,
@@ -252,14 +252,16 @@ class TeacherController extends Controller
         ) {
 
             /*
-            |--------------------------------------------------------------------------
-            | UPDATE USER
-            |--------------------------------------------------------------------------
-            */
+        |--------------------------------------------------------------------------
+        | AKUN USER
+        |--------------------------------------------------------------------------
+        */
 
-            $user = $teacher->user;
+            if ($teacher->user_id) {
 
-            if ($user) {
+                $user = User::findOrFail(
+                    $teacher->user_id
+                );
 
                 $user->name =
                     $validated['name'];
@@ -267,99 +269,102 @@ class TeacherController extends Controller
                 $user->email =
                     $validated['email'];
 
+                $user->role = 'guru';
+
                 if (
                     !empty($validated['password'])
                 ) {
+
                     $user->password =
-                        Hash::make(
-                            $validated['password']
-                        );
+                        $validated['password'];
                 }
 
                 $user->save();
-            }
+            } else {
 
-            /*
-            |--------------------------------------------------------------------------
-            | UPDATE SLUG
-            |--------------------------------------------------------------------------
+                /*
+            |--------------------------------------------------------------
+            | JIKA GURU BELUM MEMILIKI AKUN
+            |--------------------------------------------------------------
             */
 
-            $slug = $teacher->slug;
+                $user = User::create([
 
-            if (
-                $teacher->name !==
-                $validated['name']
-            ) {
-                $slug =
-                    $this->generateUniqueSlug(
-                        $validated['name'],
-                        $teacher->id
-                    );
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | DATA TEACHER
-            |--------------------------------------------------------------------------
-            */
-
-            $data = [
-                'name' =>
+                    'name' =>
                     $validated['name'],
 
-                'slug' => $slug,
+                    'email' =>
+                    $validated['email'],
 
-                'position' =>
-                    $validated['position'] ?? null,
+                    'password' =>
+                    $validated['password'],
 
-                'education' =>
-                    $validated['education'] ?? null,
+                    'role' =>
+                    'guru',
 
-                'bio' =>
-                    $validated['bio'] ?? null,
+                ]);
 
-                'is_active' =>
-                    $request->boolean('is_active'),
+                $teacher->user_id =
+                    $user->id;
+            }
 
-                'sort_order' =>
-                    $validated['sort_order'] ?? 0,
-            ];
 
             /*
-            |--------------------------------------------------------------------------
-            | GANTI FOTO
-            |--------------------------------------------------------------------------
-            */
+        |--------------------------------------------------------------------------
+        | FOTO
+        |--------------------------------------------------------------------------
+        */
 
             if ($request->hasFile('photo')) {
 
-                if (
-                    $teacher->photo &&
-                    Storage::disk('public')
-                        ->exists($teacher->photo)
-                ) {
-                    Storage::disk('public')
-                        ->delete($teacher->photo);
-                }
-
-                $data['photo'] =
+                $teacher->photo =
                     $request
-                        ->file('photo')
-                        ->store(
-                            'teachers',
-                            'public'
-                        );
+                    ->file('photo')
+                    ->store(
+                        'teachers',
+                        'public'
+                    );
             }
 
-            $teacher->update($data);
+
+            /*
+        |--------------------------------------------------------------------------
+        | DATA GURU
+        |--------------------------------------------------------------------------
+        */
+
+            $teacher->name =
+                $validated['name'];
+
+            $teacher->slug =
+                \Illuminate\Support\Str::slug(
+                    $validated['name']
+                );
+
+            $teacher->position =
+                $validated['position'] ?? null;
+
+            $teacher->education =
+                $validated['education'] ?? null;
+
+            $teacher->bio =
+                $validated['bio'] ?? null;
+
+            $teacher->is_active =
+                $request->boolean('is_active');
+
+            $teacher->sort_order =
+                $validated['sort_order'] ?? 0;
+
+            $teacher->save();
         });
+
 
         return redirect()
             ->route('admin.teachers.index')
             ->with(
                 'success',
-                'Data guru berhasil diperbarui.'
+                'Data guru dan akun login berhasil diperbarui.'
             );
     }
 
@@ -379,7 +384,7 @@ class TeacherController extends Controller
             if (
                 $teacher->photo &&
                 Storage::disk('public')
-                    ->exists($teacher->photo)
+                ->exists($teacher->photo)
             ) {
                 Storage::disk('public')
                     ->delete($teacher->photo);
@@ -415,7 +420,7 @@ class TeacherController extends Controller
         $slug = Str::slug($name);
 
         //Jika nama kosong setelah slugging.
-        
+
         if ($slug === '') {
             $slug = 'teacher';
         }
@@ -425,17 +430,17 @@ class TeacherController extends Controller
 
         while (
             Teacher::where('slug', $slug)
-                ->when(
-                    $ignoreId !== null,
-                    function ($query) use ($ignoreId) {
-                        $query->where(
-                            'id',
-                            '!=',
-                            $ignoreId
-                        );
-                    }
-                )
-                ->exists()
+            ->when(
+                $ignoreId !== null,
+                function ($query) use ($ignoreId) {
+                    $query->where(
+                        'id',
+                        '!=',
+                        $ignoreId
+                    );
+                }
+            )
+            ->exists()
         ) {
             $slug =
                 $originalSlug .

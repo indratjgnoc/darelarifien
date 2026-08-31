@@ -18,8 +18,14 @@ use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\AcademicYearController;
+use App\Http\Controllers\Admin\SchoolClassController;
+
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\GuruProfileController;
+use App\Http\Controllers\Guru\GuruScheduleController;
+use App\Http\Controllers\Guru\GuruClassController;
+
 
 /*
 |--------------------
@@ -114,21 +120,9 @@ Route::post(
 // ==============================
 // ROLE GURU
 // ==============================
-
 Route::prefix('guru')
     ->name('guru.')
     ->middleware(['auth', 'role:guru'])
-    ->group(function () {
-
-        Route::get('/dashboard', [
-            GuruDashboardController::class,
-            'index'
-        ])->name('dashboard');
-    });
-
-Route::prefix('guru')
-    ->name('guru.')
-    ->middleware('auth')
     ->group(function () {
 
         Route::get(
@@ -137,9 +131,19 @@ Route::prefix('guru')
         )->name('dashboard');
 
         Route::get(
+            '/kelas-saya',
+            [GuruClassController::class, 'index']
+        )->name('class.index');
+
+        Route::get(
             '/profil',
             [GuruProfileController::class, 'index']
         )->name('profile');
+
+        Route::get(
+            '/jadwal',
+            [GuruScheduleController::class, 'index']
+        )->name('schedules.index');
     });
 
 /*
@@ -197,7 +201,7 @@ Route::prefix('admin')
 
         //Schedule
         Route::resource('schedules', ScheduleController::class)
-        ->except([
+            ->except([
                 'show',
             ]);
 
@@ -229,6 +233,17 @@ Route::prefix('admin')
             [RegistrationController::class, 'document']
         )->name('registrations.document');
 
+        //Classes
+        Route::resource(
+            'classes',
+            SchoolClassController::class
+        );
+
+        //Academic Years
+        Route::resource(
+            'academic-years',
+            AcademicYearController::class
+        );
         Route::resource(
             'registrations',
             RegistrationController::class

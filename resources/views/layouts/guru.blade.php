@@ -158,7 +158,7 @@
                     </p>
 
 
-                    <a href="#"
+                    <a href="{{ route('guru.schedules.index') }}""
                         class="flex items-center gap-3
                                rounded-xl
                                px-4 py-3
@@ -175,7 +175,7 @@
                     </a>
 
 
-                    <a href="#"
+                    <a href="{{ route('guru.class.index') }}"
                         class="mt-1 flex items-center gap-3
                                rounded-xl
                                px-4 py-3

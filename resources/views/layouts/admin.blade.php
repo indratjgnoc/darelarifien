@@ -229,6 +229,11 @@
 
                     </a>
 
+                    <a href="{{ route('admin.classes.index') }}" class="...">
+                        <i data-lucide="school" class="h-5 w-5"></i>
+
+                        <span>Kelas</span>
+                    </a>
                 </div>
 
                 {{-- Komunikasi --}}
