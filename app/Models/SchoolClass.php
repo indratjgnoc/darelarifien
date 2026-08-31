@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\AcademicYear;
+use App\Models\Teacher;
 
 class SchoolClass extends Model
 {
@@ -14,6 +16,7 @@ class SchoolClass extends Model
 
     protected $fillable = [
         'academic_year_id',
+        'sort_order',
         'name',
         'level',
         'homeroom_teacher_id',

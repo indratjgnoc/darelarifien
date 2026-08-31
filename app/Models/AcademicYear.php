@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AcademicYear extends Model
 {
@@ -31,15 +32,20 @@ class AcademicYear extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | LABEL
+    | ACCESSORS
     |--------------------------------------------------------------------------
     */
 
     public function getFullNameAttribute(): string
     {
-        return $this->name . ' - ' .
-            ucfirst($this->semester);
+        return $this->name . ' - ' . ucfirst($this->semester);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
 
     public function classes(): HasMany
     {
@@ -48,13 +54,14 @@ class AcademicYear extends Model
             'academic_year_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
-    | SCOPE
+    | SCOPES
     |--------------------------------------------------------------------------
     */
 
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }

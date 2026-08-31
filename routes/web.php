@@ -233,17 +233,38 @@ Route::prefix('admin')
             [RegistrationController::class, 'document']
         )->name('registrations.document');
 
-        //Classes
+        // Classes
         Route::resource(
             'classes',
             SchoolClassController::class
-        );
+        )->except([
+            'show',
+        ]);
+
 
         //Academic Years
         Route::resource(
             'academic-years',
             AcademicYearController::class
-        );
+        )->except([
+            'show'
+        ]);
+
+        Route::post(
+            'academic-years/{academicYear}/activate',
+            [AcademicYearController::class, 'activate']
+        )->name('academic-years.activate');
+
+        Route::post(
+            'academic-years/{academicYear}/toggle-course-selection',
+            [AcademicYearController::class, 'toggleCourseSelection']
+        )->name('academic-years.toggle-course-selection');
+
+        Route::patch(
+            'academic-years/{academicYear}/activate',
+            [AcademicYearController::class, 'activate']
+        )->name('academic-years.activate');
+
         Route::resource(
             'registrations',
             RegistrationController::class

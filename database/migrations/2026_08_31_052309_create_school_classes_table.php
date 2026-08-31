@@ -11,26 +11,41 @@ return new class extends Migration
         Schema::create('school_classes', function (Blueprint $table) {
             $table->id();
 
+            // Tahun akademik
             $table->foreignId('academic_year_id')
                 ->constrained('academic_years')
                 ->cascadeOnDelete();
 
+            // Nama kelas
             $table->string('name', 100);
 
-            $table->string('level', 20);
+            // Tingkat kelas
+            $table->string('level', 50);
 
+            // Wali kelas
             $table->foreignId('homeroom_teacher_id')
                 ->nullable()
                 ->constrained('teachers')
                 ->nullOnDelete();
 
+            // Status kelas
             $table->boolean('is_active')
                 ->default(true);
 
+            // Urutan tampilan
+            $table->integer('sort_order')
+                ->default(0);
+
+            // Keterangan
             $table->text('description')
                 ->nullable();
 
             $table->timestamps();
+
+            // Index
+            $table->index('name');
+            $table->index('level');
+            $table->index('is_active');
 
             $table->index([
                 'academic_year_id',
