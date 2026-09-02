@@ -28,24 +28,13 @@ class SchoolClass extends Model
         'is_active' => 'boolean',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | TAHUN AJARAN
-    |--------------------------------------------------------------------------
-    */
-
     public function academicYear(): BelongsTo
     {
         return $this->belongsTo(
-            AcademicYear::class
+            AcademicYear::class,
+            'academic_year_id'
         );
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | WALI KELAS
-    |--------------------------------------------------------------------------
-    */
 
     public function homeroomTeacher(): BelongsTo
     {
@@ -54,12 +43,6 @@ class SchoolClass extends Model
             'homeroom_teacher_id'
         );
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | LABEL
-    |--------------------------------------------------------------------------
-    */
 
     public function getFullNameAttribute(): string
     {

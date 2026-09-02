@@ -7,7 +7,6 @@ use App\Models\AcademicYear;
 use App\Models\SchoolClass;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class SchoolClassController extends Controller
 {
@@ -15,6 +14,9 @@ class SchoolClassController extends Controller
     |--------------------------------------------------------------------------
     | INDEX
     |--------------------------------------------------------------------------
+    |
+    | Menampilkan daftar seluruh kelas.
+    |
     */
 
     public function index()
@@ -23,6 +25,7 @@ class SchoolClassController extends Controller
             'academicYear',
             'homeroomTeacher',
         ])
+            ->orderBy('sort_order')
             ->orderBy('level')
             ->orderBy('name')
             ->get();
@@ -37,14 +40,39 @@ class SchoolClassController extends Controller
     |--------------------------------------------------------------------------
     | CREATE
     |--------------------------------------------------------------------------
+    |
+    | Form tambah kelas.
+    |
     */
 
     public function create()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Tahun ajaran aktif
+        |--------------------------------------------------------------------------
+        */
+
+        $activeAcademicYear = AcademicYear::query()
+            ->where('is_active', true)
+            ->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Semua tahun ajaran
+        |--------------------------------------------------------------------------
+        */
+
         $academicYears = AcademicYear::query()
             ->orderByDesc('name')
             ->orderBy('semester')
             ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Guru aktif
+        |--------------------------------------------------------------------------
+        */
 
         $teachers = Teacher::query()
             ->where('is_active', true)
@@ -54,6 +82,7 @@ class SchoolClassController extends Controller
         return view(
             'admin.classes.create',
             compact(
+                'activeAcademicYear',
                 'academicYears',
                 'teachers'
             )
@@ -64,6 +93,9 @@ class SchoolClassController extends Controller
     |--------------------------------------------------------------------------
     | STORE
     |--------------------------------------------------------------------------
+    |
+    | Menyimpan kelas baru.
+    |
     */
 
     public function store(Request $request)
@@ -84,7 +116,7 @@ class SchoolClassController extends Controller
             'level' => [
                 'required',
                 'string',
-                'max:20',
+                'max:50',
             ],
 
             'homeroom_teacher_id' => [
@@ -98,35 +130,45 @@ class SchoolClassController extends Controller
                 'min:0',
             ],
 
-
-            'is_active' => [
-                'nullable',
-                'boolean',
-            ],
-
             'description' => [
                 'nullable',
                 'string',
             ],
 
+            'is_active' => [
+                'nullable',
+                'boolean',
+            ],
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI DATA
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['name'] = trim($validated['name']);
+
+        $validated['level'] = trim($validated['level']);
 
         $validated['is_active'] =
             $request->boolean('is_active');
-
-        SchoolClass::create($validated);
-
-        return redirect()
-            ->route('admin.classes.index')
-            ->with(
-                'success',
-                'Kelas berhasil ditambahkan.'
-            );
 
         /*
         |--------------------------------------------------------------------------
         | CEGAH KELAS DUPLIKAT
         |--------------------------------------------------------------------------
+        |
+        | Nama kelas yang sama tidak boleh berada dalam
+        | tahun ajaran yang sama.
+        |
+        | Contoh:
+        |
+        | 2026/2027 Ganjil -> VII A
+        | 2026/2027 Ganjil -> VII A
+        |
+        | Tidak diperbolehkan.
+        |
         */
 
         $exists = SchoolClass::query()
@@ -134,19 +176,18 @@ class SchoolClassController extends Controller
                 'academic_year_id',
                 $validated['academic_year_id']
             )
-            ->where(
-                'name',
-                $validated['name']
+            ->whereRaw(
+                'LOWER(name) = ?',
+                [strtolower($validated['name'])]
             )
             ->exists();
 
         if ($exists) {
-
             return back()
                 ->withInput()
                 ->withErrors([
                     'name' =>
-                    'Kelas tersebut sudah ada pada tahun ajaran yang dipilih.',
+                        'Kelas dengan nama tersebut sudah ada pada tahun ajaran ini.',
                 ]);
         }
 
@@ -154,12 +195,15 @@ class SchoolClassController extends Controller
         |--------------------------------------------------------------------------
         | CEGAH GURU MENJADI WALI KELAS GANDA
         |--------------------------------------------------------------------------
+        |
+        | Satu guru hanya boleh menjadi wali kelas satu kelas
+        | dalam satu tahun ajaran.
+        |
         */
 
         if (!empty($validated['homeroom_teacher_id'])) {
 
-            $teacherAlreadyHomeroom =
-                SchoolClass::query()
+            $teacherAlreadyHomeroom = SchoolClass::query()
                 ->where(
                     'academic_year_id',
                     $validated['academic_year_id']
@@ -171,15 +215,20 @@ class SchoolClassController extends Controller
                 ->exists();
 
             if ($teacherAlreadyHomeroom) {
-
                 return back()
                     ->withInput()
                     ->withErrors([
                         'homeroom_teacher_id' =>
-                        'Guru tersebut sudah menjadi wali kelas pada tahun ajaran ini.',
+                            'Guru tersebut sudah menjadi wali kelas pada tahun ajaran ini.',
                     ]);
             }
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN DATA
+        |--------------------------------------------------------------------------
+        */
 
         SchoolClass::create($validated);
 
@@ -195,14 +244,18 @@ class SchoolClassController extends Controller
     |--------------------------------------------------------------------------
     | SHOW
     |--------------------------------------------------------------------------
+    |
+    | Jika menggunakan Route::resource(), method ini diperlukan.
+    | Kita arahkan ke halaman edit karena tidak ada halaman detail khusus.
+    |
     */
 
-    public function show(SchoolClass $schoolClass)
+    public function show(SchoolClass $class)
     {
         return redirect()
             ->route(
                 'admin.classes.edit',
-                $schoolClass
+                $class
             );
     }
 
@@ -210,114 +263,117 @@ class SchoolClassController extends Controller
     |--------------------------------------------------------------------------
     | EDIT
     |--------------------------------------------------------------------------
+    |
+    | Form edit kelas.
+    |
     */
 
-    public function edit(\App\Models\SchoolClass $class)
+    public function edit(SchoolClass $class)
     {
-        $academicYears = \App\Models\AcademicYear::query()
-            ->orderBy('name', 'desc')
+        $academicYears = AcademicYear::query()
+            ->orderByDesc('name')
             ->orderBy('semester')
             ->get();
 
-        $teachers = \App\Models\Teacher::query()
+        $teachers = Teacher::query()
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        return view('admin.classes.edit', [
-            'schoolClass' => $class,
-            'academicYears' => $academicYears,
-            'teachers' => $teachers,
-        ]);
+        return view(
+            'admin.classes.edit',
+            compact(
+                'class',
+                'academicYears',
+                'teachers'
+            )
+        );
     }
 
     /*
     |--------------------------------------------------------------------------
     | UPDATE
     |--------------------------------------------------------------------------
-    */
-public function update(
-    Request $request,
-    \App\Models\SchoolClass $class
-) {
-    $validated = $request->validate([
-        'academic_year_id' => [
-            'required',
-            'exists:academic_years,id',
-        ],
-
-        'name' => [
-            'required',
-            'string',
-            'max:100',
-        ],
-
-        'level' => [
-            'required',
-            'string',
-            'max:50',
-        ],
-
-        'homeroom_teacher_id' => [
-            'nullable',
-            'exists:teachers,id',
-        ],
-
-        'sort_order' => [
-            'nullable',
-            'integer',
-            'min:0',
-        ],
-
-        'description' => [
-            'nullable',
-            'string',
-        ],
-
-        'is_active' => [
-            'nullable',
-            'boolean',
-        ],
-    ]);
-
-    $validated['is_active'] = $request->boolean('is_active');
-
-    /*
-    |--------------------------------------------------------------------------
-    | CEGAH DUPLIKAT KELAS
-    |--------------------------------------------------------------------------
+    |
+    | Memperbarui data kelas.
+    |
     */
 
-    $exists = \App\Models\SchoolClass::query()
-        ->where('academic_year_id', $validated['academic_year_id'])
-        ->where('name', $validated['name'])
-        ->where('id', '!=', $class->id)
-        ->exists();
+    public function update(
+        Request $request,
+        SchoolClass $class
+    ) {
+        $validated = $request->validate([
 
-    if ($exists) {
-        return back()
-            ->withInput()
-            ->withErrors([
-                'name' => 'Kelas tersebut sudah ada pada tahun ajaran yang dipilih.',
-            ]);
-    }
+            'academic_year_id' => [
+                'required',
+                'exists:academic_years,id',
+            ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | CEGAH WALI KELAS GANDA
-    |--------------------------------------------------------------------------
-    */
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+            ],
 
-    if (!empty($validated['homeroom_teacher_id'])) {
+            'level' => [
+                'required',
+                'string',
+                'max:50',
+            ],
 
-        $teacherAlreadyHomeroom = \App\Models\SchoolClass::query()
+            'homeroom_teacher_id' => [
+                'nullable',
+                'exists:teachers,id',
+            ],
+
+            'sort_order' => [
+                'nullable',
+                'integer',
+                'min:0',
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+            ],
+
+            'is_active' => [
+                'nullable',
+                'boolean',
+            ],
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMALISASI DATA
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['name'] = trim($validated['name']);
+
+        $validated['level'] = trim($validated['level']);
+
+        $validated['is_active'] =
+            $request->boolean('is_active');
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEGAH KELAS DUPLIKAT
+        |--------------------------------------------------------------------------
+        |
+        | Kelas yang sedang diedit harus dikecualikan dari pengecekan.
+        |
+        */
+
+        $exists = SchoolClass::query()
             ->where(
                 'academic_year_id',
                 $validated['academic_year_id']
             )
-            ->where(
-                'homeroom_teacher_id',
-                $validated['homeroom_teacher_id']
+            ->whereRaw(
+                'LOWER(name) = ?',
+                [strtolower($validated['name'])]
             )
             ->where(
                 'id',
@@ -326,41 +382,73 @@ public function update(
             )
             ->exists();
 
-        if ($teacherAlreadyHomeroom) {
+        if ($exists) {
             return back()
                 ->withInput()
                 ->withErrors([
-                    'homeroom_teacher_id' =>
-                        'Guru tersebut sudah menjadi wali kelas pada tahun ajaran ini.',
+                    'name' =>
+                        'Kelas dengan nama tersebut sudah ada pada tahun ajaran ini.',
                 ]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEGAH WALI KELAS GANDA
+        |--------------------------------------------------------------------------
+        |
+        | Kelas yang sedang diedit harus dikecualikan dari pengecekan.
+        |
+        */
+
+        if (!empty($validated['homeroom_teacher_id'])) {
+
+            $teacherAlreadyHomeroom = SchoolClass::query()
+                ->where(
+                    'academic_year_id',
+                    $validated['academic_year_id']
+                )
+                ->where(
+                    'homeroom_teacher_id',
+                    $validated['homeroom_teacher_id']
+                )
+                ->where(
+                    'id',
+                    '!=',
+                    $class->id
+                )
+                ->exists();
+
+            if ($teacherAlreadyHomeroom) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'homeroom_teacher_id' =>
+                            'Guru tersebut sudah menjadi wali kelas pada tahun ajaran ini.',
+                    ]);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE DATA
+        |--------------------------------------------------------------------------
+        */
+
+        $class->update($validated);
+
+        return redirect()
+            ->route('admin.classes.index')
+            ->with(
+                'success',
+                'Kelas berhasil diperbarui.'
+            );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE DATA
-    |--------------------------------------------------------------------------
-    */
+    //HAPUS
 
-    $class->update($validated);
-
-    return redirect()
-        ->route('admin.classes.index')
-        ->with(
-            'success',
-            'Kelas berhasil diperbarui.'
-        );
-}
-    /*
-    |--------------------------------------------------------------------------
-    | DESTROY
-    |--------------------------------------------------------------------------
-    */
-
-    public function destroy(
-        SchoolClass $schoolClass
-    ) {
-        $schoolClass->delete();
+    public function destroy(SchoolClass $class)
+    {
+        $class->delete();
 
         return redirect()
             ->route('admin.classes.index')
