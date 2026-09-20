@@ -65,4 +65,15 @@ class AcademicYear extends Model
     {
         return $query->where('is_active', true);
     }
+
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
+    }
+
+    public function teachingAssignments(): HasMany
+    {
+        return $this->hasMany(TeacherClassSubject::class);
+    }
 }

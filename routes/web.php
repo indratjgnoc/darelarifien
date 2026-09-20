@@ -20,12 +20,17 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\SchoolClassController;
+use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\TeacherClassSubjectController;
 
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\GuruProfileController;
 use App\Http\Controllers\Guru\GuruScheduleController;
 use App\Http\Controllers\Guru\GuruClassController;
 
+use App\Http\Controllers\Santri\SantriDashboardController;
+use App\Http\Controllers\Santri\SantriSubjectController;
+use App\Http\Controllers\Santri\SantriScheduleController;
 
 /*
 |--------------------
@@ -146,6 +151,35 @@ Route::prefix('guru')
         )->name('schedules.index');
     });
 
+
+// ==============================
+// ROLE SANTRI
+// ==============================
+
+Route::prefix('santri')
+    ->name('santri.')
+    ->middleware(['auth', 'role:santri'])
+    ->group(function () {
+
+        Route::get(
+            '/dashboard',
+            [SantriDashboardController::class, 'index']
+        )->name('dashboard');
+
+        Route::get(
+            '/profil',
+            [SantriDashboardController::class, 'profile']
+        )->name('profile');
+
+        Route::get('/mata-pelajaran', [SantriSubjectController::class, 'index'])
+            ->name('subjects.index');
+
+        Route::get(
+            '/jadwal',
+            [SantriScheduleController::class, 'index']
+        )->name('schedules.index');
+    });
+
 /*
 |----------------------------
 | ROLE ADMIN
@@ -227,6 +261,14 @@ Route::prefix('admin')
             'destroy',
         ]);
 
+        Route::resource('students', StudentController::class);
+
+        Route::post(
+            'students/{student}/create-account',
+            [StudentController::class, 'createAccount']
+        )->name('students.create-account');
+
+
         //Registrations
         Route::get(
             '/registrations/{registration}/document',
@@ -241,6 +283,11 @@ Route::prefix('admin')
             'show',
         ]);
 
+
+        Route::resource(
+            'teacher-class-subjects',
+            TeacherClassSubjectController::class
+        )->except(['show']);
 
         //Academic Years
         Route::resource(
@@ -274,4 +321,6 @@ Route::prefix('admin')
             'update',
             'destroy',
         ]);
+
+        Route::resource('subjects', \App\Http\Controllers\Admin\SubjectController::class);
     });

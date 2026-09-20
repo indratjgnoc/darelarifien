@@ -83,7 +83,6 @@ class AuthController extends Controller
                 ->route('guru.dashboard');
         }
 
-
         // OPERATOR
         if ($user->role === 'operator') {
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\AcademicYear;
 use App\Models\Teacher;
 
@@ -48,5 +49,10 @@ class SchoolClass extends Model
     {
         return $this->name . ' - ' .
             ($this->academicYear?->full_name ?? '');
+    }
+
+    public function teachingAssignments(): HasMany
+    {
+        return $this->hasMany(TeacherClassSubject::class);
     }
 }
