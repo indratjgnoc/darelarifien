@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Schedule extends Model
 {
     protected $fillable = [
+        'teacher_class_subject_id',
         'teacher_id',
         'subject',
         'class_name',
@@ -21,6 +22,14 @@ class Schedule extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function teacherClassSubject(): BelongsTo
+    {
+        return $this->belongsTo(
+            TeacherClassSubject::class,
+            'teacher_class_subject_id'
+        );
+    }
 
     public function teacher(): BelongsTo
     {

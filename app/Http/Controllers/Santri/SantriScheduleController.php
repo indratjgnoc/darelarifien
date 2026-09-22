@@ -9,20 +9,32 @@ use Illuminate\Support\Facades\Auth;
 
 class SantriScheduleController extends Controller
 {
+
     public function index()
     {
-        $user = Auth::user();
 
         $student = Student::with([
             'academicYear',
             'schoolClass',
         ])
-            ->where('user_id', $user->id)
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $schedules = Schedule::with('teacher')
-            ->where('class_name', $student->schoolClass?->name)
+        $schedules = Schedule::with([
+            'teacherClassSubject.academicYear',
+            'teacherClassSubject.schoolClass',
+            'teacherClassSubject.teacher',
+            'teacherClassSubject.subject',
+        ])
             ->where('is_active', true)
+            ->whereHas('teacherClassSubject', function ($query) use ($student) {
+
+                $query
+                    ->where('school_class_id', $student->school_class_id)
+                    ->where('academic_year_id', $student->academic_year_id)
+                    ->where('is_active', true);
+
+            })
             ->orderByRaw("
                 CASE day
                     WHEN 'Senin' THEN 1
@@ -38,10 +50,12 @@ class SantriScheduleController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        return view('santri.schedules.index', compact(
-            'user',
-            'student',
-            'schedules'
-        ));
+        return view(
+            'santri.schedules.index',
+            compact(
+                'student',
+                'schedules'
+            )
+        );
     }
 }

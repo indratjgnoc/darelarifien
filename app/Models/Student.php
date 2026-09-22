@@ -59,4 +59,11 @@ class Student extends Model
             'school_class_id'
         );
     }
+
+    public function grades(): HasMany
+    {
+        return $this->hasMany(
+            Grade::class
+        );
+    }
 }

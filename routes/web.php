@@ -24,9 +24,10 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TeacherClassSubjectController;
 
 use App\Http\Controllers\Guru\GuruDashboardController;
+use App\Http\Controllers\Guru\GuruClassController;
 use App\Http\Controllers\Guru\GuruProfileController;
 use App\Http\Controllers\Guru\GuruScheduleController;
-use App\Http\Controllers\Guru\GuruClassController;
+use App\Http\Controllers\Guru\GuruGradeController;
 
 use App\Http\Controllers\Santri\SantriDashboardController;
 use App\Http\Controllers\Santri\SantriSubjectController;
@@ -136,9 +137,29 @@ Route::prefix('guru')
         )->name('dashboard');
 
         Route::get(
-            '/kelas-saya',
-            [GuruClassController::class, 'index']
+            '/kelas',
+            ['App\\Http\\Controllers\\Guru\\GuruClassController', 'index']
         )->name('class.index');
+
+        Route::get('/kelas/{id}', [
+            GuruClassController::class,
+            'show'
+        ])->name('classes.show');
+
+        Route::get(
+            '/nilai',
+            [GuruGradeController::class, 'assignments']
+        )->name('grades.assignments');
+        
+        Route::get(
+            '/nilai/{assignmentId}',
+            [GuruGradeController::class, 'index']
+        )->name('grades.index');
+
+        Route::post(
+            '/nilai/{assignmentId}',
+            [GuruGradeController::class, 'store']
+        )->name('grades.store');
 
         Route::get(
             '/profil',

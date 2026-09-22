@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Models;
+
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\SchoolClass;
 use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TeacherClassSubject extends Model
 {
@@ -43,5 +45,13 @@ class TeacherClassSubject extends Model
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function grades(): HasMany
+    {
+        return $this->hasMany(
+            Grade::class,
+            'teacher_class_subject_id'
+        );
     }
 }

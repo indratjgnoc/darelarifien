@@ -4,14 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Schedule;
-use App\Models\Teacher;
+use App\Models\TeacherClassSubject;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
+    /**
+     * Menampilkan daftar jadwal.
+     */
     public function index()
     {
-        $schedules = Schedule::with('teacher')
+        $schedules = Schedule::with([
+            'teacherClassSubject.academicYear',
+            'teacherClassSubject.schoolClass',
+            'teacherClassSubject.teacher',
+            'teacherClassSubject.subject',
+            'teacher',
+        ])
             ->orderByRaw("
                 CASE day
                     WHEN 'Senin' THEN 1
@@ -21,6 +30,7 @@ class ScheduleController extends Controller
                     WHEN 'Jumat' THEN 5
                     WHEN 'Sabtu' THEN 6
                     WHEN 'Minggu' THEN 7
+                    ELSE 8
                 END
             ")
             ->orderBy('start_time')
@@ -33,237 +43,186 @@ class ScheduleController extends Controller
     }
 
 
+    /**
+     * Form tambah jadwal.
+     */
     public function create()
     {
-        $teachers = Teacher::query()
+        $teacherClassSubjects = TeacherClassSubject::with([
+            'academicYear',
+            'schoolClass',
+            'teacher',
+            'subject',
+        ])
             ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy(function ($assignment) {
+                return [
+                    $assignment->schoolClass?->name ?? '',
+                    $assignment->subject?->name ?? '',
+                    $assignment->teacher?->name ?? '',
+                ];
+            });
 
         return view(
             'admin.schedules.create',
-            compact('teachers')
+            compact('teacherClassSubjects')
         );
     }
 
 
     /**
-     * Cek bentrok jadwal.
+     * Mengecek bentrok jadwal.
      *
-     * Yang dicek:
+     * Bentrok yang dicek:
      * 1. Guru
      * 2. Kelas
      * 3. Ruangan
      */
     private function hasConflict(
-        Request $request,
-        ?Schedule $schedule = null
+        TeacherClassSubject $assignment,
+        string $day,
+        string $startTime,
+        string $endTime,
+        ?string $room = null,
+        ?int $scheduleId = null
     ): ?string {
 
         /*
         |--------------------------------------------------------------------------
-        | QUERY DASAR
+        | Ambil jadwal yang waktunya bertabrakan
         |--------------------------------------------------------------------------
         */
 
         $query = Schedule::query()
-            ->where('day', $request->day)
+            ->where('day', $day)
             ->where('is_active', true)
-            ->where(function ($query) use ($request) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | WAKTU BENTROK
-                |--------------------------------------------------------------------------
-                |
-                | Contoh:
-                |
-                | Jadwal A : 08:00 - 09:00
-                | Jadwal B : 08:30 - 09:30
-                |
-                | => bentrok
-                |
-                | Tetapi:
-                |
-                | Jadwal A : 08:00 - 09:00
-                | Jadwal B : 09:00 - 10:00
-                |
-                | => tidak bentrok
-                |
-                */
-
-                $query->where(
-                    'start_time',
-                    '<',
-                    $request->end_time
-                )->where(
-                    'end_time',
-                    '>',
-                    $request->start_time
-                );
-
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query
+                    ->where('start_time', '<', $endTime)
+                    ->where('end_time', '>', $startTime);
             });
 
-
         /*
         |--------------------------------------------------------------------------
-        | JIKA EDIT
+        | Saat UPDATE, jangan membandingkan jadwal dengan dirinya sendiri
         |--------------------------------------------------------------------------
-        |
-        | Jangan membandingkan jadwal dengan dirinya sendiri.
-        |
         */
 
-        if ($schedule) {
-
-            $query->where(
-                'id',
-                '!=',
-                $schedule->id
-            );
+        if ($scheduleId) {
+            $query->where('id', '!=', $scheduleId);
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | AMBIL SEMUA JADWAL YANG BENTROK
-        |--------------------------------------------------------------------------
-        */
-
-        $conflicts = $query
-            ->with('teacher')
+        $existingSchedules = $query
+            ->with([
+                'teacherClassSubject',
+                'teacherClassSubject.academicYear',
+                'teacherClassSubject.schoolClass',
+                'teacherClassSubject.teacher',
+                'teacherClassSubject.subject',
+            ])
             ->get();
 
 
-        if ($conflicts->isEmpty()) {
-
-            return null;
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | CEK SATU PER SATU
-        |--------------------------------------------------------------------------
-        */
-
-        foreach ($conflicts as $conflict) {
-
+        foreach ($existingSchedules as $schedule) {
 
             /*
             |--------------------------------------------------------------------------
-            | 1. BENTROK GURU
+            | 1. CEK BENTROK GURU
             |--------------------------------------------------------------------------
             */
 
-            if (
-                $conflict->teacher_id ==
-                $request->teacher_id
+            if ($schedule->teacher_class_subject_id) {
+
+                $existingAssignment = $schedule->teacherClassSubject;
+
+                if (
+                    $existingAssignment &&
+                    $existingAssignment->teacher_id === $assignment->teacher_id &&
+                    $existingAssignment->academic_year_id === $assignment->academic_year_id
+                ) {
+                    return 'Guru tersebut sudah memiliki jadwal pada waktu yang sama.';
+                }
+
+            } elseif (
+                $schedule->teacher_id &&
+                $schedule->teacher_id === $assignment->teacher_id
             ) {
 
-                $teacherName =
-                    optional($conflict->teacher)->name
-                    ?? 'Guru tersebut';
+                /*
+                |--------------------------------------------------------------------------
+                | Fallback untuk jadwal lama
+                |--------------------------------------------------------------------------
+                */
 
-                return
-                    "Jadwal bentrok. {$teacherName} "
-                    . "sudah mengajar pada hari {$conflict->day} "
-                    . "pukul "
-                    . date('H:i', strtotime($conflict->start_time))
-                    . " - "
-                    . date('H:i', strtotime($conflict->end_time))
-                    . ".";
+                return 'Guru tersebut sudah memiliki jadwal pada waktu yang sama.';
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | 2. BENTROK KELAS
+            | 2. CEK BENTROK KELAS
+            |--------------------------------------------------------------------------
+            */
+
+            if ($schedule->teacher_class_subject_id) {
+
+                $existingAssignment = $schedule->teacherClassSubject;
+
+                if (
+                    $existingAssignment &&
+                    $existingAssignment->school_class_id === $assignment->school_class_id &&
+                    $existingAssignment->academic_year_id === $assignment->academic_year_id
+                ) {
+                    return 'Kelas tersebut sudah memiliki jadwal pada waktu yang sama.';
+                }
+
+            } elseif (
+                $schedule->class_name &&
+                $schedule->class_name === $assignment->schoolClass?->name
+            ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Fallback untuk jadwal lama
+                |--------------------------------------------------------------------------
+                */
+
+                return 'Kelas tersebut sudah memiliki jadwal pada waktu yang sama.';
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. CEK BENTROK RUANGAN
             |--------------------------------------------------------------------------
             */
 
             if (
+                $room &&
+                $schedule->room &&
                 strcasecmp(
-                    trim($conflict->class_name),
-                    trim($request->class_name)
+                    trim($schedule->room),
+                    trim($room)
                 ) === 0
             ) {
-
-                return
-                    "Jadwal bentrok. Kelas "
-                    . $conflict->class_name
-                    . " sudah memiliki mata pelajaran "
-                    . "\""
-                    . $conflict->subject
-                    . "\" pada hari "
-                    . $conflict->day
-                    . " pukul "
-                    . date('H:i', strtotime($conflict->start_time))
-                    . " - "
-                    . date('H:i', strtotime($conflict->end_time))
-                    . ".";
+                return 'Ruangan tersebut sudah digunakan pada waktu yang sama.';
             }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | 3. BENTROK RUANGAN
-            |--------------------------------------------------------------------------
-            |
-            | Ruangan kosong tidak perlu dianggap bentrok.
-            |
-            */
-
-            if (
-                filled($request->room) &&
-                filled($conflict->room) &&
-                strcasecmp(
-                    trim($conflict->room),
-                    trim($request->room)
-                ) === 0
-            ) {
-
-                return
-                    "Jadwal bentrok. Ruangan "
-                    . $conflict->room
-                    . " sedang digunakan untuk kelas "
-                    . $conflict->class_name
-                    . " pada hari "
-                    . $conflict->day
-                    . " pukul "
-                    . date('H:i', strtotime($conflict->start_time))
-                    . " - "
-                    . date('H:i', strtotime($conflict->end_time))
-                    . ".";
-            }
-
         }
-
 
         return null;
     }
 
 
+    /**
+     * Menyimpan jadwal baru.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-
-            'teacher_id' => [
+            'teacher_class_subject_id' => [
                 'required',
-                'exists:teachers,id',
-            ],
-
-            'subject' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'class_name' => [
-                'required',
-                'string',
-                'max:100',
+                'exists:teacher_class_subjects,id',
             ],
 
             'day' => [
@@ -292,18 +251,40 @@ class ScheduleController extends Controller
                 'nullable',
                 'boolean',
             ],
-
         ]);
 
 
         /*
         |--------------------------------------------------------------------------
-        | STATUS
+        | Ambil penugasan mengajar
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_active'] =
-            $request->boolean('is_active');
+        $assignment = TeacherClassSubject::with([
+            'academicYear',
+            'schoolClass',
+            'teacher',
+            'subject',
+        ])->findOrFail(
+            $validated['teacher_class_subject_id']
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan penugasan masih aktif
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$assignment->is_active) {
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'teacher_class_subject_id' =>
+                        'Penugasan mengajar tersebut tidak aktif.',
+                ]);
+        }
 
 
         /*
@@ -313,8 +294,11 @@ class ScheduleController extends Controller
         */
 
         $conflict = $this->hasConflict(
-            $request,
-            null
+            $assignment,
+            $validated['day'],
+            $validated['start_time'],
+            $validated['end_time'],
+            $validated['room'] ?? null
         );
 
 
@@ -323,15 +307,32 @@ class ScheduleController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'schedule' => $conflict,
+                    'teacher_class_subject_id' => $conflict,
                 ]);
-
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | SIMPAN
+        | Isi kolom legacy
+        |--------------------------------------------------------------------------
+        |
+        | Kolom ini sementara tetap diisi agar data lama tetap kompatibel.
+        |
+        */
+
+        $validated['teacher_id'] = $assignment->teacher_id;
+
+        $validated['subject'] = $assignment->subject?->name;
+
+        $validated['class_name'] = $assignment->schoolClass?->name;
+
+        $validated['is_active'] = $request->boolean('is_active');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan
         |--------------------------------------------------------------------------
         */
 
@@ -342,11 +343,16 @@ class ScheduleController extends Controller
             ->route('admin.schedules.index')
             ->with(
                 'success',
-                'Jadwal mengajar berhasil ditambahkan.'
+                'Jadwal berhasil ditambahkan.'
             );
     }
 
 
+    /**
+     * Menampilkan detail.
+     *
+     * Untuk saat ini diarahkan ke halaman edit.
+     */
     public function show(Schedule $schedule)
     {
         return redirect()
@@ -357,45 +363,95 @@ class ScheduleController extends Controller
     }
 
 
+    /**
+     * Form edit jadwal.
+     */
     public function edit(Schedule $schedule)
     {
-        $teachers = Teacher::query()
+        /*
+        |--------------------------------------------------------------------------
+        | Load relasi jadwal
+        |--------------------------------------------------------------------------
+        */
+
+        $schedule->load([
+            'teacherClassSubject.academicYear',
+            'teacherClassSubject.schoolClass',
+            'teacherClassSubject.teacher',
+            'teacherClassSubject.subject',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil semua penugasan mengajar aktif
+        |--------------------------------------------------------------------------
+        */
+
+        $teacherClassSubjects = TeacherClassSubject::with([
+            'academicYear',
+            'schoolClass',
+            'teacher',
+            'subject',
+        ])
             ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy(function ($assignment) {
+                return [
+                    $assignment->schoolClass?->name ?? '',
+                    $assignment->subject?->name ?? '',
+                    $assignment->teacher?->name ?? '',
+                ];
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Jika penugasan jadwal saat ini sudah tidak aktif,
+        | tetap masukkan ke pilihan agar data tidak hilang.
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $schedule->teacherClassSubject &&
+            !$schedule->teacherClassSubject->is_active
+        ) {
+
+            $exists = $teacherClassSubjects->contains(
+                'id',
+                $schedule->teacherClassSubject->id
+            );
+
+            if (!$exists) {
+                $teacherClassSubjects->push(
+                    $schedule->teacherClassSubject
+                );
+            }
+        }
+
 
         return view(
             'admin.schedules.edit',
             compact(
                 'schedule',
-                'teachers'
+                'teacherClassSubjects'
             )
         );
     }
 
 
+    /**
+     * Memperbarui jadwal.
+     */
     public function update(
         Request $request,
         Schedule $schedule
     ) {
 
         $validated = $request->validate([
-
-            'teacher_id' => [
+            'teacher_class_subject_id' => [
                 'required',
-                'exists:teachers,id',
-            ],
-
-            'subject' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'class_name' => [
-                'required',
-                'string',
-                'max:100',
+                'exists:teacher_class_subjects,id',
             ],
 
             'day' => [
@@ -424,18 +480,51 @@ class ScheduleController extends Controller
                 'nullable',
                 'boolean',
             ],
-
         ]);
 
 
         /*
         |--------------------------------------------------------------------------
-        | STATUS
+        | Ambil penugasan mengajar
         |--------------------------------------------------------------------------
         */
 
-        $validated['is_active'] =
-            $request->boolean('is_active');
+        $assignment = TeacherClassSubject::with([
+            'academicYear',
+            'schoolClass',
+            'teacher',
+            'subject',
+        ])->findOrFail(
+            $validated['teacher_class_subject_id']
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan penugasan aktif
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$assignment->is_active) {
+
+            /*
+            | Jika assignment yang dipilih berbeda dari assignment lama
+            | dan sudah tidak aktif, tolak.
+            */
+
+            if (
+                !$schedule->teacher_class_subject_id ||
+                (int) $schedule->teacher_class_subject_id !==
+                (int) $assignment->id
+            ) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'teacher_class_subject_id' =>
+                            'Penugasan mengajar tersebut tidak aktif.',
+                    ]);
+            }
+        }
 
 
         /*
@@ -445,8 +534,12 @@ class ScheduleController extends Controller
         */
 
         $conflict = $this->hasConflict(
-            $request,
-            $schedule
+            $assignment,
+            $validated['day'],
+            $validated['start_time'],
+            $validated['end_time'],
+            $validated['room'] ?? null,
+            $schedule->id
         );
 
 
@@ -455,10 +548,24 @@ class ScheduleController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'schedule' => $conflict,
+                    'teacher_class_subject_id' => $conflict,
                 ]);
-
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update kolom legacy
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['teacher_id'] = $assignment->teacher_id;
+
+        $validated['subject'] = $assignment->subject?->name;
+
+        $validated['class_name'] = $assignment->schoolClass?->name;
+
+        $validated['is_active'] = $request->boolean('is_active');
 
 
         /*
@@ -479,6 +586,9 @@ class ScheduleController extends Controller
     }
 
 
+    /**
+     * Menghapus jadwal.
+     */
     public function destroy(Schedule $schedule)
     {
         $schedule->delete();

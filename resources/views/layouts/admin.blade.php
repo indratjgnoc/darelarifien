@@ -174,88 +174,138 @@
 
                 </div>
 
-
                 {{-- Akademik --}}
                 <div class="pt-6">
 
                     <p
                         class="mb-3 px-4 text-[11px]
-                               font-bold uppercase
-                               tracking-widest
-                               text-white/30">
+               font-bold uppercase
+               tracking-widest
+               text-white/30">
                         Akademik
                     </p>
 
 
-                    <a href="{{ route('admin.programs.index') }}"
-                        class="mt-1 flex items-center gap-3
-           rounded-xl px-4 py-3
-           transition
-           {{ request()->routeIs('admin.programs.*')
-               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
-
-                        <i data-lucide="graduation-cap" class="h-5 w-5"></i>
-
-                        <span>Program Pendidikan</span>
-
-                    </a>
-
-                    <a href="{{ route('admin.teachers.index') }}"
-                        class="mt-1 flex items-center gap-3
-           rounded-xl px-4 py-3
-           transition
-           {{ request()->routeIs('admin.teachers.*')
-               ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-               : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
-
-                        <i data-lucide="users-round" class="h-5 w-5"></i>
-
-                        <span>Ustadz & Ustadzah</span>
-
-                    </a>
-
-                    <a href="{{ route('admin.schedules.index') }}"
-                        class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 transition
-    {{ request()->routeIs('admin.schedules.*')
-        ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-        : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
-
-                        <i data-lucide="users-round" class="h-5 w-5"></i>
-
-                        <span>Schedules</span>
-
-                    </a>
-
-
-                    <a href="{{ route('admin.classes.index') }}"
-                        class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 transition
-    {{ request()->routeIs('admin.classes.*')
-        ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-        : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
-
-                        <i data-lucide="school" class="h-5 w-5"></i>
-
-                        <span>Kelas</span>
-
-                    </a>
-
-
+                    {{-- Tahun Ajaran --}}
                     <a href="{{ route('admin.academic-years.index') }}"
-                        class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 transition
-    {{ request()->routeIs('admin.academic-years.*')
-        ? 'bg-[#F4C542] text-[#062E1F] font-bold'
-        : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.academic-years.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
-                        <i data-lucide="calendar-days" class="h-5 w-5"></i>
+                        <i data-lucide="calendar-range" class="h-5 w-5">
+                        </i>
 
                         <span>Tahun Ajaran</span>
 
                     </a>
 
 
-                </div>
+                    {{-- Kelas --}}
+                    <a href="{{ route('admin.classes.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.classes.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
 
+                        <i data-lucide="school" class="h-5 w-5">
+                        </i>
+
+                        <span>Kelas</span>
+
+                    </a>
+
+
+                    {{-- Mata Pelajaran --}}
+                    <a href="{{ route('admin.subjects.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.subjects.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="book-open" class="h-5 w-5">
+                        </i>
+
+                        <span>Mata Pelajaran</span>
+
+                    </a>
+
+
+                    {{-- Ustadz & Ustadzah --}}
+                    <a href="{{ route('admin.teachers.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.teachers.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="users-round" class="h-5 w-5">
+                        </i>
+
+                        <span>Ustadz & Ustadzah</span>
+
+                    </a>
+
+
+                    {{-- Penugasan Mengajar --}}
+                    <a href="{{ route('admin.teacher-class-subjects.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.teacher-class-subjects.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="clipboard-list" class="h-5 w-5">
+                        </i>
+
+                        <span>Penugasan Mengajar</span>
+
+                    </a>
+
+
+                    {{-- Jadwal --}}
+                    <a href="{{ route('admin.schedules.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.schedules.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="calendar-clock" class="h-5 w-5">
+                        </i>
+
+                        <span>Jadwal Pelajaran</span>
+
+                    </a>
+
+
+                    {{-- Santri --}}
+                    <a href="{{ route('admin.students.index') }}"
+                        class="mt-1 flex items-center gap-3
+               rounded-xl px-4 py-3
+               transition
+               {{ request()->routeIs('admin.students.*')
+                   ? 'bg-[#F4C542] text-[#062E1F] font-bold'
+                   : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+
+                        <i data-lucide="graduation-cap" class="h-5 w-5">
+                        </i>
+
+                        <span>Data Santri</span>
+
+                    </a>
+
+                </div>
+                
                 {{-- Komunikasi --}}
 
                 <div class="pt-6">
