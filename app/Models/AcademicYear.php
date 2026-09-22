@@ -30,22 +30,10 @@ class AcademicYear extends Model
         'end_date' => 'date',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | ACCESSORS
-    |--------------------------------------------------------------------------
-    */
-
     public function getFullNameAttribute(): string
     {
         return $this->name . ' - ' . ucfirst($this->semester);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONSHIPS
-    |--------------------------------------------------------------------------
-    */
 
     public function classes(): HasMany
     {
@@ -54,12 +42,6 @@ class AcademicYear extends Model
             'academic_year_id'
         );
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | SCOPES
-    |--------------------------------------------------------------------------
-    */
 
     public function scopeActive(Builder $query): Builder
     {
@@ -75,5 +57,10 @@ class AcademicYear extends Model
     public function teachingAssignments(): HasMany
     {
         return $this->hasMany(TeacherClassSubject::class);
+    }
+
+    public function gradeWeights(): HasMany
+    {
+        return $this->hasMany(GradeWeight::class);
     }
 }

@@ -150,7 +150,7 @@ Route::prefix('guru')
             '/nilai',
             [GuruGradeController::class, 'assignments']
         )->name('grades.assignments');
-        
+
         Route::get(
             '/nilai/{assignmentId}',
             [GuruGradeController::class, 'index']
@@ -161,6 +161,26 @@ Route::prefix('guru')
             [GuruGradeController::class, 'store']
         )->name('grades.store');
 
+        Route::get(
+            '/nilai/{assignmentId}/rekap',
+            [GuruGradeController::class, 'summary']
+        )->name('grades.summary');
+
+        Route::get(
+            '/nilai/{assignmentId}/penilaian/{type}/{name}/edit',
+            [GuruGradeController::class, 'editAssessment']
+        )->name('grades.assessment.edit');
+
+        Route::put(
+            '/nilai/{assignmentId}/penilaian/{type}/{name}',
+            [GuruGradeController::class, 'updateAssessment']
+        )->name('grades.assessment.update');
+
+        Route::delete(
+            '/nilai/{assignmentId}/penilaian/{type}/{name}',
+            [GuruGradeController::class, 'destroyAssessment']
+        )->name('grades.assessment.destroy');
+        
         Route::get(
             '/profil',
             [GuruProfileController::class, 'index']
