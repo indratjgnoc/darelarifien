@@ -168,6 +168,37 @@
 
                     </div>
 
+                    {{-- KEPALA PESANTREN --}}
+
+                    <div class="md:col-span-2">
+
+                        <label class="mb-2 block text-sm font-bold text-gray-700">
+                            Nama Kepala Pesantren
+                        </label>
+
+                        <input type="text" name="principal_name"
+                            value="{{ old('principal_name', $settings['principal_name'] ?? '') }}"
+                            class="w-full rounded-xl
+               border border-gray-200
+               bg-gray-50 px-4 py-3
+               text-sm outline-none
+               transition
+               focus:border-[#087443]
+               focus:ring-2
+               focus:ring-[#087443]/10"
+                            placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd.I">
+
+                        <p class="mt-2 text-xs text-gray-400">
+                            Nama ini akan digunakan pada tanda tangan Kepala Pesantren di dokumen rapor.
+                        </p>
+
+                        @error('principal_name')
+                            <p class="mt-2 text-xs font-semibold text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
 
                     {{-- LOGO PESANTREN --}}
 

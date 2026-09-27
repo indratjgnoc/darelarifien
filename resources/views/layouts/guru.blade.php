@@ -192,7 +192,7 @@
                     </a>
 
 
-                 <a href="{{ route('guru.grades.assignments') }}"
+                    <a href="{{ route('guru.grades.assignments') }}"
                         class="mt-1 flex items-center gap-3
                                rounded-xl
                                px-4 py-3
@@ -205,6 +205,22 @@
                         <i data-lucide="clipboard-list" class="h-5 w-5"></i>
 
                         <span>Tugas & Nilai</span>
+
+                    </a>
+
+                    <a href="{{ route('guru.reports.index') }}"
+                        class="mt-1 flex items-center gap-3
+           rounded-xl
+           px-4 py-3
+           text-sm font-semibold
+           transition
+           {{ request()->routeIs('guru.reports.*')
+               ? 'bg-white/10 text-white'
+               : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+
+                        <i data-lucide="file-text" class="h-5 w-5"></i>
+
+                        <span>Rapor</span>
 
                     </a>
 

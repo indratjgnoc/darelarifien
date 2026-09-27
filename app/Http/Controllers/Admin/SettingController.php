@@ -97,6 +97,11 @@ public function update(Request $request)
             'max:2048',
         ],
 
+        'principal_name' => [
+            'nullable',
+            'string',
+        ],
+
     ]);
 
 

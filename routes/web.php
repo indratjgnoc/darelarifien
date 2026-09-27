@@ -28,6 +28,7 @@ use App\Http\Controllers\Guru\GuruClassController;
 use App\Http\Controllers\Guru\GuruProfileController;
 use App\Http\Controllers\Guru\GuruScheduleController;
 use App\Http\Controllers\Guru\GuruGradeController;
+use App\Http\Controllers\Guru\GuruReportController;
 
 use App\Http\Controllers\Santri\SantriDashboardController;
 use App\Http\Controllers\Santri\SantriSubjectController;
@@ -180,7 +181,7 @@ Route::prefix('guru')
             '/nilai/{assignmentId}/penilaian/{type}/{name}',
             [GuruGradeController::class, 'destroyAssessment']
         )->name('grades.assessment.destroy');
-        
+
         Route::get(
             '/profil',
             [GuruProfileController::class, 'index']
@@ -190,6 +191,15 @@ Route::prefix('guru')
             '/jadwal',
             [GuruScheduleController::class, 'index']
         )->name('schedules.index');
+
+        Route::get('/rapor', [GuruReportController::class, 'index'])
+            ->name('reports.index');
+
+        Route::get('/rapor/kelas/{classId}', [GuruReportController::class, 'classDetail'])
+            ->name('reports.class');
+
+        Route::get('/rapor/kelas/{classId}/cetak', [GuruReportController::class, 'print'])
+            ->name('reports.print');
     });
 
 
