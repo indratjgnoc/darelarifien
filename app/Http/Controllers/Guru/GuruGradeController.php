@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class GuruGradeController extends Controller
 {
-    /**
-     * Daftar penugasan guru.
-     */
     public function assignments()
     {
         $teacher = Teacher::where('user_id', Auth::id())
@@ -49,9 +46,6 @@ class GuruGradeController extends Controller
         );
     }
 
-    /**
-     * Halaman input dan riwayat nilai.
-     */
     public function index(int $assignmentId)
     {
         $teacher = Teacher::where('user_id', Auth::id())
@@ -94,32 +88,81 @@ class GuruGradeController extends Controller
             ->orderBy('student_id')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Daftar penilaian yang sudah dibuat
-        |--------------------------------------------------------------------------
-        */
+        $weights = GradeWeight::query()
+            ->where(
+                'academic_year_id',
+                $assignment->academic_year_id
+            )
+            ->orderByRaw("
+            CASE assessment_type
+                WHEN 'Tugas' THEN 1
+                WHEN 'Kuis' THEN 2
+                WHEN 'Praktik' THEN 3
+                WHEN 'UTS' THEN 4
+                WHEN 'UAS' THEN 5
+                ELSE 6
+            END
+        ")
+            ->get();
+
+        $assessmentTypes = $weights
+            ->pluck('assessment_type')
+            ->values();
+
+
+        if ($assessmentTypes->isEmpty()) {
+            $assessmentTypes = collect([
+                'Tugas',
+                'Kuis',
+                'Praktik',
+                'UTS',
+                'UAS',
+                'Lainnya',
+            ]);
+        }
 
         $assessments = $grades
             ->groupBy(function ($grade) {
                 return $grade->assessment_type . '|' .
                     $grade->assessment_name;
             })
-            ->map(function ($group) {
+            ->map(function ($group) use ($students) {
 
                 $first = $group->first();
+
+                $studentCount = $students->count();
+
+                $gradedCount = $group
+                    ->pluck('student_id')
+                    ->unique()
+                    ->count();
+
+                $missingCount = max(
+                    $studentCount - $gradedCount,
+                    0
+                );
+
+                $isComplete = $studentCount > 0
+                    && $gradedCount >= $studentCount;
 
                 return (object) [
                     'type' => $first->assessment_type,
                     'name' => $first->assessment_name,
-                    'count' => $group->count(),
+                    'count' => $gradedCount,
+                    'total_students' => $studentCount,
+                    'missing_count' => $missingCount,
                     'average' => round(
                         $group->avg('score'),
                         2
                     ),
+                    'is_complete' => $isComplete,
                 ];
             })
             ->values();
+
+        $minimumPassingGrade = (float) (
+            $assignment->subject?->minimum_passing_grade ?? 0
+        );
 
         return view(
             'guru.grades.index',
@@ -128,7 +171,10 @@ class GuruGradeController extends Controller
                 'assignment',
                 'students',
                 'grades',
-                'assessments'
+                'assessments',
+                'weights',
+                'assessmentTypes',
+                'minimumPassingGrade'
             )
         );
     }
@@ -170,6 +216,7 @@ class GuruGradeController extends Controller
 
         $weights = GradeWeight::query()
             ->where('academic_year_id', $assignment->academic_year_id)
+            ->where('weight', '>', 0)
             ->orderByRaw("
             CASE assessment_type
                 WHEN 'Tugas' THEN 1
@@ -452,22 +499,10 @@ class GuruGradeController extends Controller
         $teacher = Teacher::where('user_id', Auth::id())
             ->firstOrFail();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Pastikan assignment memang milik guru
-        |--------------------------------------------------------------------------
-        */
-
         $assignment = TeacherClassSubject::where('id', $assignmentId)
             ->where('teacher_id', $teacher->id)
             ->where('is_active', true)
             ->firstOrFail();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Validasi request
-        |--------------------------------------------------------------------------
-        */
 
         $validated = $request->validate([
             'assessment_type' => [
@@ -500,12 +535,6 @@ class GuruGradeController extends Controller
             ],
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil santri yang memang berada di kelas assignment
-        |--------------------------------------------------------------------------
-        */
-
         $students = Student::where(
             'school_class_id',
             $assignment->school_class_id
@@ -518,12 +547,6 @@ class GuruGradeController extends Controller
             ->get()
             ->keyBy('id');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Validasi ID santri dari request
-        |--------------------------------------------------------------------------
-        */
-
         foreach (array_keys($validated['scores']) as $studentId) {
 
             if (! $students->has((int) $studentId)) {
@@ -535,12 +558,6 @@ class GuruGradeController extends Controller
             }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan dalam transaction
-        |--------------------------------------------------------------------------
-        */
-
         DB::transaction(function () use (
             $validated,
             $assignment
@@ -550,13 +567,6 @@ class GuruGradeController extends Controller
                 $validated['scores']
                 as $studentId => $score
             ) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | Kosong = jangan membuat/mengubah nilai
-                |--------------------------------------------------------------------------
-                */
-
                 if (
                     $score === null ||
                     $score === ''

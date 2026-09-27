@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class GuruReportController extends Controller
 {
-    /**
-     * Dashboard rapor wali kelas.
-     */
     public function index()
     {
         $teacher = Auth::user()->teacher;
@@ -40,9 +37,6 @@ class GuruReportController extends Controller
         ]);
     }
 
-    /**
-     * Detail kelengkapan nilai dan persiapan rapor satu kelas.
-     */
     public function classDetail(int $classId)
     {
         $teacher = Auth::user()->teacher;
@@ -51,11 +45,6 @@ class GuruReportController extends Controller
             abort(403);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Pastikan guru benar-benar wali kelas
-        |--------------------------------------------------------------------------
-        */
         $schoolClass = SchoolClass::query()
             ->with([
                 'academicYear',
@@ -66,11 +55,6 @@ class GuruReportController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil siswa aktif pada kelas + tahun akademik
-        |--------------------------------------------------------------------------
-        */
         $students = Student::query()
             ->where('school_class_id', $schoolClass->id)
             ->where('academic_year_id', $schoolClass->academic_year_id)
@@ -78,14 +62,6 @@ class GuruReportController extends Controller
             ->orderBy('name')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Jenis penilaian yang wajib ada
-        |--------------------------------------------------------------------------
-        |
-        | Bobot > 0 berarti jenis penilaian tersebut wajib digunakan.
-        |
-        */
         $weights = GradeWeight::query()
             ->where('academic_year_id', $schoolClass->academic_year_id)
             ->where('weight', '>', 0)
@@ -105,11 +81,6 @@ class GuruReportController extends Controller
             ->pluck('assessment_type')
             ->values();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Semua mata pelajaran yang diajarkan di kelas
-        |--------------------------------------------------------------------------
-        */
         $assignments = TeacherClassSubject::query()
             ->with([
                 'teacher',
@@ -129,11 +100,6 @@ class GuruReportController extends Controller
             ->orderBy('subject_id')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil seluruh grade kelas dalam satu query
-        |--------------------------------------------------------------------------
-        */
         $assignmentIds = $assignments->pluck('id');
 
         $grades = Grade::query()
@@ -141,27 +107,12 @@ class GuruReportController extends Controller
             ->whereIn('student_id', $students->pluck('id'))
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Susun index:
-        |
-        | assignment_id
-        |    student_id
-        |       assessment_type
-        |
-        |--------------------------------------------------------------------------
-        */
         $gradeIndex = [];
 
         foreach ($grades as $grade) {
             $gradeIndex[$grade->teacher_class_subject_id][$grade->student_id][$grade->assessment_type] = true;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Hitung kelengkapan setiap mata pelajaran
-        |--------------------------------------------------------------------------
-        */
         $subjects = $assignments->map(function ($assignment) use (
             $students,
             $requiredTypes,
@@ -235,11 +186,6 @@ class GuruReportController extends Controller
             abort(403);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Pastikan guru adalah wali kelas
-    |--------------------------------------------------------------------------
-    */
         $schoolClass = SchoolClass::query()
             ->with([
                 'academicYear',
@@ -250,11 +196,6 @@ class GuruReportController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        /*
-    |--------------------------------------------------------------------------
-    | Ambil santri aktif
-    |--------------------------------------------------------------------------
-    */
         $students = Student::query()
             ->where('school_class_id', $schoolClass->id)
             ->where('academic_year_id', $schoolClass->academic_year_id)
@@ -266,11 +207,7 @@ class GuruReportController extends Controller
             abort(422, 'Belum ada santri aktif pada kelas ini.');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Komponen nilai wajib
-    |--------------------------------------------------------------------------
-    */
+
         $weights = GradeWeight::query()
             ->where('academic_year_id', $schoolClass->academic_year_id)
             ->where('weight', '>', 0)
@@ -294,11 +231,6 @@ class GuruReportController extends Controller
             abort(422, 'Bobot penilaian belum tersedia.');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Semua mata pelajaran kelas
-    |--------------------------------------------------------------------------
-    */
         $assignments = TeacherClassSubject::query()
             ->with([
                 'teacher',
@@ -322,11 +254,6 @@ class GuruReportController extends Controller
             abort(422, 'Belum ada mata pelajaran untuk kelas ini.');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Ambil seluruh nilai sekaligus
-    |--------------------------------------------------------------------------
-    */
         $grades = Grade::query()
             ->whereIn(
                 'teacher_class_subject_id',
@@ -338,14 +265,6 @@ class GuruReportController extends Controller
             )
             ->get();
 
-        /*
-    |--------------------------------------------------------------------------
-    | VALIDASI KELENGKAPAN
-    |--------------------------------------------------------------------------
-    | Jangan hanya mengandalkan tombol UI.
-    | URL PDF juga harus aman.
-    |--------------------------------------------------------------------------
-    */
         foreach ($assignments as $assignment) {
 
             foreach ($students as $student) {
@@ -371,11 +290,6 @@ class GuruReportController extends Controller
             }
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Siapkan data rapor
-    |--------------------------------------------------------------------------
-    */
         $reportStudents = $students->map(function ($student) use (
             $assignments,
             $grades,
@@ -441,16 +355,13 @@ class GuruReportController extends Controller
             ];
         });
 
-        /*
-    |--------------------------------------------------------------------------
-    | Generate PDF
-    |--------------------------------------------------------------------------
-    */
         $settings = Setting::pluck('value', 'key');
+
         $pdf = Pdf::loadView('guru.reports.pdf', [
             'schoolClass' => $schoolClass,
             'students' => $reportStudents,
             'weights' => $weights,
+            'settings' => $settings,
         ]);
 
         $pdf->setPaper('A4', 'portrait');

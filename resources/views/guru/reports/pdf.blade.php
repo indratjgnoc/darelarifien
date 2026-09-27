@@ -153,6 +153,19 @@
             font-weight: bold;
         }
 
+        .table .status {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-tuntas {
+            color: #087443;
+        }
+
+        .status-belum {
+            color: #b91c1c;
+        }
+
         /* =========================================================
            SUMMARY
         ========================================================= */
@@ -216,13 +229,22 @@
             color: #888;
             text-align: center;
         }
+
+        .grade-note {
+            margin-top: 8px;
+            font-size: 8px;
+            color: #666;
+        }
+
+        .status-unknown {
+            color: #666;
+        }
     </style>
 </head>
 
 <body>
 
     @foreach ($students as $report)
-
         <div class="page">
 
             {{-- =====================================================
@@ -239,23 +261,13 @@
                         <td class="logo-cell">
 
                             @if (!empty($settings['logo']))
-
                                 @php
-                                    $logoPath = storage_path(
-                                        'app/public/' . $settings['logo']
-                                    );
+                                    $logoPath = storage_path('app/public/' . $settings['logo']);
                                 @endphp
 
                                 @if (file_exists($logoPath))
-
-                                    <img
-                                        src="{{ $logoPath }}"
-                                        class="logo"
-                                        alt="Logo"
-                                    >
-
+                                    <img src="{{ $logoPath }}" class="logo" alt="Logo">
                                 @endif
-
                             @endif
 
                         </td>
@@ -269,11 +281,9 @@
                             </div>
 
                             @if (!empty($settings['address']))
-
                                 <div class="school-address">
                                     {{ $settings['address'] }}
                                 </div>
-
                             @endif
 
                             <div class="document-title">
@@ -413,10 +423,6 @@
                             Mata Pelajaran
                         </th>
 
-                        <th style="width: 20%;">
-                            Guru
-                        </th>
-
                         <th style="width: 15%;">
                             Nilai
                         </th>
@@ -425,6 +431,9 @@
                             Predikat
                         </th>
 
+                        <th style="width: 15%;">
+                            Ketuntasan
+                        </th>
                     </tr>
 
                 </thead>
@@ -433,18 +442,9 @@
                 <tbody>
 
                     @foreach ($report->subjects as $index => $item)
-
                         @php
 
                             $score = (float) $item->final_score;
-
-                            /*
-                             * Predikat sementara.
-                             *
-                             * Nanti bisa kita pindahkan ke
-                             * pengaturan akademik jika sekolah
-                             * mempunyai standar resmi.
-                             */
 
                             if ($score >= 90) {
                                 $predicate = 'A';
@@ -456,6 +456,15 @@
                                 $predicate = 'D';
                             }
 
+                            $minimumPassingGrade = (float) ($item->subject->minimum_passing_grade ?? 0);
+
+                            $completionStatus = null;
+
+                            if ($minimumPassingGrade > 0) {
+                                $completionStatus = $score >= $minimumPassingGrade ? 'Tuntas' : 'Belum Tuntas';
+                            } else {
+                                $completionStatus = 'Belum Ditentukan';
+                            }
                         @endphp
 
 
@@ -469,10 +478,6 @@
                                 {{ $item->subject->name ?? '-' }}
                             </td>
 
-                            <td>
-                                {{ $item->teacher->name ?? '-' }}
-                            </td>
-
                             <td class="center">
                                 {{ number_format($score, 2) }}
                             </td>
@@ -481,14 +486,21 @@
                                 {{ $predicate }}
                             </td>
 
+                            <td
+                                class="status
+    {{ $completionStatus === 'Tuntas'
+        ? 'status-tuntas'
+        : ($completionStatus === 'Belum Tuntas'
+            ? 'status-belum'
+            : 'status-unknown') }}">
+                                {{ $completionStatus }}
+                            </td>
                         </tr>
-
                     @endforeach
 
                 </tbody>
 
             </table>
-
 
             {{-- =====================================================
                  KETERANGAN
@@ -503,6 +515,8 @@
                 <div>
                     Nilai akhir dihitung berdasarkan bobot komponen
                     penilaian yang telah ditetapkan pada tahun ajaran.
+                    Tuntas apabila nilai mencapai batas minimum yang ditetapkan
+                    pada masing-masing mata pelajaran.
                 </div>
 
             </div>
@@ -563,19 +577,14 @@
                 Dokumen ini dibuat melalui Sistem Informasi Akademik
 
                 @if (!empty($settings['school_name']))
-
                     {{ $settings['school_name'] }}
-
                 @else
-
                     Pesantren Darel Arifien
-
                 @endif
 
             </div>
 
         </div>
-
     @endforeach
 
 </body>
