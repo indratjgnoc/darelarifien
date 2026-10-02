@@ -7,37 +7,26 @@
     <div class="space-y-6">
 
         {{-- ================================================================
-             HEADER
-        ================================================================= --}}
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+         HEADER
+    ================================================================= --}}
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
             <div>
 
                 <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
 
-                    <a
-                        href="{{ route('guru.class.index') }}"
-                        class="transition hover:text-[#087443]"
-                    >
+                    <a href="{{ route('guru.class.index') }}" class="transition hover:text-[#087443]">
                         Kelas Saya
                     </a>
 
-                    <i
-                        data-lucide="chevron-right"
-                        class="h-4 w-4"
-                    ></i>
+                    <i data-lucide="chevron-right" class="h-4 w-4"></i>
 
-                    <a
-                        href="{{ route('guru.classes.show', $assignment->school_class_id) }}"
-                        class="transition hover:text-[#087443]"
-                    >
+                    <a href="{{ route('guru.classes.show', $assignment->school_class_id) }}"
+                        class="transition hover:text-[#087443]">
                         {{ $assignment->schoolClass?->name ?? 'Kelas' }}
                     </a>
 
-                    <i
-                        data-lucide="chevron-right"
-                        class="h-4 w-4"
-                    ></i>
+                    <i data-lucide="chevron-right" class="h-4 w-4"></i>
 
                     <span class="font-medium text-[#087443]">
                         Nilai
@@ -45,54 +34,38 @@
 
                 </div>
 
-                <h1 class="mt-3 text-2xl font-bold text-[#062E1F]">
+                <h1 class="mt-3 text-2xl font-bold tracking-tight text-[#062E1F]">
                     Input Nilai Santri
                 </h1>
 
                 <p class="mt-1 text-sm text-slate-500">
-                    Masukkan nilai untuk seluruh santri pada mata pelajaran ini.
+                    Kelola nilai {{ $assignment->subject?->name ?? '-' }}
+                    untuk kelas {{ $assignment->schoolClass?->name ?? '-' }}.
                 </p>
 
             </div>
 
 
             {{-- ACTION --}}
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center gap-2">
 
-                <a
-                    href="{{ route('guru.grades.summary', $assignment->id) }}"
+                <a href="{{ route('guru.grades.summary', $assignment->id) }}"
                     class="inline-flex items-center justify-center gap-2
-                           rounded-xl bg-[#087443] px-4 py-2.5
-                           text-sm font-semibold text-white
-                           shadow-sm transition hover:bg-[#062E1F]"
-                >
-
-                    <i
-                        data-lucide="chart-no-axes-column"
-                        class="h-4 w-4"
-                    ></i>
-
+                       rounded-xl bg-[#087443] px-4 py-2.5
+                       text-sm font-semibold text-white
+                       shadow-sm transition hover:bg-[#062E1F]">
+                    <i data-lucide="chart-no-axes-column" class="h-4 w-4"></i>
                     Rekap Nilai
-
                 </a>
 
-
-                <a
-                    href="{{ route('guru.grades.assignments') }}"
+                <a href="{{ route('guru.classes.show', $assignment->school_class_id) }}"
                     class="inline-flex items-center justify-center gap-2
-                           rounded-xl border border-slate-200
-                           bg-white px-4 py-2.5
-                           text-sm font-semibold text-slate-700
-                           shadow-sm hover:bg-slate-50"
-                >
-
-                    <i
-                        data-lucide="arrow-left"
-                        class="h-4 w-4"
-                    ></i>
-
+                       rounded-xl border border-slate-200
+                       bg-white px-4 py-2.5
+                       text-sm font-semibold text-slate-700
+                       shadow-sm transition hover:bg-slate-50">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
                     Kembali
-
                 </a>
 
             </div>
@@ -101,34 +74,105 @@
 
 
         {{-- ================================================================
-             INFO MAPEL
-        ================================================================= --}}
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+         FLASH SUCCESS
+    ================================================================= --}}
+        @if (session('success'))
+            <div
+                class="flex items-start gap-3 rounded-2xl border
+                   border-emerald-200 bg-emerald-50
+                   px-4 py-4 text-emerald-800">
+
+                <i data-lucide="circle-check" class="mt-0.5 h-5 w-5 shrink-0"></i>
+
+                <div class="text-sm font-medium">
+                    {{ session('success') }}
+                </div>
+
+            </div>
+        @endif
+
+
+        {{-- ================================================================
+         FLASH ERROR
+    ================================================================= --}}
+        @if (session('error'))
+            <div
+                class="flex items-start gap-3 rounded-2xl border
+                   border-red-200 bg-red-50
+                   px-4 py-4 text-red-800">
+
+                <i data-lucide="circle-alert" class="mt-0.5 h-5 w-5 shrink-0"></i>
+
+                <div class="text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+
+            </div>
+        @endif
+
+
+        {{-- ================================================================
+         VALIDATION ERROR
+    ================================================================= --}}
+        @if ($errors->any())
+
+            <div class="rounded-2xl border border-red-200
+                   bg-red-50 px-4 py-4 text-red-800">
+
+                <div class="flex items-start gap-3">
+
+                    <i data-lucide="circle-alert" class="mt-0.5 h-5 w-5 shrink-0"></i>
+
+                    <div>
+
+                        <p class="text-sm font-semibold">
+                            Terdapat kesalahan pada input.
+                        </p>
+
+                        <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
+
+                            @foreach ($errors->all() as $error)
+                                <li>
+                                    {{ $error }}
+                                </li>
+                            @endforeach
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        @endif
+
+
+        {{-- ================================================================
+         INFORMASI MAPEL
+    ================================================================= --}}
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
             {{-- MAPEL --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="rounded-2xl border border-slate-200
+                   bg-white p-5 shadow-sm">
 
                 <div class="flex items-center gap-3">
 
                     <div
-                        class="flex h-11 w-11 items-center justify-center
-                               rounded-xl bg-[#062E1F] text-[#F4C542]"
-                    >
-
-                        <i
-                            data-lucide="book-open"
-                            class="h-5 w-5"
-                        ></i>
-
+                        class="flex h-11 w-11 shrink-0 items-center
+                           justify-center rounded-xl
+                           bg-[#062E1F] text-[#F4C542]">
+                        <i data-lucide="book-open" class="h-5 w-5"></i>
                     </div>
 
-                    <div>
+                    <div class="min-w-0">
 
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Mata Pelajaran
                         </p>
 
-                        <p class="mt-1 font-bold text-[#062E1F]">
+                        <p class="mt-1 truncate font-bold text-[#062E1F]">
                             {{ $assignment->subject?->name ?? '-' }}
                         </p>
 
@@ -140,29 +184,25 @@
 
 
             {{-- KELAS --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="rounded-2xl border border-slate-200
+                   bg-white p-5 shadow-sm">
 
                 <div class="flex items-center gap-3">
 
                     <div
-                        class="flex h-11 w-11 items-center justify-center
-                               rounded-xl bg-[#087443] text-white"
-                    >
-
-                        <i
-                            data-lucide="school"
-                            class="h-5 w-5"
-                        ></i>
-
+                        class="flex h-11 w-11 shrink-0 items-center
+                           justify-center rounded-xl
+                           bg-[#087443] text-white">
+                        <i data-lucide="school" class="h-5 w-5"></i>
                     </div>
 
-                    <div>
+                    <div class="min-w-0">
 
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Kelas
                         </p>
 
-                        <p class="mt-1 font-bold text-[#062E1F]">
+                        <p class="mt-1 truncate font-bold text-[#062E1F]">
                             {{ $assignment->schoolClass?->name ?? '-' }}
                         </p>
 
@@ -174,25 +214,21 @@
 
 
             {{-- JUMLAH SANTRI --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="rounded-2xl border border-slate-200
+                   bg-white p-5 shadow-sm">
 
                 <div class="flex items-center gap-3">
 
                     <div
-                        class="flex h-11 w-11 items-center justify-center
-                               rounded-xl bg-[#F4C542] text-[#062E1F]"
-                    >
-
-                        <i
-                            data-lucide="users"
-                            class="h-5 w-5"
-                        ></i>
-
+                        class="flex h-11 w-11 shrink-0 items-center
+                           justify-center rounded-xl
+                           bg-[#F4C542] text-[#062E1F]">
+                        <i data-lucide="users" class="h-5 w-5"></i>
                     </div>
 
                     <div>
 
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Jumlah Santri
                         </p>
 
@@ -209,44 +245,104 @@
 
             {{-- KKM --}}
             <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-
                 <div class="flex items-center gap-3">
-
                     <div
                         class="flex h-11 w-11 items-center justify-center
-                               rounded-xl bg-emerald-50 text-[#087443]"
-                    >
+                    rounded-xl bg-amber-50 text-amber-600">
+                        <i data-lucide="target" class="h-5 w-5"></i>
+                    </div>
 
-                        <i
-                            data-lucide="badge-check"
-                            class="h-5 w-5"
-                        ></i>
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            KKM
+                        </p>
 
+                        <p class="mt-1 font-bold text-slate-900">
+                            @if (($assignment->subject->minimum_passing_grade ?? 0) > 0)
+                                {{ number_format((float) $assignment->subject->minimum_passing_grade, 0) }}
+                            @else
+                                Belum Ditentukan
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        {{-- ================================================================
+         BOBOT NILAI
+    ================================================================= --}}
+        <div class="rounded-2xl border border-slate-200
+               bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-5 py-4">
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="flex h-10 w-10 shrink-0 items-center
+                           justify-center rounded-xl
+                           bg-emerald-50 text-[#087443]">
+                        <i data-lucide="percent" class="h-5 w-5"></i>
                     </div>
 
                     <div>
 
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                            KKM
+                        <h2 class="font-bold text-[#062E1F]">
+                            Bobot Penilaian
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Bobot ini digunakan dalam perhitungan Nilai Akhir.
                         </p>
-
-                        @if ($minimumPassingGrade > 0)
-
-                            <p class="mt-1 font-bold text-[#087443]">
-                                {{ number_format($minimumPassingGrade, 2) }}
-                            </p>
-
-                        @else
-
-                            <p class="mt-1 text-sm font-semibold text-slate-400">
-                                Belum ditentukan
-                            </p>
-
-                        @endif
 
                     </div>
 
                 </div>
+
+            </div>
+
+
+            <div class="flex flex-wrap gap-2 px-5 py-4">
+
+                @forelse($weights as $weight)
+                    @php
+                        $weightValue = (float) $weight->weight;
+                    @endphp
+
+                    <div
+                        class="inline-flex items-center gap-2 rounded-xl border px-3 py-2
+                    {{ $weightValue > 0 ? 'border-emerald-100 bg-emerald-50' : 'border-slate-200 bg-slate-50' }}">
+
+                        <span
+                            class="text-sm font-semibold
+                        {{ $weightValue > 0 ? 'text-emerald-800' : 'text-slate-500' }}">
+                            {{ $weight->assessment_type }}
+                        </span>
+
+                        <span
+                            class="rounded-lg bg-white px-2 py-0.5
+                               text-xs font-bold
+                        {{ $weightValue > 0 ? 'text-[#087443]' : 'text-slate-500' }}">
+                            {{ number_format($weightValue, 0) }}%
+                        </span>
+
+                        @if ($weightValue <= 0)
+                            <span class="text-[11px] text-slate-400">
+                                tidak dihitung
+                            </span>
+                        @endif
+
+                    </div>
+
+                @empty
+
+                    <span class="text-sm text-slate-400">
+                        Belum ada pengaturan bobot penilaian.
+                    </span>
+                @endforelse
 
             </div>
 
@@ -254,181 +350,88 @@
 
 
         {{-- ================================================================
-             FLASH SUCCESS
-        ================================================================= --}}
-        @if (session('success'))
+         FORM INPUT NILAI
+    ================================================================= --}}
+        <div class="overflow-hidden rounded-2xl
+               border border-slate-200 bg-white shadow-sm">
 
-            <div
-                class="flex items-center gap-3 rounded-xl border
-                       border-emerald-200 bg-emerald-50
-                       px-4 py-3 text-sm text-emerald-700"
-            >
+            <div class="border-b border-slate-100 px-5 py-5">
 
-                <i
-                    data-lucide="circle-check"
-                    class="h-5 w-5"
-                ></i>
+                <div class="flex items-start gap-3">
 
-                <span>
-                    {{ session('success') }}
-                </span>
+                    <div
+                        class="flex h-10 w-10 shrink-0 items-center
+                           justify-center rounded-xl
+                           bg-[#087443] text-white">
+                        <i data-lucide="file-pen-line" class="h-5 w-5"></i>
+                    </div>
 
-            </div>
+                    <div>
 
-        @endif
+                        <h2 class="font-bold text-[#062E1F]">
+                            Input Penilaian
+                        </h2>
 
+                        <p class="mt-1 text-sm text-slate-500">
+                            Masukkan satu jenis penilaian untuk seluruh santri.
+                        </p>
 
-        {{-- ================================================================
-             FLASH ERROR
-        ================================================================= --}}
-        @if (session('error'))
-
-            <div
-                class="flex items-center gap-3 rounded-xl border
-                       border-red-200 bg-red-50
-                       px-4 py-3 text-sm text-red-700"
-            >
-
-                <i
-                    data-lucide="circle-alert"
-                    class="h-5 w-5"
-                ></i>
-
-                <span>
-                    {{ session('error') }}
-                </span>
-
-            </div>
-
-        @endif
-
-
-        {{-- ================================================================
-             VALIDATION ERROR
-        ================================================================= --}}
-        @if ($errors->any())
-
-            <div
-                class="rounded-xl border border-red-200
-                       bg-red-50 px-4 py-4 text-sm text-red-700"
-            >
-
-                <div class="flex items-center gap-2 font-bold">
-
-                    <i
-                        data-lucide="circle-alert"
-                        class="h-5 w-5"
-                    ></i>
-
-                    <span>
-                        Terdapat kesalahan:
-                    </span>
+                    </div>
 
                 </div>
 
-                <ul class="mt-2 list-disc space-y-1 pl-6">
-
-                    @foreach ($errors->all() as $error)
-
-                        <li>
-                            {{ $error }}
-                        </li>
-
-                    @endforeach
-
-                </ul>
-
             </div>
 
-        @endif
+
+            <form method="POST" action="{{ route('guru.grades.store', $assignment->id) }}" id="gradeForm">
+
+                @csrf
 
 
-        {{-- ================================================================
-             FORM INPUT NILAI
-        ================================================================= --}}
-        <form
-            method="POST"
-            action="{{ route('guru.grades.store', $assignment->id) }}"
-            class="space-y-6"
-        >
-
-            @csrf
-
-
-            {{-- ============================================================
-                 INFORMASI PENILAIAN
+                {{-- ============================================================
+                 DETAIL PENILAIAN
             ============================================================= --}}
-            <div
-                class="rounded-2xl border border-slate-200
-                       bg-white p-6 shadow-sm"
-            >
-
-                <div class="mb-5">
-
-                    <h2 class="font-bold text-[#062E1F]">
-                        Informasi Penilaian
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Tentukan jenis dan nama penilaian sebelum memasukkan nilai.
-                    </p>
-
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-2">
+                <div class="grid gap-5 border-b
+                       border-slate-100 p-5 md:grid-cols-2">
 
                     {{-- JENIS --}}
                     <div>
 
-                        <label
-                            for="assessment_type"
-                            class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
+                        <label for="assessment_type" class="mb-2 block text-sm font-semibold text-slate-700">
                             Jenis Penilaian
                         </label>
 
-                        <select
-                            id="assessment_type"
-                            name="assessment_type"
-                            required
+                        <select name="assessment_type" id="assessment_type" required
                             class="w-full rounded-xl border border-slate-200
-                                   bg-white px-4 py-3 text-sm
-                                   outline-none transition
-                                   focus:border-[#087443]
-                                   focus:ring-2 focus:ring-[#087443]/10"
-                        >
+                               bg-white px-4 py-3 text-sm text-slate-800
+                               outline-none transition
+                               focus:border-[#087443]
+                               focus:ring-2 focus:ring-[#087443]/10">
 
                             <option value="">
                                 Pilih jenis penilaian
                             </option>
 
-                            @foreach ($assessmentTypes as $type)
-
+                            @foreach ($weights as $weight)
                                 @php
-                                    $weight = $weights->firstWhere(
-                                        'assessment_type',
-                                        $type
-                                    );
+                                    $weightValue = (float) $weight->weight;
                                 @endphp
 
-                                <option
-                                    value="{{ $type }}"
-                                    @selected(old('assessment_type') === $type)
-                                >
-                                    {{ $type }}
+                                <option value="{{ $weight->assessment_type }}" @selected(old('assessment_type') === $weight->assessment_type)>
+                                    {{ $weight->assessment_type }}
+                                    — {{ number_format($weightValue, 0) }}%
 
-                                    @if ($weight)
-                                        — {{ number_format((float) $weight->weight, 0) }}%
+                                    @if ($weightValue <= 0)
+                                        (tidak masuk Nilai Akhir)
                                     @endif
-                                </option>
 
+                                </option>
                             @endforeach
 
                         </select>
 
-                        <p class="mt-2 text-xs text-slate-400">
-                            Bobot mengikuti pengaturan tahun akademik.
+                        <p id="assessmentWeightInfo" class="mt-2 text-xs text-slate-500">
+                            Pilih jenis penilaian untuk melihat informasi bobotnya.
                         </p>
 
                     </div>
@@ -437,41 +440,36 @@
                     {{-- NAMA --}}
                     <div>
 
-                        <label
-                            for="assessment_name"
-                            class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
+                        <label for="assessment_name" class="mb-2 block text-sm font-semibold text-slate-700">
                             Nama Penilaian
                         </label>
 
-                        <input
-                            type="text"
-                            id="assessment_name"
-                            name="assessment_name"
-                            value="{{ old('assessment_name') }}"
-                            placeholder="Contoh: Tugas 1, UTS Semester Ganjil"
-                            maxlength="150"
-                            required
+                        <input type="text" name="assessment_name" id="assessment_name"
+                            value="{{ old('assessment_name') }}" required maxlength="150"
+                            placeholder="Contoh: Tugas 1 / UTS Semester Ganjil"
                             class="w-full rounded-xl border border-slate-200
-                                   bg-white px-4 py-3 text-sm
-                                   outline-none transition
-                                   focus:border-[#087443]
-                                   focus:ring-2 focus:ring-[#087443]/10"
-                        >
+                               bg-white px-4 py-3 text-sm text-slate-800
+                               outline-none transition
+                               placeholder:text-slate-400
+                               focus:border-[#087443]
+                               focus:ring-2 focus:ring-[#087443]/10">
+
+                        <p class="mt-2 text-xs text-slate-400">
+                            Gunakan nama yang jelas agar mudah ditemukan pada riwayat nilai.
+                        </p>
 
                     </div>
 
                 </div>
 
 
-                {{-- KETERANGAN --}}
-                <div class="mt-5">
+                {{-- ============================================================
+                 CATATAN
+            ============================================================= --}}
+                <div class="border-b border-slate-100 p-5">
 
-                    <label
-                        for="notes"
-                        class="mb-2 block text-sm font-semibold text-slate-700"
-                    >
-                        Keterangan
+                    <label for="notes" class="mb-2 block text-sm font-semibold text-slate-700">
+                        Catatan
 
                         <span class="font-normal text-slate-400">
                             (opsional)
@@ -479,268 +477,351 @@
 
                     </label>
 
-                    <textarea
-                        id="notes"
-                        name="notes"
-                        rows="3"
-                        maxlength="1000"
-                        placeholder="Keterangan tambahan untuk penilaian ini..."
+                    <textarea name="notes" id="notes" rows="3" maxlength="1000" placeholder="Catatan penilaian..."
                         class="w-full rounded-xl border border-slate-200
-                               bg-white px-4 py-3 text-sm
-                               outline-none transition
-                               focus:border-[#087443]
-                               focus:ring-2 focus:ring-[#087443]/10"
-                    >{{ old('notes') }}</textarea>
+                           bg-white px-4 py-3 text-sm text-slate-800
+                           outline-none transition
+                           placeholder:text-slate-400
+                           focus:border-[#087443]
+                           focus:ring-2 focus:ring-[#087443]/10">{{ old('notes') }}</textarea>
 
                 </div>
 
-            </div>
 
-
-            {{-- ============================================================
+                {{-- ============================================================
                  DAFTAR SANTRI
             ============================================================= --}}
-            <div
-                class="overflow-hidden rounded-2xl border border-slate-200
-                       bg-white shadow-sm"
-            >
-
-                <div
-                    class="flex flex-col gap-3 border-b border-slate-100
-                           p-6 md:flex-row md:items-center
-                           md:justify-between"
-                >
-
-                    <div>
-
-                        <h2 class="font-bold text-[#062E1F]">
-                            Daftar Santri
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Masukkan nilai 0 sampai 100 untuk setiap santri.
-                        </p>
-
-                    </div>
+                <div class="p-5">
 
                     <div
-                        class="rounded-xl bg-emerald-50 px-4 py-2
-                               text-sm font-semibold text-emerald-700"
-                    >
+                        class="mb-4 flex flex-col gap-3
+                           sm:flex-row sm:items-center
+                           sm:justify-between">
 
-                        {{ $students->count() }} Santri
+                        <div>
 
-                    </div>
+                            <h3 class="font-bold text-[#062E1F]">
+                                Daftar Santri
+                            </h3>
 
-                </div>
-
-
-                @if ($students->isNotEmpty())
-
-                    <div class="overflow-x-auto">
-
-                        <table class="w-full text-left">
-
-                            <thead class="bg-slate-50">
-
-                                <tr>
-
-                                    <th
-                                        class="px-5 py-4 text-xs font-bold
-                                               uppercase tracking-wide text-slate-500"
-                                    >
-                                        No
-                                    </th>
-
-                                    <th
-                                        class="px-5 py-4 text-xs font-bold
-                                               uppercase tracking-wide text-slate-500"
-                                    >
-                                        NIS
-                                    </th>
-
-                                    <th
-                                        class="px-5 py-4 text-xs font-bold
-                                               uppercase tracking-wide text-slate-500"
-                                    >
-                                        Nama Santri
-                                    </th>
-
-                                    <th
-                                        class="w-48 px-5 py-4 text-xs font-bold
-                                               uppercase tracking-wide text-slate-500"
-                                    >
-                                        Nilai
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody class="divide-y divide-slate-100">
-
-                                @foreach ($students as $index => $student)
-
-                                    <tr class="transition hover:bg-slate-50">
-
-                                        <td class="px-5 py-4 text-sm text-slate-500">
-                                            {{ $index + 1 }}
-                                        </td>
-
-
-                                        <td class="px-5 py-4 text-sm font-medium text-slate-600">
-                                            {{ $student->nis ?? '-' }}
-                                        </td>
-
-
-                                        <td class="px-5 py-4">
-
-                                            <div class="font-semibold text-[#062E1F]">
-                                                {{ $student->name }}
-                                            </div>
-
-                                            @if ($student->gender)
-
-                                                <div class="mt-0.5 text-xs text-slate-400">
-                                                    {{ $student->gender === 'L'
-                                                        ? 'Laki-laki'
-                                                        : 'Perempuan' }}
-                                                </div>
-
-                                            @endif
-
-                                        </td>
-
-
-                                        <td class="px-5 py-4">
-
-                                            <input
-                                                type="number"
-                                                name="scores[{{ $student->id }}]"
-                                                value="{{ old('scores.' . $student->id) }}"
-                                                min="0"
-                                                max="100"
-                                                step="0.01"
-                                                placeholder="0 - 100"
-                                                class="w-full rounded-xl border border-slate-200
-                                                       px-4 py-2.5 text-sm font-semibold
-                                                       text-[#062E1F]
-                                                       outline-none transition
-                                                       focus:border-[#087443]
-                                                       focus:ring-2 focus:ring-[#087443]/10"
-                                            >
-
-                                        </td>
-
-                                    </tr>
-
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                @else
-
-                    <div class="p-10 text-center">
-
-                        <div
-                            class="mx-auto flex h-14 w-14 items-center
-                                   justify-center rounded-2xl
-                                   bg-slate-100 text-slate-400"
-                        >
-
-                            <i
-                                data-lucide="users-round"
-                                class="h-6 w-6"
-                            ></i>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Masukkan nilai pada rentang 0 sampai 100.
+                            </p>
 
                         </div>
 
-                        <h3 class="mt-4 font-bold text-[#062E1F]">
-                            Belum Ada Santri
-                        </h3>
 
-                        <p class="mt-1 text-sm text-slate-500">
-                            Belum ada santri aktif pada kelas ini.
-                        </p>
+                        @if ($students->isNotEmpty())
+                            <div class="flex flex-wrap items-center gap-2">
+
+                                <button type="button" id="fillEmptyButton"
+                                    class="inline-flex items-center gap-2
+                                       rounded-xl border border-slate-200
+                                       bg-white px-3 py-2 text-xs
+                                       font-semibold text-slate-600
+                                       transition hover:bg-slate-50">
+                                    <i data-lucide="copy-check" class="h-4 w-4"></i>
+                                    Isi yang kosong
+                                </button>
+
+                                <button type="button" id="clearScoresButton"
+                                    class="inline-flex items-center gap-2
+                                       rounded-xl border border-red-100
+                                       bg-red-50 px-3 py-2 text-xs
+                                       font-semibold text-red-600
+                                       transition hover:bg-red-100">
+                                    <i data-lucide="eraser" class="h-4 w-4"></i>
+                                    Kosongkan
+                                </button>
+
+                            </div>
+                        @endif
 
                     </div>
 
-                @endif
 
-            </div>
+                    @if ($students->isEmpty())
+
+                        <div
+                            class="rounded-2xl border border-dashed
+                               border-slate-300 bg-slate-50
+                               px-6 py-12 text-center">
+
+                            <div
+                                class="mx-auto flex h-14 w-14 items-center
+                                   justify-center rounded-2xl
+                                   bg-white text-slate-400 shadow-sm">
+                                <i data-lucide="users-round" class="h-7 w-7"></i>
+                            </div>
+
+                            <h3 class="mt-4 font-bold text-slate-800">
+                                Belum Ada Santri
+                            </h3>
+
+                            <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">
+                                Belum ada santri aktif pada kelas ini.
+                            </p>
+
+                        </div>
+                    @else
+                        <div class="overflow-x-auto rounded-2xl
+                               border border-slate-200">
+
+                            <table class="min-w-full divide-y divide-slate-200">
+
+                                <thead class="bg-slate-50">
+
+                                    <tr>
+
+                                        <th
+                                            class="w-14 px-4 py-3 text-center
+                                               text-xs font-bold uppercase
+                                               tracking-wider text-slate-500">
+                                            No
+                                        </th>
+
+                                        <th
+                                            class="px-4 py-3 text-left
+                                               text-xs font-bold uppercase
+                                               tracking-wider text-slate-500">
+                                            NIS
+                                        </th>
+
+                                        <th
+                                            class="px-4 py-3 text-left
+                                               text-xs font-bold uppercase
+                                               tracking-wider text-slate-500">
+                                            Nama Santri
+                                        </th>
+
+                                        <th
+                                            class="w-40 px-4 py-3 text-center
+                                               text-xs font-bold uppercase
+                                               tracking-wider text-slate-500">
+                                            Nilai
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
 
 
-            {{-- ============================================================
-                 ACTION
-            ============================================================= --}}
-            @if ($students->isNotEmpty())
+                                <tbody class="divide-y divide-slate-100 bg-white">
 
-                <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                                    @foreach ($students as $index => $student)
+                                        @php
 
-                    <a
-                        href="{{ route('guru.classes.show', $assignment->school_class_id) }}"
-                        class="inline-flex items-center justify-center gap-2
-                               rounded-xl border border-slate-200
-                               bg-white px-6 py-3
-                               text-sm font-semibold text-slate-700
-                               transition hover:bg-slate-50"
-                    >
-                        Batal
-                    </a>
+                                            /*
+                                             * Ambil nilai lama jika ada.
+                                             * Support struktur field:
+                                             * - student_id
+                                             * - assessment_type
+                                             * - assessment_name
+                                             */
+
+                                            $existingGrade = collect($grades ?? [])
+                                                ->where('student_id', $student->id)
+                                                ->where('assessment_type', old('assessment_type'))
+                                                ->where('assessment_name', old('assessment_name'))
+                                                ->first();
+
+                                            $oldScore = old('scores.' . $student->id, $existingGrade?->score);
+
+                                            $oldNote = old('notes.' . $student->id, $existingGrade?->notes);
+
+                                        @endphp
 
 
-                    <button
-                        type="submit"
-                        class="inline-flex items-center justify-center gap-2
-                               rounded-xl bg-[#087443] px-6 py-3
-                               text-sm font-bold text-white
-                               shadow-sm transition hover:bg-[#062E1F]"
-                    >
+                                        <tr class="transition hover:bg-slate-50/70">
 
-                        <i
-                            data-lucide="save"
-                            class="h-4 w-4"
-                        ></i>
+                                            {{-- NO --}}
+                                            <td
+                                                class="px-4 py-3 text-center
+                                                   text-sm text-slate-500">
+                                                {{ $index + 1 }}
+                                            </td>
 
-                        Simpan Semua Nilai
 
-                    </button>
+                                            {{-- NIS --}}
+                                            <td class="px-4 py-3">
+
+                                                <span class="font-mono text-sm text-slate-600">
+                                                    {{ $student->NIS ?? ($student->nis ?? '-') }}
+                                                </span>
+
+                                            </td>
+
+
+                                            {{-- NAMA --}}
+                                            <td class="px-4 py-3">
+
+                                                <div class="flex items-center gap-3">
+
+                                                    @if ($student->photo)
+                                                        <img src="{{ asset('storage/' . $student->photo) }}"
+                                                            alt="{{ $student->name }}"
+                                                            class="h-9 w-9 rounded-xl object-cover">
+                                                    @else
+                                                        <div
+                                                            class="flex h-9 w-9 shrink-0
+                                                               items-center justify-center
+                                                               rounded-xl bg-emerald-50
+                                                               text-xs font-bold
+                                                               text-[#087443]">
+                                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+
+
+                                                    <div class="min-w-0">
+
+                                                        <p
+                                                            class="truncate text-sm
+                                                               font-semibold text-slate-800">
+                                                            {{ $student->name }}
+                                                        </p>
+
+                                                        @if ($student->NISN)
+                                                            <p class="text-xs text-slate-400">
+                                                                NISN: {{ $student->NISN }}
+                                                            </p>
+                                                        @endif
+
+                                                        @if ($student->gender)
+                                                            <p class="text-xs text-slate-400">
+                                                                {{ $student->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                                            </p>
+                                                        @endif
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            {{-- NILAI --}}
+                                            <td class="px-4 py-3">
+
+                                                <input type="number" name="scores[{{ $student->id }}]"
+                                                    value="{{ $oldScore }}" min="0" max="100"
+                                                    step="0.01" inputmode="decimal" placeholder="0–100"
+                                                    class="score-input w-full rounded-xl
+                                                       border border-slate-200
+                                                       bg-white px-3 py-2.5
+                                                       text-center text-sm
+                                                       font-semibold text-slate-800
+                                                       outline-none transition
+                                                       placeholder:font-normal
+                                                       placeholder:text-slate-300
+                                                       focus:border-[#087443]
+                                                       focus:ring-2
+                                                       focus:ring-[#087443]/10">
+
+                                                @if ($oldNote)
+                                                    <p
+                                                        class="mt-1 text-[11px]
+                                                           text-slate-400">
+                                                        {{ $oldNote }}
+                                                    </p>
+                                                @endif
+
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        {{-- ====================================================
+                         FOOTER FORM
+                    ===================================================== --}}
+                        <div
+                            class="mt-5 flex flex-col gap-3
+                               rounded-2xl bg-slate-50 p-4
+                               sm:flex-row sm:items-center
+                               sm:justify-between">
+
+                            <div class="flex items-center gap-2
+                                   text-xs text-slate-500">
+
+                                <i data-lucide="info" class="h-4 w-4"></i>
+
+                                <span>
+                                    Nilai yang dikosongkan tidak akan disimpan.
+                                </span>
+
+                            </div>
+
+
+                            <button type="submit"
+                                class="inline-flex items-center
+                                   justify-center gap-2
+                                   rounded-xl bg-[#087443]
+                                   px-5 py-3 text-sm font-bold
+                                   text-white shadow-sm transition
+                                   hover:bg-[#062E1F]
+                                   focus:outline-none
+                                   focus:ring-2
+                                   focus:ring-[#087443]/20">
+
+                                <i data-lucide="save" class="h-4 w-4"></i>
+
+                                Simpan Semua Nilai
+
+                            </button>
+
+                        </div>
+
+                    @endif
 
                 </div>
 
-            @endif
+            </form>
 
-        </form>
+        </div>
 
 
         {{-- ================================================================
-             RIWAYAT PENILAIAN
-        ================================================================= --}}
-        <div
-            class="overflow-hidden rounded-2xl border border-slate-200
-                   bg-white shadow-sm"
-        >
+         RIWAYAT PENILAIAN
+    ================================================================= --}}
+        <div class="overflow-hidden rounded-2xl
+               border border-slate-200 bg-white shadow-sm">
 
-            <div class="border-b border-slate-100 p-6">
+            <div class="border-b border-slate-100 px-5 py-5">
 
-                <div class="flex flex-col gap-2 md:flex-row
-                            md:items-center md:justify-between">
+                <div
+                    class="flex flex-col gap-3
+                       md:flex-row md:items-center
+                       md:justify-between">
 
-                    <div>
+                    <div class="flex items-start gap-3">
 
-                        <h2 class="font-bold text-[#062E1F]">
-                            Riwayat Penilaian
-                        </h2>
+                        <div
+                            class="flex h-10 w-10 shrink-0
+                               items-center justify-center
+                               rounded-xl bg-slate-100
+                               text-slate-600">
+                            <i data-lucide="history" class="h-5 w-5"></i>
+                        </div>
 
-                        <p class="mt-1 text-sm text-slate-500">
-                            Daftar penilaian yang sebelumnya sudah dimasukkan
-                            untuk mata pelajaran ini.
-                        </p>
+                        <div>
+
+                            <h2 class="font-bold text-[#062E1F]">
+                                Riwayat Penilaian
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-500">
+                                Daftar penilaian yang sudah dibuat
+                                untuk mata pelajaran ini.
+                            </p>
+
+                        </div>
 
                     </div>
 
@@ -748,27 +829,22 @@
                     @if ($assessments->isNotEmpty())
 
                         @php
-                            $completedAssessments = $assessments
-                                ->where('is_complete', true)
-                                ->count();
 
-                            $incompleteAssessments = $assessments
-                                ->where('is_complete', false)
-                                ->count();
+                            $completedAssessments = $assessments->where('is_complete', true)->count();
+
+                            $incompleteAssessments = $assessments->where('is_complete', false)->count();
+
                         @endphp
 
                         <div class="flex flex-wrap gap-2">
 
                             <span
                                 class="inline-flex items-center gap-1.5
-                                       rounded-full bg-emerald-50 px-3 py-1.5
-                                       text-xs font-bold text-emerald-700"
-                            >
+                                   rounded-full bg-emerald-50
+                                   px-3 py-1.5 text-xs
+                                   font-bold text-emerald-700">
 
-                                <i
-                                    data-lucide="circle-check"
-                                    class="h-3.5 w-3.5"
-                                ></i>
+                                <i data-lucide="circle-check" class="h-3.5 w-3.5"></i>
 
                                 {{ $completedAssessments }} Lengkap
 
@@ -776,22 +852,17 @@
 
 
                             @if ($incompleteAssessments > 0)
-
                                 <span
                                     class="inline-flex items-center gap-1.5
-                                           rounded-full bg-amber-50 px-3 py-1.5
-                                           text-xs font-bold text-amber-700"
-                                >
+                                       rounded-full bg-amber-50
+                                       px-3 py-1.5 text-xs
+                                       font-bold text-amber-700">
 
-                                    <i
-                                        data-lucide="clock-3"
-                                        class="h-3.5 w-3.5"
-                                    ></i>
+                                    <i data-lucide="clock-3" class="h-3.5 w-3.5"></i>
 
                                     {{ $incompleteAssessments }} Belum Lengkap
 
                                 </span>
-
                             @endif
 
                         </div>
@@ -803,56 +874,82 @@
             </div>
 
 
-            @if ($assessments->isNotEmpty())
+            @if ($assessments->isEmpty())
 
+                <div class="px-6 py-12 text-center">
+
+                    <div
+                        class="mx-auto flex h-14 w-14
+                           items-center justify-center
+                           rounded-2xl bg-slate-100
+                           text-slate-400">
+                        <i data-lucide="clipboard-list" class="h-7 w-7"></i>
+                    </div>
+
+                    <h3 class="mt-4 font-bold text-slate-800">
+                        Belum Ada Penilaian
+                    </h3>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Penilaian yang telah dibuat akan muncul di sini.
+                    </p>
+
+                </div>
+            @else
                 <div class="overflow-x-auto">
 
-                    <table class="w-full text-left">
+                    <table class="min-w-full divide-y divide-slate-200">
 
                         <thead class="bg-slate-50">
 
                             <tr>
 
                                 <th
-                                    class="px-5 py-4 text-xs font-bold
-                                           uppercase tracking-wide text-slate-500"
-                                >
+                                    class="px-5 py-3 text-left
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
                                     No
                                 </th>
 
                                 <th
-                                    class="px-5 py-4 text-xs font-bold
-                                           uppercase tracking-wide text-slate-500"
-                                >
+                                    class="px-5 py-3 text-left
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
                                     Jenis
                                 </th>
 
                                 <th
-                                    class="px-5 py-4 text-xs font-bold
-                                           uppercase tracking-wide text-slate-500"
-                                >
+                                    class="px-5 py-3 text-left
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
                                     Penilaian
                                 </th>
 
                                 <th
-                                    class="px-5 py-4 text-xs font-bold
-                                           uppercase tracking-wide text-slate-500"
-                                >
-                                    Kelengkapan
+                                    class="px-5 py-3 text-center
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
+                                    Terisi
                                 </th>
 
                                 <th
-                                    class="px-5 py-4 text-xs font-bold
-                                           uppercase tracking-wide text-slate-500"
-                                >
+                                    class="px-5 py-3 text-center
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
                                     Rata-rata
                                 </th>
 
                                 <th
-                                    class="px-5 py-4 text-right text-xs
-                                           font-bold uppercase tracking-wide
-                                           text-slate-500"
-                                >
+                                    class="px-5 py-3 text-center
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
+                                    Status
+                                </th>
+
+                                <th
+                                    class="px-5 py-3 text-right
+                                       text-xs font-bold uppercase
+                                       tracking-wider text-slate-500">
                                     Aksi
                                 </th>
 
@@ -864,11 +961,41 @@
                         <tbody class="divide-y divide-slate-100">
 
                             @foreach ($assessments as $index => $assessment)
+                                @php
 
-                                <tr class="transition hover:bg-slate-50">
+                                    /*
+                                     * Mendukung dua kemungkinan struktur data:
+                                     *
+                                     * assessment_type / assessment_name
+                                     * atau
+                                     * type / name
+                                     */
+
+                                    $assessmentType = $assessment->assessment_type ?? ($assessment->type ?? '-');
+
+                                    $assessmentName = $assessment->assessment_name ?? ($assessment->name ?? '-');
+
+                                    $weight = $weights->firstWhere('assessment_type', $assessmentType);
+
+                                    $weightValue = $weight ? (float) $weight->weight : 0;
+
+                                    $count = $assessment->count ?? 0;
+
+                                    $totalStudents = $assessment->total_students ?? $students->count();
+
+                                    $missingCount = $assessment->missing_count ?? max(0, $totalStudents - $count);
+
+                                    $average = $assessment->average ?? 0;
+
+                                @endphp
+
+
+                                <tr class="transition hover:bg-slate-50/70">
 
                                     {{-- NO --}}
-                                    <td class="px-5 py-4 text-sm text-slate-500">
+                                    <td
+                                        class="px-5 py-4
+                                           text-sm text-slate-500">
                                         {{ $index + 1 }}
                                     </td>
 
@@ -876,31 +1003,27 @@
                                     {{-- JENIS --}}
                                     <td class="px-5 py-4">
 
-                                        <div class="flex flex-col items-start gap-1">
+                                        <div
+                                            class="flex flex-col
+                                               items-start gap-1">
 
                                             <span
-                                                class="inline-flex rounded-lg
-                                                       bg-[#062E1F] px-3 py-1
-                                                       text-xs font-bold
-                                                       text-[#F4C542]"
-                                            >
-                                                {{ $assessment->type }}
+                                                class="inline-flex w-fit
+                                                   rounded-lg
+                                                   bg-[#062E1F]
+                                                   px-3 py-1
+                                                   text-xs font-bold
+                                                   text-[#F4C542]">
+                                                {{ $assessmentType }}
                                             </span>
 
-                                            @php
-                                                $weight = $weights->firstWhere(
-                                                    'assessment_type',
-                                                    $assessment->type
-                                                );
-                                            @endphp
-
                                             @if ($weight)
-
-                                                <span class="text-[11px] text-slate-400">
+                                                <span
+                                                    class="text-[11px]
+                                                       text-slate-400">
                                                     Bobot
-                                                    {{ number_format((float) $weight->weight, 0) }}%
+                                                    {{ number_format($weightValue, 0) }}%
                                                 </span>
-
                                             @endif
 
                                         </div>
@@ -911,119 +1034,113 @@
                                     {{-- NAMA --}}
                                     <td class="px-5 py-4">
 
-                                        <div class="font-semibold text-[#062E1F]">
-                                            {{ $assessment->name }}
-                                        </div>
+                                        <p
+                                            class="text-sm font-semibold
+                                               text-[#062E1F]">
+                                            {{ $assessmentName }}
+                                        </p>
 
                                     </td>
 
 
-                                    {{-- KELENGKAPAN --}}
-                                    <td class="px-5 py-4">
+                                    {{-- TERISI --}}
+                                    <td class="px-5 py-4 text-center">
 
-                                        @if ($assessment->is_complete)
+                                        <span
+                                            class="font-semibold
+                                               text-slate-700">
+                                            {{ $count }}
+                                        </span>
 
-                                            <div class="flex flex-col items-start gap-1">
+                                        <span class="text-slate-400">
+                                            /
+                                            {{ $totalStudents }}
+                                        </span>
 
-                                                <span
-                                                    class="inline-flex items-center gap-1.5
-                                                           rounded-full bg-emerald-50
-                                                           px-3 py-1.5 text-xs
-                                                           font-bold text-emerald-700"
-                                                >
-
-                                                    <i
-                                                        data-lucide="circle-check"
-                                                        class="h-3.5 w-3.5"
-                                                    ></i>
-
-                                                    Lengkap
-
-                                                </span>
-
-                                                <span class="text-[11px] text-slate-400">
-                                                    {{ $assessment->count }}
-                                                    / {{ $assessment->total_students }}
-                                                    santri
-                                                </span>
-
-                                            </div>
-
-                                        @else
-
-                                            <div class="flex flex-col items-start gap-1">
-
-                                                <span
-                                                    class="inline-flex items-center gap-1.5
-                                                           rounded-full bg-amber-50
-                                                           px-3 py-1.5 text-xs
-                                                           font-bold text-amber-700"
-                                                >
-
-                                                    <i
-                                                        data-lucide="clock-3"
-                                                        class="h-3.5 w-3.5"
-                                                    ></i>
-
-                                                    Belum Lengkap
-
-                                                </span>
-
-                                                <span class="text-[11px] text-slate-400">
-                                                    {{ $assessment->count }}
-                                                    / {{ $assessment->total_students }}
-                                                    santri
-                                                </span>
-
-                                            </div>
-
+                                        @if ($missingCount > 0)
+                                            <p
+                                                class="mt-1 text-[11px]
+                                                   text-amber-600">
+                                                {{ $missingCount }} belum diisi
+                                            </p>
                                         @endif
 
                                     </td>
 
 
                                     {{-- RATA-RATA --}}
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-4 text-center">
 
                                         <span
-                                            class="inline-flex min-w-16 justify-center
-                                                   rounded-lg bg-emerald-50
-                                                   px-3 py-1.5 text-sm
-                                                   font-bold text-emerald-700"
-                                        >
-                                            {{ number_format(
-                                                (float) $assessment->average,
-                                                2
-                                            ) }}
+                                            class="inline-flex min-w-16
+                                               justify-center
+                                               rounded-lg bg-emerald-50
+                                               px-3 py-1.5
+                                               text-sm font-bold
+                                               text-emerald-700">
+                                            {{ number_format((float) $average, 2) }}
                                         </span>
 
                                     </td>
 
 
-                                    {{-- AKSI --}}
-                                    <td class="px-5 py-4 text-right">
+                                    {{-- STATUS --}}
+                                    <td class="px-5 py-4 text-center">
 
-                                        <div class="flex justify-end gap-2">
+                                        @if ($assessment->is_complete)
+                                            <span
+                                                class="inline-flex items-center
+                                                   gap-1.5 rounded-full
+                                                   bg-emerald-50 px-2.5 py-1
+                                                   text-xs font-bold
+                                                   text-emerald-700">
+
+                                                <i data-lucide="circle-check" class="h-3.5 w-3.5"></i>
+
+                                                Lengkap
+
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center
+                                                   gap-1.5 rounded-full
+                                                   bg-amber-50 px-2.5 py-1
+                                                   text-xs font-bold
+                                                   text-amber-700">
+
+                                                <i data-lucide="clock-3" class="h-3.5 w-3.5"></i>
+
+                                                {{ $missingCount }} belum
+
+                                            </span>
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- AKSI --}}
+                                    <td class="px-5 py-4">
+
+                                        <div
+                                            class="flex items-center
+                                               justify-end gap-2">
 
                                             {{-- EDIT --}}
-                                            <a
-                                                href="{{ route('guru.grades.assessment.edit', [
-                                                    'assignmentId' => $assignment->id,
-                                                    'type' => $assessment->type,
-                                                    'name' => $assessment->name,
-                                                ]) }}"
-                                                class="inline-flex items-center gap-1.5
-                                                       rounded-lg border border-slate-200
-                                                       bg-white px-3 py-2
-                                                       text-xs font-semibold
-                                                       text-slate-700
-                                                       transition hover:bg-slate-50"
-                                            >
+                                            <a href="{{ route('guru.grades.assessment.edit', [
+                                                'assignmentId' => $assignment->id,
+                                                'type' => $assessmentType,
+                                                'name' => $assessmentName,
+                                            ]) }}"
+                                                class="inline-flex items-center
+                                                   gap-1.5 rounded-xl
+                                                   border border-slate-200
+                                                   bg-white px-3 py-2
+                                                   text-xs font-semibold
+                                                   text-slate-600
+                                                   transition
+                                                   hover:bg-slate-50">
 
-                                                <i
-                                                    data-lucide="pencil"
-                                                    class="h-3.5 w-3.5"
-                                                ></i>
+                                                <i data-lucide="pencil" class="h-3.5 w-3.5"></i>
 
                                                 Edit
 
@@ -1031,34 +1148,31 @@
 
 
                                             {{-- HAPUS --}}
-                                            <form
-                                                method="POST"
+                                            <form method="POST"
                                                 action="{{ route('guru.grades.assessment.destroy', [
                                                     'assignmentId' => $assignment->id,
-                                                    'type' => $assessment->type,
-                                                    'name' => $assessment->name,
+                                                    'type' => $assessmentType,
+                                                    'name' => $assessmentName,
                                                 ]) }}"
-                                                onsubmit="return confirm('Hapus penilaian ini beserta seluruh nilai santri?')"
-                                            >
+                                                onsubmit="return confirm(
+                                                'Hapus penilaian ini beserta seluruh nilai santri?'
+                                            )">
 
                                                 @csrf
 
                                                 @method('DELETE')
 
-                                                <button
-                                                    type="submit"
-                                                    class="inline-flex items-center gap-1.5
-                                                           rounded-lg border border-red-200
-                                                           bg-red-50 px-3 py-2
-                                                           text-xs font-semibold
-                                                           text-red-600
-                                                           transition hover:bg-red-100"
-                                                >
+                                                <button type="submit"
+                                                    class="inline-flex items-center
+                                                       gap-1.5 rounded-xl
+                                                       border border-red-100
+                                                       bg-red-50 px-3 py-2
+                                                       text-xs font-semibold
+                                                       text-red-600
+                                                       transition
+                                                       hover:bg-red-100">
 
-                                                    <i
-                                                        data-lucide="trash-2"
-                                                        class="h-3.5 w-3.5"
-                                                    ></i>
+                                                    <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
 
                                                     Hapus
 
@@ -1071,7 +1185,6 @@
                                     </td>
 
                                 </tr>
-
                             @endforeach
 
                         </tbody>
@@ -1082,12 +1195,13 @@
 
 
                 {{-- INFO --}}
-                <div
-                    class="border-t border-slate-100
-                           bg-slate-50 px-6 py-4"
-                >
+                <div class="border-t border-slate-100
+                       bg-slate-50 px-6 py-4">
 
-                    <div class="flex flex-col gap-2 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+                    <div
+                        class="flex flex-col gap-2 text-xs
+                           text-slate-500 md:flex-row
+                           md:items-center md:justify-between">
 
                         <p>
                             <strong class="text-slate-700">
@@ -1109,33 +1223,6 @@
 
                 </div>
 
-            @else
-
-                <div class="p-10 text-center">
-
-                    <div
-                        class="mx-auto flex h-14 w-14 items-center
-                               justify-center rounded-2xl
-                               bg-slate-100 text-slate-400"
-                    >
-
-                        <i
-                            data-lucide="clipboard-list"
-                            class="h-6 w-6"
-                        ></i>
-
-                    </div>
-
-                    <h3 class="mt-4 font-bold text-[#062E1F]">
-                        Belum Ada Riwayat Penilaian
-                    </h3>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Penilaian yang sudah disimpan akan muncul di sini.
-                    </p>
-
-                </div>
-
             @endif
 
         </div>
@@ -1143,3 +1230,308 @@
     </div>
 
 @endsection
+
+
+{{-- ================================================================
+     JAVASCRIPT
+================================================================= --}}
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            const weights = @json(
+                $weights->mapWithKeys(function ($weight) {
+                    return [
+                        $weight->assessment_type => (float) $weight->weight,
+                    ];
+                }));
+
+            const assessmentType =
+                document.getElementById('assessment_type');
+
+            const assessmentName =
+                document.getElementById('assessment_name');
+
+            const weightInfo =
+                document.getElementById('assessmentWeightInfo');
+
+            const gradeForm =
+                document.getElementById('gradeForm');
+
+            const fillEmptyButton =
+                document.getElementById('fillEmptyButton');
+
+            const clearScoresButton =
+                document.getElementById('clearScoresButton');
+
+            function updateWeightInfo() {
+
+                if (!assessmentType || !weightInfo) {
+                    return;
+                }
+
+                const type = assessmentType.value;
+
+                if (!type) {
+
+                    weightInfo.textContent =
+                        'Pilih jenis penilaian untuk melihat informasi bobotnya.';
+
+                    weightInfo.className =
+                        'mt-2 text-xs text-slate-500';
+
+                    return;
+                }
+
+                const weight =
+                    Number(weights[type] ?? 0);
+
+
+                if (weight > 0) {
+
+                    weightInfo.textContent =
+                        `${type} memiliki bobot ${weight}% dan akan masuk dalam perhitungan Nilai Akhir.`;
+
+                    weightInfo.className =
+                        'mt-2 text-xs font-medium text-emerald-700';
+
+                } else {
+
+                    weightInfo.textContent =
+                        `${type} memiliki bobot 0% sehingga tidak memengaruhi Nilai Akhir.`;
+
+                    weightInfo.className =
+                        'mt-2 text-xs font-medium text-amber-700';
+
+                }
+
+            }
+
+            if (assessmentType) {
+
+                assessmentType.addEventListener(
+                    'change',
+                    updateWeightInfo
+                );
+
+                updateWeightInfo();
+
+            }
+
+            if (fillEmptyButton) {
+
+                fillEmptyButton.addEventListener(
+                    'click',
+                    function() {
+
+                        const inputs =
+                            document.querySelectorAll('.score-input');
+
+                        const firstFilled =
+                            Array.from(inputs).find(
+                                input => input.value !== ''
+                            );
+
+
+                        if (!firstFilled) {
+
+                            alert(
+                                'Belum ada nilai yang bisa dijadikan acuan.'
+                            );
+
+                            return;
+                        }
+
+
+                        const value =
+                            firstFilled.value;
+
+
+                        inputs.forEach(function(input) {
+
+                            if (input.value === '') {
+                                input.value = value;
+                            }
+
+                        });
+
+                    }
+                );
+
+            }
+
+            if (clearScoresButton) {
+
+                clearScoresButton.addEventListener(
+                    'click',
+                    function() {
+
+                        const confirmed =
+                            confirm(
+                                'Kosongkan seluruh nilai pada form ini?'
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        document
+                            .querySelectorAll('.score-input')
+                            .forEach(function(input) {
+
+                                input.value = '';
+
+                            });
+
+                    }
+                );
+
+            }
+
+            document
+                .querySelectorAll('.score-input')
+                .forEach(function(input) {
+
+                    input.addEventListener(
+                        'input',
+                        function() {
+
+                            let value =
+                                parseFloat(this.value);
+
+
+                            if (Number.isNaN(value)) {
+                                return;
+                            }
+
+
+                            if (value < 0) {
+                                this.value = 0;
+                            }
+
+
+                            if (value > 100) {
+                                this.value = 100;
+                            }
+
+                        }
+                    );
+
+
+                    input.addEventListener(
+                        'blur',
+                        function() {
+
+                            let value =
+                                parseFloat(this.value);
+
+
+                            if (Number.isNaN(value)) {
+                                return;
+                            }
+
+
+                            if (value < 0) {
+                                this.value = 0;
+                            }
+
+
+                            if (value > 100) {
+                                this.value = 100;
+                            }
+
+                        }
+                    );
+
+                });
+
+            if (gradeForm) {
+
+                gradeForm.addEventListener(
+                    'submit',
+                    function(event) {
+
+                        const type =
+                            assessmentType?.value;
+
+                        const name =
+                            assessmentName?.value.trim();
+
+                        if (!type || !name) {
+                            return;
+                        }
+
+
+                        const scores =
+                            Array.from(
+                                document.querySelectorAll(
+                                    '.score-input'
+                                )
+                            );
+
+
+                        const filled =
+                            scores.filter(
+                                input => input.value !== ''
+                            ).length;
+
+                        if (filled === 0) {
+
+                            event.preventDefault();
+
+                            alert(
+                                'Masukkan minimal satu nilai sebelum menyimpan.'
+                            );
+
+                            return;
+                        }
+
+                        if (filled < scores.length) {
+
+                            const proceed =
+                                confirm(
+                                    `Baru ${filled} dari ${scores.length} santri yang memiliki nilai.\n\n` +
+                                    'Santri yang kosong tidak akan disimpan. Lanjutkan?'
+                                );
+
+
+                            if (!proceed) {
+                                event.preventDefault();
+                            }
+
+                        }
+
+                    }
+                );
+
+            }
+
+            document
+                .querySelectorAll('.score-input')
+                .forEach(function(input) {
+
+                    input.addEventListener(
+                        'keydown',
+                        function(event) {
+
+                            if (event.key !== 'Enter') {
+                                return;
+                            }
+
+                            event.preventDefault();
+
+                        }
+                    );
+
+                });
+
+
+        });
+    </script>
+@endpush

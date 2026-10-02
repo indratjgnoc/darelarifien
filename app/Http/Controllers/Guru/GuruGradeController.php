@@ -48,135 +48,145 @@ class GuruGradeController extends Controller
 
     public function index(int $assignmentId)
     {
-        $teacher = Teacher::where('user_id', Auth::id())
-            ->firstOrFail();
+        $teacher = Auth::user()->teacher;
 
-        $assignment = TeacherClassSubject::with([
-            'academicYear',
-            'schoolClass',
-            'subject',
-            'teacher',
-        ])
+        abort_unless($teacher, 403);
+
+        $assignment = TeacherClassSubject::query()
+            ->with([
+                'academicYear',
+                'schoolClass',
+                'subject',
+            ])
             ->where('id', $assignmentId)
             ->where('teacher_id', $teacher->id)
             ->where('is_active', true)
             ->firstOrFail();
 
-        $students = Student::where(
-            'school_class_id',
-            $assignment->school_class_id
-        )
-            ->where(
-                'academic_year_id',
-                $assignment->academic_year_id
-            )
+        $students = Student::query()
+            ->where('school_class_id', $assignment->school_class_id)
+            ->where('academic_year_id', $assignment->academic_year_id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        $grades = Grade::with('student')
-            ->where(
-                'teacher_class_subject_id',
-                $assignment->id
-            )
-            ->whereIn(
-                'student_id',
-                $students->pluck('id')
-            )
+        $grades = Grade::query()
+            ->where('teacher_class_subject_id', $assignment->id)
+            ->whereIn('student_id', $students->pluck('id'))
             ->orderBy('assessment_type')
             ->orderBy('assessment_name')
-            ->orderBy('student_id')
             ->get();
+
+        /*
+    |--------------------------------------------------------------------------
+    | Bobot Penilaian
+    |--------------------------------------------------------------------------
+    |
+    | Diambil berdasarkan tahun akademik dari assignment.
+    |
+    */
+        $assessmentOrder = [
+            'Tugas',
+            'Kuis',
+            'Praktik',
+            'UTS',
+            'UAS',
+            'Lainnya',
+        ];
 
         $weights = GradeWeight::query()
-            ->where(
-                'academic_year_id',
-                $assignment->academic_year_id
-            )
-            ->orderByRaw("
-            CASE assessment_type
-                WHEN 'Tugas' THEN 1
-                WHEN 'Kuis' THEN 2
-                WHEN 'Praktik' THEN 3
-                WHEN 'UTS' THEN 4
-                WHEN 'UAS' THEN 5
-                ELSE 6
-            END
-        ")
-            ->get();
-
-        $assessmentTypes = $weights
-            ->pluck('assessment_type')
-            ->values();
-
-
-        if ($assessmentTypes->isEmpty()) {
-            $assessmentTypes = collect([
-                'Tugas',
-                'Kuis',
-                'Praktik',
-                'UTS',
-                'UAS',
-                'Lainnya',
-            ]);
-        }
-
-        $assessments = $grades
-            ->groupBy(function ($grade) {
-                return $grade->assessment_type . '|' .
-                    $grade->assessment_name;
-            })
-            ->map(function ($group) use ($students) {
-
-                $first = $group->first();
-
-                $studentCount = $students->count();
-
-                $gradedCount = $group
-                    ->pluck('student_id')
-                    ->unique()
-                    ->count();
-
-                $missingCount = max(
-                    $studentCount - $gradedCount,
-                    0
+            ->where('academic_year_id', $assignment->academic_year_id)
+            ->get()
+            ->sortBy(function ($weight) use ($assessmentOrder) {
+                $position = array_search(
+                    $weight->assessment_type,
+                    $assessmentOrder,
+                    true
                 );
 
-                $isComplete = $studentCount > 0
-                    && $gradedCount >= $studentCount;
-
-                return (object) [
-                    'type' => $first->assessment_type,
-                    'name' => $first->assessment_name,
-                    'count' => $gradedCount,
-                    'total_students' => $studentCount,
-                    'missing_count' => $missingCount,
-                    'average' => round(
-                        $group->avg('score'),
-                        2
-                    ),
-                    'is_complete' => $isComplete,
-                ];
+                return $position === false
+                    ? 999
+                    : $position;
             })
             ->values();
 
-        $minimumPassingGrade = (float) (
-            $assignment->subject?->minimum_passing_grade ?? 0
-        );
+        /*
+    |--------------------------------------------------------------------------
+    | Fallback
+    |--------------------------------------------------------------------------
+    |
+    | Kalau tahun akademik belum memiliki konfigurasi bobot,
+    | tetap sediakan seluruh jenis penilaian agar halaman tidak error.
+    |
+    */
+        if ($weights->isEmpty()) {
+            $weights = collect($assessmentOrder)->map(function ($type) {
+                return (object) [
+                    'assessment_type' => $type,
+                    'weight' => 0,
+                ];
+            });
+        }
 
-        return view(
-            'guru.grades.index',
-            compact(
-                'teacher',
-                'assignment',
-                'students',
-                'grades',
-                'assessments',
-                'weights',
-                'assessmentTypes',
-                'minimumPassingGrade'
-            )
-        );
+        /*
+    |--------------------------------------------------------------------------
+    | Riwayat Penilaian
+    |--------------------------------------------------------------------------
+    |
+    | Dikelompokkan berdasarkan jenis + nama penilaian.
+    |
+    */
+        $assessments = $grades
+            ->groupBy(function ($grade) {
+                return $grade->assessment_type . '|' . $grade->assessment_name;
+            })
+            ->map(function ($items) use ($students) {
+                $filledCount = $items
+                    ->filter(fn($item) => $item->score !== null)
+                    ->count();
+
+                $totalStudents = $students->count();
+
+                return (object) [
+                    'assessment_type' => $items->first()->assessment_type,
+                    'assessment_name' => $items->first()->assessment_name,
+                    'count' => $filledCount,
+                    'total_students' => $totalStudents,
+                    'missing_count' => max(
+                        0,
+                        $totalStudents - $filledCount
+                    ),
+                    'average' => round(
+                        $items->avg('score'),
+                        2
+                    ),
+                    'is_complete' => $totalStudents > 0
+                        && $filledCount >= $totalStudents,
+                ];
+            })
+            ->sortBy(function ($assessment) use ($assessmentOrder) {
+                $position = array_search(
+                    $assessment->assessment_type,
+                    $assessmentOrder,
+                    true
+                );
+
+                return sprintf(
+                    '%03d-%s',
+                    $position === false ? 999 : $position,
+                    strtolower($assessment->assessment_name)
+                );
+            })
+            ->values();
+
+        return view('guru.grades.index', [
+            'teacher' => $teacher,
+            'assignment' => $assignment,
+            'students' => $students,
+            'grades' => $grades,
+            'weights' => $weights,
+            'assessments' => $assessments,
+        ]);
     }
 
     public function summary(
